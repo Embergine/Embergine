@@ -8,4 +8,4 @@ Open **https://embergine.github.io/embergine/** on your phone: Safari → Share 
 
 In the claude.ai copy the AI patient and the AI case generator work (they use the viewer's own Claude); in the installed copy Google Drive works. Both share progress through the Settings → Backup JSON or through Drive.
 
-Build cd662c1e66. Built from a single source (`index.html`).
+Build e4ef8e8f45. Built from a single source (`index.html`).

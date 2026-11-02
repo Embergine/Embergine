@@ -117,6 +117,72 @@ body.in-sim .tabbar{display:none}
 textarea.sh{width:100%;min-height:120px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px;font-family:var(--f-mono);font-size:12px;color:var(--ink)}
 input.sh{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:var(--f-mono);font-size:13px}
 
+.webgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:12px;align-items:start}@media (max-width:900px){.webgrid{grid-template-columns:1fr}}
+.labsub[hidden]{display:none}
+
+/* ===== Embergine 1.1 extras: Round, web, labs, tools, drills ===== */
+.roundbar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:34;background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));box-shadow:0 -6px 20px rgba(0,0,0,.25)}
+@media (min-width:901px){.roundbar{bottom:0}}
+body.in-sim .roundbar{display:none}
+.roundbar .legs{display:flex;gap:4px}.roundbar .legs i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);display:block}.roundbar .legs i.done{background:var(--ok)}.roundbar .legs i.now{background:var(--accent)}
+.roundbar .t{flex:1;min-width:0;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roundbar button{border:0;border-radius:8px;padding:6px 10px;font-weight:700;background:rgba(255,255,255,.14);color:inherit;cursor:pointer}
+.roundbar button.go{background:var(--accent);color:var(--on-accent)}
+.roundcard{border:1px solid var(--accent);background:linear-gradient(135deg,var(--accent-soft),var(--surface) 60%)}
+.legs-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-top:10px}
+.legs-list div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;display:flex;gap:8px;align-items:center}
+.legs-list div.done{border-color:var(--ok);color:var(--ok)}.legs-list div.now{border-color:var(--accent)}
+.legs-list b{font-family:var(--f-mono);font-size:12px;width:16px;text-align:center}
+/* web */
+.web{position:relative;background:var(--mon-bg);border:1px solid var(--mon-line);border-radius:var(--r);overflow:hidden;touch-action:none}
+.web canvas{display:block;width:100%;height:auto;max-width:100%}
+.webinfo{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.weblegend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.weblegend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+/* labs */
+.lab{display:grid;gap:12px}
+.lab .ctrls{display:grid;gap:8px}
+.sl{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center}
+.sl label{font-size:13px;color:var(--muted);grid-column:1/3}
+.sl input[type=range]{width:100%;accent-color:var(--accent)}
+.sl output{font-family:var(--f-mono);font-weight:700;min-width:64px;text-align:right}
+.lab canvas{width:100%;height:auto;max-width:100%;display:block;background:#0b1016;border-radius:8px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.readout div{background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.readout .v{font-family:var(--f-mono);font-size:22px;font-weight:700}.readout .l{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.strip{background:var(--mon-bg);border-radius:8px;padding:6px}.strip canvas{width:100%;height:auto;display:block;max-width:100%}
+.x-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.x-opt{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:10px;font-weight:600;cursor:pointer;text-align:left}
+.x-opt.r{background:var(--ok-soft);border-color:var(--ok)}.x-opt.w{background:var(--crit-soft);border-color:var(--crit)}
+/* tools */
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start}
+.dose table td:first-child{font-weight:600}
+.clock{display:flex;flex-direction:column;gap:10px}
+.clock .big{font-family:var(--f-mono);font-size:44px;font-weight:700;line-height:1;text-align:center}
+.clock .btns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.clock .btns button{border:1px solid var(--line);border-radius:10px;padding:12px 6px;font-weight:700;background:var(--surface-2);cursor:pointer;font-family:var(--f-display)}
+.clock .btns button.hot{background:var(--crit);color:#fff;border-color:var(--crit)}
+.clock .btns button.ok{background:var(--ok);color:#06281a;border-color:var(--ok)}
+.clock .log{font-family:var(--f-mono);font-size:12.5px;max-height:200px;overflow:auto;background:var(--surface-2);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:3px}
+.chk label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);flex:none;margin-top:2px}
+/* estimate, teach, autopsy, boss */
+.est .guess{font-family:var(--f-mono);font-size:34px;font-weight:700}
+.est input[type=range]{width:100%;accent-color:var(--accent)}
+.est .reveal{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.est .reveal div{background:var(--surface-2);border-radius:8px;padding:8px}
+.est .reveal b{font-family:var(--f-mono);font-size:22px;display:block}
+.rub label{display:flex;gap:8px;padding:5px 0;font-size:14px;cursor:pointer}
+.aut{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.aut button{border:1px solid var(--line);border-radius:99px;padding:5px 11px;font-size:13px;background:var(--surface);cursor:pointer}
+.aut button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.badge{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;background:var(--surface-2);opacity:.55}
+.badge.won{opacity:1;border-color:var(--accent);background:var(--accent-soft)}
+.badge .ic{font-size:26px}.badge b{display:block;font-size:13px}.badge small{color:var(--muted);font-size:12px}
+.bars2 .bar{display:grid;grid-template-columns:120px 1fr 40px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.bars2 .tr{height:8px;background:var(--surface-2);border-radius:8px;overflow:hidden}.bars2 .tr i{display:block;height:100%;background:var(--accent)}
+.bars2 b{font-family:var(--f-mono);text-align:right}
+
 /* ===== Tangerine (scoped) ===== */
 #tg /* Layout: a bedside encounter. Left rail = the patient (triage card + always-dark bedside monitor + clock);
    right = the current stage of the encounter, #tg with a stage rail across the top. Home is a ward board of cases. */
@@ -198,7 +264,7 @@ input.sh{width:100%;background:var(--surface-2);border:1px solid var(--line);bor
 <header class="topbar"><div class="wrap">
   <button class="brand" data-tab="today" aria-label="Embergine home"><span class="mark" aria-hidden="true"></span>Embergine<small>clinical reasoning · arrest</small></button>
   <nav class="topnav" aria-label="Main" id="topnav">
-    <button data-tab="today">Today</button><button data-tab="cases">Cases</button><button data-tab="codes">Codes</button><button data-tab="learn">Learn</button><button data-tab="drill">Drill</button><button data-tab="progress">Progress</button><button data-tab="settings">Settings</button>
+    <button data-tab="today">Today</button><button data-tab="cases">Cases</button><button data-tab="codes">Codes</button><button data-tab="learn">Learn</button><button data-tab="labs">Labs</button><button data-tab="drill">Drill</button><button data-tab="progress">Progress</button><button data-tab="settings">Settings</button>
   </nav>
   <span class="hubdot" id="hubdot" title="Google Drive" data-hint="Google Drive|Grey: not connected. Green: synced. Red: last sync failed. Settings → Google &amp; Citrus."></span>
 </div></header>
@@ -222,6 +288,7 @@ input.sh{width:100%;background:var(--surface-2);border:1px solid var(--line);bor
       </div>
       <div class="stats" id="todayStats"></div>
     </div>
+    <div class="sh-card roundcard" id="roundcard"></div>
     <div class="sh-card">
       <div class="sh-row" style="justify-content:space-between"><h3>This week</h3><span class="sh-small sh-muted" id="weekLine"></span></div>
       <div class="weekstrip" id="weekstrip" style="margin-top:10px"></div>
@@ -409,8 +476,17 @@ input.sh{width:100%;background:var(--surface-2);border:1px solid var(--line);bor
 </section>
 </section>
 
+<!-- ===== LABS ===== -->
+<section class="sh-view" id="sv-labs">
+  <div class="subnav" id="labsnav"><button data-act="labsTab" data-sub="web">Concept web</button><button data-act="labsTab" data-sub="labs">Labs</button><button data-act="labsTab" data-sub="tools">Tools</button></div>
+  <div id="labs-web" class="labsub"><div class="webgrid"><div class="web"><canvas id="webcv" width="900" height="720"></canvas></div><div class="webinfo" id="webinfo"></div></div><div class="weblegend" style="margin-top:8px"><span><i style="background:#FF7A1A"></i>concept</span><span><i style="background:#FF5E57"></i>rhythm</span><span><i style="background:#47C8F5"></i>H cause</span><span><i style="background:#F7A8E0"></i>T cause</span><span><i style="background:#F5F07A"></i>other cause</span><span><i style="background:#4BE38A"></i>drug</span><span>· small dot = your best code on that cause</span></div></div>
+  <div id="labs-labs" class="labsub" hidden><div class="subnav" id="labnav"><button data-lab="perfusion">Coronary perfusion</button><button data-lab="defib">Defibrillation odds</button><button data-lab="epi">Adrenaline timing</button><button data-lab="hypo">Hypothermia rules</button><button data-lab="pretest">Which H or T?</button></div><div class="sh-card" id="labbox"></div></div>
+  <div id="labs-tools" class="labsub" hidden><div class="tools" id="toolsbox"></div></div>
+</section>
+
 <!-- ===== DRILL ===== -->
 <section class="sh-view em" id="sv-drill">
+  <div class="sh-grid sh-g2" style="margin-bottom:14px"><div class="sh-card" id="stripbox"></div><div class="sh-card" id="estbox"></div><div class="sh-card" id="teachbox"></div><div class="sh-card" id="bossbox"></div></div>
   <div class="sh-card" style="margin-bottom:14px"><div class="sh-row" style="justify-content:space-between"><div><h3>Exam block</h3><p class="sh-small sh-muted">Timed single-best-answer questions drawn from every case, 90 s each; missed questions come back.</p></div><button class="sh-btn" data-act="examBlock">Open exam block</button></div></div>
   <section class="view on" id="v-quiz">
   <div class="stack">
@@ -432,6 +508,7 @@ input.sh{width:100%;background:var(--surface-2);border:1px solid var(--line);bor
 
 <!-- ===== PROGRESS ===== -->
 <section class="sh-view em" id="sv-progress">
+  <div id="progextras" style="margin-bottom:14px"></div>
   <div class="sh-card" style="margin-bottom:14px"><div class="sh-row" style="justify-content:space-between"><div><h3>Clinical reasoning</h3><p class="sh-small sh-muted" id="tgProgLine">Stage scores, calibration, repeated errors and your review schedule.</p></div><button class="sh-btn" data-act="tgProgress">Open case progress</button></div></div>
   <section class="view on" id="v-log">
   <div class="stack">
@@ -461,6 +538,7 @@ input.sh{width:100%;background:var(--surface-2);border:1px solid var(--line);bor
 </section>
 
 </main>
+<div class="roundbar" id="roundbar" hidden></div>
 
 <nav class="tabbar" aria-label="Main" id="tabbar">
   <button data-tab="today"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Today</button>
@@ -2948,7 +3026,7 @@ document.querySelectorAll('.view').forEach(v=>{});
 /* ================= EMBERGINE SHELL ================= */
 "use strict";
 const EG = (function(){
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.1.0";
 const IS_PWA = !!window.EMBERGINE_PWA;
 const APP_URL = "https://embergine.github.io/embergine/";
 const $ = (s, el=document) => el.querySelector(s);
@@ -2991,8 +3069,8 @@ function toast(msg){ let t = $("#eg-toast"); if(!t){ t = document.createElement(
 })();
 
 /* ---------- router ---------- */
-const TABS = ["today","cases","codes","learn","drill","progress","settings"];
-let tab = "today", learnSub = "causes";
+const TABS = ["today","cases","codes","learn","labs","drill","progress","settings"];
+let tab = "today", learnSub = "causes", labsSub = "web";
 function show(t, sub){
   if(t==="more"){ moreSheet(); return; }
   if(!TABS.includes(t)) t = "today";
@@ -3000,6 +3078,10 @@ function show(t, sub){
   $$(".sh-view").forEach(v => v.classList.toggle("on", v.id === "sv-"+t));
   $$("#topnav button, #tabbar button").forEach(b => b.setAttribute("aria-current", b.dataset.tab===t || (t!=="today" && b.dataset.tab==="more" && !["cases","codes","drill"].includes(t))));
   if(t==="learn"){ learnSub = sub || learnSub; $$("#learnnav button").forEach(b=>b.setAttribute("aria-current", b.dataset.sub===learnSub)); $$("#sv-learn > .view").forEach(v=>v.classList.toggle("on", v.id==="v-"+learnSub)); }
+  if(t==="labs"){ labsSub = sub || labsSub; $$("#labsnav button").forEach(b=>b.setAttribute("aria-current", b.dataset.sub===labsSub)); $$("#sv-labs .labsub").forEach(v=>v.hidden = v.id!=="labs-"+labsSub); if(EG.X){ if(labsSub==="web") EG.X.initWeb(); if(labsSub==="labs" && !$("#labbox").innerHTML) EG.X.openLab("perfusion"); if(labsSub==="tools") EG.X.renderTools(); } }
+  if(t==="drill" && EG.X) EG.X.renderDrillExtras();
+  if(t==="progress" && EG.X) EG.X.renderProgressExtras();
+  if(t==="today" && EG.X) EG.X.renderRound();
   if(t==="today") renderToday();
   if(t==="progress" && typeof renderLog==="function") renderLog();
   if(t==="drill" && typeof renderQuizStats==="function") renderQuizStats();
@@ -3014,6 +3096,7 @@ window.go = v => { const m = EMBER_MAP[v] || ["today"]; show(m[0], m[1]); };
 function moreSheet(){
   sheet([
     {t:"Learn", s:"Causes · algorithms · drugs · post-arrest", f:()=>show("learn")},
+    {t:"Labs", s:"Concept web · labs · dose card · code clock", f:()=>show("labs")},
     {t:"Progress", s:"Codes led, case scores, review schedule", f:()=>show("progress")},
     {t:"Settings", s:"Google & Citrus, theme, sound, backup", f:()=>show("settings")},
   ]);
@@ -3239,6 +3322,295 @@ return { toast, logDay, dirty, renderToday, show, stats, version:APP_VERSION, hu
 })();
 window.EG = EG; window.renderHome = EG.renderToday;
 EG.boot();
+
+/* ================= EMBERGINE 1.1 EXTRAS: the Round, concept web, labs, tools, estimates, teach-back, autopsy, boss fights ================= */
+(function(){
+"use strict";
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const p2 = n => String(n).padStart(2,"0");
+const keyOf = d => `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;
+const today = () => keyOf(new Date());
+const clamp = (x,a,b) => Math.max(a, Math.min(b, x));
+const mmss = s => { s = Math.max(0, Math.floor(s)); return p2(Math.floor(s/60))+":"+p2(s%60); };
+function X(){ DB.x = DB.x || { round:null, rounds:0, why:{}, whyQ:{}, badges:{}, teach:{}, est:[], strips:{seen:0,right:0}, web:{} }; return DB.x; }
+const toast = m => EG.toast(m);
+
+/* ================= DATA ================= */
+// Tangerine case for a cause (web edges + "see the case" links)
+const CASE_OF = { anaph:"er-anaphylaxis", pe:"er-pe", hyperk:"ex-hyperkalemia-ckd", tension:"er-fall-tension-ptx", hypovol:"er-upper-gi-bleed", dissection:"er-aortic-dissection", op:"ex-organophosphate", cyanide:"er-co-poisoning", acidosis:"er-dka", stemi:"er-rv-stemi", maternal:"ex-preeclampsia" };
+const CONCEPTS = [
+ {id:"c_hs", n:"Hs & Ts", grp:"K", why:"Every non-shockable arrest is a reversible cause until proven otherwise. Name them out loud: the team can only treat what it hears.", link:["hypoxia","hypovol","hyperk","hypothermia","hypogly","acidosis","stemi","pe","tension","tamponade","opioid","tca","ccb","dig","last","cyanide","op"]},
+ {id:"c_cpr", n:"CPR quality", grp:"K", why:"Coronary perfusion pressure builds over ~15 compressions and collapses within seconds of a pause. Fraction >80 %, pauses <10 s, switch every 2 min.", link:["c_capno","c_vector"]},
+ {id:"c_defib", n:"Defibrillation", grp:"K", why:"VF is the only rhythm with a cure. Each minute without a shock costs about 7–10 % survival when nobody is doing CPR; CPR slows that loss.", link:["vf","vt","tdp","c_vector"]},
+ {id:"c_vector", n:"Vector change & DSED", grp:"K", why:"After three failed shocks the problem is usually the current path, not the energy. AP pads change the vector; DOSE VF found both VC and DSED beat standard pads.", link:["vf"]},
+ {id:"c_epi", n:"Adrenaline timing", grp:"K", why:"Non-shockable: as early as possible, every minute of delay costs survival. Shockable: after the 2nd shock, because a shock may be enough and catecholamines raise VF recurrence.", link:["pea","asys","vf"]},
+ {id:"c_airway", n:"Airway & ventilation", grp:"K", why:"Two-person bag-mask is enough early; an advanced airway must not pause compressions. After it: 10 breaths/min, no more. Hypoxic arrests are the exception where ventilation is the treatment.", link:["hypoxia","opioid","drown","asthma","c_capno"]},
+ {id:"c_capno", n:"Capnography", grp:"K", why:"EtCO₂ is cardiac output during CPR. <10 after 20 min is a poor sign (never alone); a sudden jump is ROSC before you feel a pulse; ERC target ≥25.", link:["c_cpr","c_rosc"]},
+ {id:"c_rosc", n:"Post-ROSC care", grp:"K", why:"The injury continues after the pulse returns: MAP ≥65, SpO₂ 92–98 %, normocapnia, 12-lead, fever prevention, cause hunt, no early prognosis.", link:["c_temp","c_prog","c_cath"]},
+ {id:"c_temp", n:"Temperature control", grp:"K", why:"TTM2 ended cooling as a default; what matters is preventing fever (≤37.5 °C) for 36–72 h and not rewarming a mildly cold patient actively.", link:["hypothermia"]},
+ {id:"c_cath", n:"Angiography after ROSC", grp:"K", why:"ST elevation → cath lab now. No ST elevation → COACT and TOMAHAWK showed no benefit from emergent angiography.", link:["stemi"]},
+ {id:"c_prog", n:"Neuroprognostication", grp:"K", why:"Nothing before 72 h off sedation, and never one test alone: exam, EEG, SSEP, NSE, imaging, two concordant poor signs.", link:[]},
+ {id:"c_ecpr", n:"ECPR", grp:"K", why:"A bridge, not a treatment: witnessed, reversible cause, good CPR, under ~60 min, in a system that can cannulate. ARREST/Prague/INCEPTION disagree on size of effect.", link:["pe","hypothermia","ccb","tca","stemi"]},
+ {id:"c_pocus", n:"POCUS in arrest", grp:"K", why:"Only in the rhythm-check window, only by someone fast, only to find tamponade, PE, pneumothorax or an empty heart. Standstill alone never ends a resuscitation.", link:["tamponade","pe","tension","hypovol"]},
+ {id:"c_tor", n:"Stopping", grp:"K", why:"A judgement, not a timer: duration, rhythm trajectory, EtCO₂, reversible causes treated, witnessed, wishes. Hypothermia, drowning, toxins, PE after lysis and pregnancy all justify going longer.", link:["hypothermia","drown","tca","pe","maternal"]},
+];
+const DRUG_NODES = [["d_epi","Adrenaline",["vf","vt","pea","asys","anaph"]],["d_amio","Amiodarone",["vf","vt"]],["d_mg","Magnesium",["torsades","dig","asthma"]],["d_ca","Calcium",["hyperk","ccb"]],["d_bic","Bicarbonate",["tca","hyperk","acidosis"]],["d_lipid","Lipid emulsion",["last","tca","ccb"]],["d_tpa","Thrombolysis",["pe","stemi"]],["d_nalox","Naloxone",["opioid"]],["d_hdi","High-dose insulin",["ccb"]],["d_fab","Digoxin Fab",["dig"]],["d_hydroxo","Hydroxocobalamin",["cyanide"]],["d_atrop","Atropine",["op","block"]],["d_epiIM","Adrenaline IM",["anaph","asthma"]]];
+const RHYTHM_NODES = [["vf","VF / fine VF"],["vt","Pulseless VT"],["tdp","Torsades"],["pea","PEA"],["asys","Asystole"]];
+
+/* ================= CONCEPT WEB ================= */
+const WEB = { nodes:[], edges:[], sel:null, drag:null, raf:null, built:false, w:900, h:720 };
+const COL = { H:"#47C8F5", T:"#F7A8E0", X:"#F5F07A", K:"#FF7A1A", R:"#FF5E57", D:"#4BE38A" };
+function buildWeb(){
+  if(WEB.built) return; WEB.built = true;
+  const N = [], E = [], add = (id,n,grp,r) => N.push({id, n, grp, r:r||14, x:WEB.w/2+(Math.random()-.5)*400, y:WEB.h/2+(Math.random()-.5)*300, vx:0, vy:0});
+  CONCEPTS.forEach(c=>add(c.id, c.n, "K", 17));
+  RHYTHM_NODES.forEach(([id,n])=>add("r_"+id, n, "R", 15));
+  CAUSES.forEach(c=>add(c.id, c.n.replace(/\s*\(.*\)/,""), c.grp==="X"?"X":c.grp, 12));
+  DRUG_NODES.forEach(([id,n])=>add(id, n, "D", 11));
+  const has = id => N.some(x=>x.id===id);
+  CONCEPTS.forEach(c=>c.link.forEach(l=>{ const t = has(l)?l:(has("r_"+l)?"r_"+l:null); if(t) E.push([c.id,t,"why"]); }));
+  CAUSES.forEach(c=>{ const r = {vf:"r_vf",vff:"r_vf",vt:"r_vt",tdp:"r_tdp",pea:"r_pea",pea_wide:"r_pea",brady_pea:"r_pea",asys:"r_asys"}[c.rhythm]; if(r) E.push([c.id,r,"arrests as"]); });
+  DRUG_NODES.forEach(([id,,ls])=>ls.forEach(l=>{ const t = has(l)?l:(has("r_"+l)?"r_"+l:null); if(t) E.push([id,t,"treats"]); }));
+  WEB.nodes = N; WEB.edges = E.map(([a,b,k])=>({a:N.find(n=>n.id===a), b:N.find(n=>n.id===b), k})).filter(e=>e.a&&e.b);
+  for(let i=0;i<260;i++) stepWeb(0.9);
+}
+function stepWeb(k){
+  const N = WEB.nodes, W = WEB.w, H = WEB.h;
+  for(let i=0;i<N.length;i++){ const a = N[i]; for(let j=i+1;j<N.length;j++){ const b = N[j]; let dx = b.x-a.x, dy = b.y-a.y, d2 = dx*dx+dy*dy+0.01, d = Math.sqrt(d2); const f = 4200/d2; dx/=d; dy/=d; a.vx -= dx*f; a.vy -= dy*f; b.vx += dx*f; b.vy += dy*f; } }
+  WEB.edges.forEach(e=>{ const dx = e.b.x-e.a.x, dy = e.b.y-e.a.y, d = Math.sqrt(dx*dx+dy*dy)+0.01; const f = (d-110)*0.012; e.a.vx += dx/d*f; e.a.vy += dy/d*f; e.b.vx -= dx/d*f; e.b.vy -= dy/d*f; });
+  N.forEach(n=>{ n.vx += (W/2-n.x)*0.004; n.vy += (H/2-n.y)*0.004; if(WEB.drag===n){ n.vx = n.vy = 0; return; } n.x += n.vx*k; n.y += n.vy*k; n.vx *= 0.82; n.vy *= 0.82; n.x = clamp(n.x, 30, W-30); n.y = clamp(n.y, 24, H-24); });
+}
+function masteryOf(n){
+  if(n.grp==="K") return null;
+  if(n.grp==="R") return null;
+  if(n.grp==="D"){ return null; }
+  const codes = DB.codes.filter(c=>c.cause===n.id); if(!codes.length) return 0; const best = Math.max(...codes.map(c=>c.score)); return best>=80?1:best>=60?0.6:0.3;
+}
+function drawWeb(){
+  const cv = $("#webcv"); if(!cv) return; const cx = cv.getContext("2d"); const W = WEB.w, H = WEB.h;
+  cx.clearRect(0,0,W,H); cx.fillStyle = "#07090C"; cx.fillRect(0,0,W,H);
+  const sel = WEB.sel; const near = sel ? new Set(WEB.edges.filter(e=>e.a===sel||e.b===sel).flatMap(e=>[e.a.id,e.b.id])) : null;
+  WEB.edges.forEach(e=>{ const hot = sel && (e.a===sel||e.b===sel); cx.strokeStyle = hot ? "rgba(255,122,26,.9)" : "rgba(140,160,180,.18)"; cx.lineWidth = hot?2:1; cx.beginPath(); cx.moveTo(e.a.x,e.a.y); cx.lineTo(e.b.x,e.b.y); cx.stroke();
+    if(hot){ cx.fillStyle = "rgba(255,255,255,.7)"; cx.font = "10px JetBrains Mono, monospace"; cx.textAlign = "center"; cx.fillText(e.k, (e.a.x+e.b.x)/2, (e.a.y+e.b.y)/2-3); } });
+  WEB.nodes.forEach(n=>{ const dim = sel && n!==sel && !near.has(n.id); cx.globalAlpha = dim ? .25 : 1; cx.fillStyle = COL[n.grp]||"#ccc"; cx.beginPath(); cx.arc(n.x,n.y,n.r,0,7); cx.fill();
+    if(n===sel){ cx.strokeStyle = "#fff"; cx.lineWidth = 3; cx.stroke(); }
+    const m = masteryOf(n); if(m!==null){ cx.fillStyle = m>=1?"#4BE38A":m>0?"#F5F07A":"#555"; cx.beginPath(); cx.arc(n.x+n.r*0.7, n.y-n.r*0.7, 4, 0, 7); cx.fill(); }
+    cx.fillStyle = "#E7EDF2"; cx.font = (n.grp==="K"?"700 12px":"10.5px")+" Atkinson Hyperlegible, sans-serif"; cx.textAlign = "center"; cx.fillText(n.n, n.x, n.y+n.r+12); cx.globalAlpha = 1; });
+}
+function webLoop(){ stepWeb(0.5); drawWeb(); WEB.raf = requestAnimationFrame(webLoop); }
+function webInfo(n){
+  const box = $("#webinfo"); if(!n){ box.innerHTML = `<span class="sh-eyebrow">Concept web</span><p class="sh-small sh-muted" style="margin-top:4px">${WEB.nodes.length} nodes: ${CONCEPTS.length} concepts, ${RHYTHM_NODES.length} rhythms, ${CAUSES.length} causes, ${DRUG_NODES.length} drugs. Tap a node to see what it connects to and why; drag to rearrange. The dot on a cause is your best code score on it.</p>`; return; }
+  const links = WEB.edges.filter(e=>e.a===n||e.b===n).map(e=>({o:e.a===n?e.b:e.a, k:e.k}));
+  let why = "", acts = "";
+  const c = CMAP[n.id]; const k = CONCEPTS.find(x=>x.id===n.id);
+  if(k) why = k.why;
+  else if(c){ why = `<b>Before:</b> ${esc(c.teach.pre)}<br><b>During:</b> ${esc(c.teach.arrest)}`; acts = `<button class="sh-btn sm primary" onclick="EG.show('codes');startSim('${c.id}',{hidden:false})">Run this code</button>${CASE_OF[c.id]&&window.TG&&TG.getCase(CASE_OF[c.id])?`<button class="sh-btn sm" onclick="EG.show('cases');TG.newEncounter(TG.getCase('${CASE_OF[c.id]}'))">Open the case</button>`:""}`; }
+  else if(n.grp==="R"){ const rid = n.id.slice(2); const R = RH[rid]; why = R ? `${R.sh?"Shockable":"Non-shockable"}. ${R.org?"Organised electrical activity":"No organised activity"}. ${rid==="vf"?"Shock it, even when fine. Adrenaline after the 2nd shock, amiodarone after the 3rd, vector change after 3 failures.":rid==="vt"?"Treated exactly like VF while pulseless.":rid==="tdp"?"Magnesium 2 g; unsynchronised shock; speed the heart up; never amiodarone.":rid==="pea"?"Adrenaline as early as possible; it is almost always an H or a T.":"Adrenaline as early as possible; CPR; look hard for a reversible cause; pacing does not help."}` : ""; acts = `<button class="sh-btn sm" onclick="EG.X.stripDrill('${rid}')">Strip drill</button>`; }
+  else { const d = DRUGS.find(x=>x[0].toLowerCase().startsWith(n.n.toLowerCase().split(" ")[0])); why = d ? `<b>${esc(d[0])}</b> · ${esc(d[1])}<br>${esc(d[2])}` : ""; }
+  const teach = TEACH.find(t=>t.node===n.id);
+  box.innerHTML = `<div class="sh-row" style="justify-content:space-between"><div><span class="sh-eyebrow">${n.grp==="K"?"Concept":n.grp==="R"?"Rhythm":n.grp==="D"?"Drug":"Cause"}</span><h3>${esc(n.n)}</h3></div><div class="sh-row">${acts}${teach?`<button class="sh-btn sm" onclick="EG.X.teach('${teach.id}')">Teach it back</button>`:""}</div></div>
+    <p class="sh-small" style="margin-top:8px">${why}</p>
+    <div class="sh-row" style="margin-top:8px">${links.map(l=>`<button class="sh-pill" style="cursor:pointer" onclick="EG.X.webSelect('${l.o.id}')">${esc(l.k)} → ${esc(l.o.n)}</button>`).join("")}</div>`;
+}
+function webSelect(id){ const n = WEB.nodes.find(x=>x.id===id); WEB.sel = n||null; X().web.last = id; webInfo(WEB.sel); EG.legDone("concept"); }
+function conceptOfDay(){ const d = new Date(); const i = (d.getFullYear()*372+d.getMonth()*31+d.getDate()) % CONCEPTS.length; return CONCEPTS[i]; }
+function initWeb(){
+  buildWeb(); const cv = $("#webcv"); if(!cv || cv.dataset.wired) { drawWeb(); return; } cv.dataset.wired = 1;
+  const pos = e => { const r = cv.getBoundingClientRect(); return { x:(e.clientX-r.left)*WEB.w/r.width, y:(e.clientY-r.top)*WEB.h/r.height }; };
+  const hit = p => WEB.nodes.find(n => (n.x-p.x)**2+(n.y-p.y)**2 <= (n.r+8)**2);
+  let down = null;
+  cv.addEventListener("pointerdown", e => { const p = pos(e); const n = hit(p); down = {p, n, moved:false}; if(n){ WEB.drag = n; cv.setPointerCapture(e.pointerId); } });
+  cv.addEventListener("pointermove", e => { if(!down||!WEB.drag) return; const p = pos(e); if(Math.abs(p.x-down.p.x)>4||Math.abs(p.y-down.p.y)>4) down.moved = true; WEB.drag.x = p.x; WEB.drag.y = p.y; });
+  const up = e => { if(down && !down.moved){ webSelect(down.n ? down.n.id : null); } WEB.drag = null; down = null; };
+  cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", up);
+  if(!WEB.raf) webLoop();
+  if(!WEB.sel){ WEB.sel = WEB.nodes.find(n=>n.id===conceptOfDay().id)||null; }
+  webInfo(WEB.sel);
+}
+
+/* ================= LABS ================= */
+const LABS = {
+ perfusion:{ n:"Coronary perfusion", s:"Pauses, fatigue and adrenaline interval → CPR fraction and modelled coronary perfusion pressure.",
+  ctrls:[["pause","Pause at each rhythm check (s)",2,30,8,1],["sw","Compressor switch interval (min)",1,6,2,0.5],["epi","Adrenaline interval (min)",2,10,4,0.5],["extra","Other interruptions per cycle (s)",0,30,5,1]],
+  calc:v=>{ const cycle = 120; const off = v.pause+v.extra; const ccf = cycle/(cycle+off); const fatigue = clamp(1-(v.sw-2)*0.09, 0.6, 1); const cpp = Math.round(28*ccf*fatigue*(v.epi<=5?1:0.85)); const rosc = clamp(0.35*ccf*fatigue*(cpp>=15?1:0.5)*(v.epi<=5?1:0.8), 0, 0.5); return {ccf:Math.round(ccf*100)+" %", cpp:cpp+" mmHg", rosc:Math.round(rosc*100)+" %", note: cpp<15?"CPP under 15 mmHg: ROSC is unlikely. Shorten the pauses and switch compressors.":cpp<20?"Borderline. Pre-charge the defibrillator during compressions and keep the pause under 5 s.":"Good perfusion: this is what >80 % fraction looks like."}; },
+  draw:(cx,v,o)=>{ const W=600,H=200; cx.fillStyle="#0b1016"; cx.fillRect(0,0,W,H); const cycle=120, off=v.pause+v.extra; const tot=cycle+off; cx.strokeStyle="#4BE38A"; cx.lineWidth=2; cx.beginPath(); for(let x=0;x<W;x++){ const t=(x/W)*tot*2; const inCycle=(t%tot)<cycle; const since=(t%tot); let cpp = inCycle ? 28*(1-Math.exp(-since/8))*(clamp(1-(v.sw-2)*0.09,.6,1)) : 28*Math.exp(-(since-cycle)/2); const y=H-20-cpp*5; x?cx.lineTo(x,y):cx.moveTo(x,y);} cx.stroke(); cx.strokeStyle="rgba(255,94,87,.8)"; cx.setLineDash([4,4]); cx.beginPath(); cx.moveTo(0,H-20-15*5); cx.lineTo(W,H-20-15*5); cx.stroke(); cx.setLineDash([]); cx.fillStyle="#9aa6b4"; cx.font="11px JetBrains Mono, monospace"; cx.fillText("CPP 15 mmHg: the floor for ROSC", 6, H-20-15*5-4); cx.fillText("two 2-min cycles with your pauses", 6, 14); } },
+ defib:{ n:"Defibrillation odds", s:"Minutes in VF, bystander CPR and the pad strategy after three failures.",
+  ctrls:[["min","Minutes of VF before the first shock",0,20,4,1],["cpr","Bystander CPR (0 no, 1 yes)",0,1,1,1],["fails","Failed shocks so far",0,6,0,1],["strat","Strategy after 3 failures (0 same, 1 AP vector, 2 DSED)",0,2,0,1]],
+  calc:v=>{ const loss = v.cpr ? 0.04 : 0.09; let p = 0.7*Math.pow(1-loss, v.min); if(v.fails>=3){ p *= v.strat===2?0.62:v.strat===1?0.5:0.3; } else p *= Math.pow(0.85, v.fails); return {p:Math.round(p*100)+" %", note: v.fails>=3 ? (v.strat===0?"Persistent VF with the same pads: optimise CPR, check the drugs, then change the vector.":"DOSE VF: survival to discharge 13 % standard, 22 % vector change, 30 % DSED.") : "Survival in VF falls about 7–10 % per minute without CPR and 3–4 % with it."}; },
+  draw:(cx,v,o)=>{ const W=600,H=200; cx.fillStyle="#0b1016"; cx.fillRect(0,0,W,H); [[0.09,"#FF5E57","no CPR"],[0.04,"#4BE38A","bystander CPR"]].forEach(([loss,col,lab])=>{ cx.strokeStyle=col; cx.lineWidth=2; cx.beginPath(); for(let m=0;m<=20;m+=0.25){ const p=0.7*Math.pow(1-loss,m); const x=m/20*W, y=H-20-p*(H-40); m?cx.lineTo(x,y):cx.moveTo(x,y);} cx.stroke(); cx.fillStyle=col; cx.font="11px JetBrains Mono, monospace"; cx.fillText(lab, W-120, loss>0.05?H-30:40); }); const x=v.min/20*W; cx.strokeStyle="#F5F07A"; cx.setLineDash([3,3]); cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,H); cx.stroke(); cx.setLineDash([]); cx.fillStyle="#9aa6b4"; cx.fillText("minutes in VF → chance the first shock works", 6, 14); } },
+ epi:{ n:"Adrenaline timing", s:"Time to the first dose in a non-shockable arrest vs survival (registry slope) and what PARAMEDIC-2 actually showed.",
+  ctrls:[["t","Minutes from arrest to first adrenaline",1,20,5,1]],
+  calc:v=>{ const s = 0.12*Math.pow(0.95, v.t-1); return {surv:(s*100).toFixed(1)+" %", rel:Math.round(100*(1-Math.pow(0.95,v.t-1)))+" % lost", note:"Each minute of delay in non-shockable IHCA lowers survival by ~4 % relative (Donnino 2014). PARAMEDIC-2: adrenaline 3.2 % vs placebo 2.4 % alive at 30 days; neurological outcome did not differ."}; },
+  draw:(cx,v,o)=>{ const W=600,H=200; cx.fillStyle="#0b1016"; cx.fillRect(0,0,W,H); cx.strokeStyle="#FF7A1A"; cx.lineWidth=2; cx.beginPath(); for(let t=1;t<=20;t+=0.25){ const s=0.12*Math.pow(0.95,t-1); const x=(t-1)/19*W, y=H-20-s/0.12*(H-40); t>1?cx.lineTo(x,y):cx.moveTo(x,y);} cx.stroke(); const x=(v.t-1)/19*W; cx.strokeStyle="#F5F07A"; cx.setLineDash([3,3]); cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,H); cx.stroke(); cx.setLineDash([]); cx.fillStyle="#9aa6b4"; cx.font="11px JetBrains Mono, monospace"; cx.fillText("survival vs minutes to the first dose (relative)", 6, 14); } },
+ hypo:{ n:"Hypothermia rules", s:"Core temperature decides drugs, shocks and how long you keep going.",
+  ctrls:[["temp","Core temperature (°C)",20,37,28,0.5]],
+  calc:v=>{ const t=v.temp; return {drugs: t<30?"withhold":t<35?"double the interval":"standard", shocks: t<30?"max 3, then rewarm":"standard", note: t<30?"Below 30 °C: no drugs, three shocks at most, rewarm (ECLS if unstable), prolonged CPR is justified; 'not dead until warm and dead'.":t<35?"30–35 °C: give drugs at twice the usual interval (6–10 min); shocks as normal.":"Above 35 °C: standard ALS. Below 32 °C after ROSC do not actively rewarm beyond 36 °C."}; },
+  draw:(cx,v,o)=>{ const W=600,H=200; cx.fillStyle="#0b1016"; cx.fillRect(0,0,W,H); const zones=[[20,30,"#47C8F5","< 30 °C · no drugs · ≤3 shocks"],[30,35,"#F5F07A","30–35 °C · double interval"],[35,37,"#4BE38A","standard ALS"]]; zones.forEach(([a,b,c,l])=>{ const x0=(a-20)/17*W, x1=(b-20)/17*W; cx.fillStyle=c; cx.globalAlpha=.25; cx.fillRect(x0,40,x1-x0,H-80); cx.globalAlpha=1; cx.fillStyle="#E7EDF2"; cx.font="11px JetBrains Mono, monospace"; cx.fillText(l, x0+6, 60); }); const x=(v.temp-20)/17*W; cx.strokeStyle="#FF7A1A"; cx.lineWidth=3; cx.beginPath(); cx.moveTo(x,30); cx.lineTo(x,H-30); cx.stroke(); } },
+ pretest:{ n:"Which H or T?", s:"Slide the clues; the model ranks the reversible causes. Not a calculator for real patients: a way to feel which findings move you.",
+  ctrls:[["rate","Rhythm rate during PEA (/min)",20,160,90,5],["wide","QRS width (0 narrow … 1 wide)",0,1,0,0.1],["jvp","Neck veins (0 flat … 1 distended)",0,1,0.5,0.1],["sat","SpO₂ before arrest (%)",50,100,90,1],["k","Known renal failure / missed dialysis (0/1)",0,1,0,1]],
+  calc:v=>{ const s = { "Hypovolaemia / haemorrhage": (v.rate>100?2:0)+(v.jvp<0.4?2:0)+(v.wide<0.3?1:0), "Tension pneumothorax": (v.jvp>0.6?2:0)+(v.rate>100?1:0)+(v.sat<90?1:0), "Tamponade": (v.jvp>0.6?2:0)+(v.rate>100?1:0)+(v.wide<0.3?1:0), "Pulmonary embolism": (v.jvp>0.6?2:0)+(v.sat<90?2:0)+(v.rate>100?1:0), "Hypoxia": (v.sat<85?3:0)+(v.rate<60?2:0), "Hyperkalaemia": (v.k?3:0)+(v.wide>0.6?2:0)+(v.rate<60?1:0), "Toxin (Na-channel blocker)": (v.wide>0.6?2:0)+(v.rate>100?1:0) }; const tot = Object.values(s).reduce((a,b)=>a+b,0)||1; const ranked = Object.entries(s).sort((a,b)=>b[1]-a[1]); return { top: ranked[0][0], second: ranked[1][0], note: ranked.map(([k,x])=>`${k} ${Math.round(100*x/tot)} %`).join(" · ") }; },
+  draw:(cx,v,o)=>{ const W=600,H=200; cx.fillStyle="#0b1016"; cx.fillRect(0,0,W,H); const parts = o.note.split(" · "); parts.forEach((p,i)=>{ const m = p.match(/(.*) (\d+) %$/); if(!m) return; const pct=+m[2]; const y=14+i*26; cx.fillStyle="#9aa6b4"; cx.font="11px JetBrains Mono, monospace"; cx.fillText(m[1], 6, y+10); cx.fillStyle = i===0?"#FF7A1A":"#2f8f9d"; cx.fillRect(220, y, (W-240)*pct/100, 14); cx.fillStyle="#E7EDF2"; cx.fillText(pct+" %", 224+(W-240)*pct/100, y+11); }); } },
+};
+let LAB = null;
+function openLab(id){ LAB = id; const L = LABS[id]; const box = $("#labbox"); box.innerHTML = `<div class="sh-row" style="justify-content:space-between"><div><span class="sh-eyebrow">Lab</span><h3>${L.n}</h3><p class="sh-small sh-muted">${L.s}</p></div></div>
+   <div class="lab" style="margin-top:10px"><div class="ctrls">${L.ctrls.map(c=>`<div class="sl"><label>${c[1]}</label><input type="range" id="lab-${c[0]}" min="${c[2]}" max="${c[3]}" value="${c[4]}" step="${c[5]}"><output id="labo-${c[0]}">${c[4]}</output></div>`).join("")}</div><canvas id="labcv" width="600" height="200"></canvas><div class="readout" id="labout"></div><p class="sh-small" id="labnote"></p></div>`;
+  $$("#labbox input[type=range]").forEach(i=>i.addEventListener("input", runLab)); runLab(); $$("#labnav button").forEach(b=>b.setAttribute("aria-current", b.dataset.lab===id)); }
+function runLab(){ const L = LABS[LAB]; const v = {}; L.ctrls.forEach(c=>{ v[c[0]] = +$("#lab-"+c[0]).value; $("#labo-"+c[0]).textContent = v[c[0]]; }); const o = L.calc(v); $("#labout").innerHTML = Object.entries(o).filter(([k])=>k!=="note").map(([k,val])=>`<div><div class="v">${esc(val)}</div><div class="l">${k}</div></div>`).join(""); $("#labnote").textContent = o.note||""; L.draw($("#labcv").getContext("2d"), v, o); }
+
+/* ---- rhythm strip drill ---- */
+const STRIP_SET = [["vf","Coarse VF",{hr:0}],["vff","Fine VF",{hr:0}],["vt","Monomorphic VT",{hr:190}],["tdp","Torsades de pointes",{hr:0}],["asys","Asystole",{hr:0}],["pea","PEA, narrow (organised, no pulse)",{hr:95}],["pea_wide","PEA, wide and slow",{hr:35}],["block","Complete heart block",{hr:30}],["af","Atrial fibrillation",{hr:110}],["sinus","Sinus rhythm",{hr:75}],["sb","Sinus bradycardia",{hr:42}],["paced","Paced rhythm",{hr:70}]];
+let STRIP = null;
+function renderStrip(cv, rid, hr){ const cx = cv.getContext("2d"); const W = cv.width, H = cv.height; cx.fillStyle = "#07090C"; cx.fillRect(0,0,W,H); cx.strokeStyle = "#121a24"; for(let x=0;x<W;x+=25){ cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,H); cx.stroke(); } for(let y=0;y<H;y+=25){ cx.beginPath(); cx.moveTo(0,y); cx.lineTo(W,y); cx.stroke(); }
+  const saved = S; S = { rhythm:rid, v:{hr:hr||60}, cpr:false, cause:null, phase:"x" }; afT = 0; cx.strokeStyle = "#4BE38A"; cx.lineWidth = 2; cx.beginPath(); const t0 = Math.random()*5; for(let x=0;x<W;x++){ const t = t0 + x/W*6; const y = H*0.6 - ecgAt(t)*H*0.38; x?cx.lineTo(x,y):cx.moveTo(x,y); } cx.stroke(); S = saved; }
+function stripDrill(pref){ const pool = STRIP_SET; const pick = pref && pool.find(p=>p[0]===pref) || pool[Math.floor(Math.random()*pool.length)]; const opts = [pick].concat(pool.filter(p=>p!==pick).sort(()=>Math.random()-.5).slice(0,3)).sort(()=>Math.random()-.5); STRIP = {pick, opts, n:(STRIP?STRIP.n:0)+1};
+  const box = $("#stripbox"); box.innerHTML = `<div class="sh-row" style="justify-content:space-between"><span class="sh-eyebrow">Rhythm strip ${STRIP.n} · pulseless patient unless told otherwise</span><span class="sh-small sh-muted">${X().strips.right}/${X().strips.seen} right</span></div><div class="strip" style="margin-top:8px"><canvas id="stripcv" width="900" height="160"></canvas></div><div class="x-opts" style="margin-top:8px">${opts.map(o=>`<button class="x-opt" data-r="${o[0]}">${o[1]}</button>`).join("")}</div><div id="stripex" class="sh-small" style="margin-top:8px"></div>`;
+  renderStrip($("#stripcv"), pick[0], pick[2].hr); $$("#stripbox .x-opt").forEach(b=>b.onclick=()=>stripAnswer(b.dataset.r)); EG.show("drill"); $("#stripbox").scrollIntoView({block:"start"}); }
+function stripAnswer(r){ const ok = r===STRIP.pick[0]; X().strips.seen++; if(ok) X().strips.right++; $$("#stripbox .x-opt").forEach(b=>{ b.disabled = true; if(b.dataset.r===STRIP.pick[0]) b.classList.add("r"); else if(b.dataset.r===r) b.classList.add("w"); }); const R = RH[STRIP.pick[0]]; const next = R.sh ? "Shockable: charge during compressions, shock, resume CPR." : (STRIP.pick[0]==="asys"||/pea/.test(STRIP.pick[0])) ? "Non-shockable: resume CPR, adrenaline as early as possible, hunt the cause." : "Perfusing rhythm if there is a pulse: check it, then treat the patient, not the monitor."; $("#stripex").innerHTML = `${ok?'<span style="color:var(--ok)">Correct.</span>':'<span style="color:var(--crit)">No: '+esc(STRIP.pick[1])+'.</span>'} ${next} <button class="sh-btn sm" style="margin-left:8px" onclick="EG.X.stripDrill()">Next strip</button>`; save(); if(X().strips.seen % 3 === 0) EG.legDone("strip"); EG.logDay("quiz"); }
+
+/* ================= TOOLS ================= */
+function doseTable(kg){ const r = (x,d=1) => (Math.round(x*Math.pow(10,d))/Math.pow(10,d)).toString(); return [
+  ["Adrenaline (arrest)","1 mg IV/IO every 3–5 min",""],["Amiodarone","300 mg then 150 mg","infusion 900 mg/24 h"],["Lidocaine","1–1.5 mg/kg", r(kg*1)+"–"+r(kg*1.5)+" mg (max "+r(kg*3)+" mg)"],
+  ["Magnesium","2 g IV",""],["Calcium chloride 10 %","10 mL (6.8 mmol)","gluconate 30 mL"],["Bicarbonate 8.4 %","50 mmol; TCA 1–2 mmol/kg", r(kg)+"–"+r(kg*2)+" mmol"],
+  ["Alteplase (PE arrest)","50 mg bolus",""],["Lipid 20 %","1.5 mL/kg bolus, then 15 mL/kg/h", r(kg*1.5,0)+" mL, then "+r(kg*15,0)+" mL/h (max "+r(kg*12,0)+" mL)"],
+  ["High-dose insulin","1 U/kg bolus, 1 U/kg/h", r(kg,0)+" U, then "+r(kg,0)+" U/h + dextrose"],["Naloxone","0.4–2 mg, repeat 2–3 min",""],["Hydroxocobalamin","5 g over 15 min",""],["TXA (trauma)","1 g over 10 min, 1 g over 8 h",""],
+  ["Ketamine (RSI)","1–2 mg/kg", r(kg)+"–"+r(kg*2)+" mg"],["Rocuronium","1.2 mg/kg", r(kg*1.2)+" mg"],["Adrenaline infusion","0.05–0.5 µg/kg/min", r(kg*0.05*60/1000,2)+"–"+r(kg*0.5*60/1000,2)+" mg/h"],
+  ["Noradrenaline","0.05–0.5 µg/kg/min", r(kg*0.05*60/1000,2)+"–"+r(kg*0.5*60/1000,2)+" mg/h"],["Dextrose 10 %","2.5 mL/kg (25 g adult)", r(kg*2.5,0)+" mL"],["Crystalloid bolus","10–20 mL/kg", r(kg*10,0)+"–"+r(kg*20,0)+" mL"] ]; }
+const INF = [["Noradrenaline 4 mg in 50 mL",80,"µg/kg/min",0.05,0.5,0.1],["Noradrenaline 8 mg in 50 mL",160,"µg/kg/min",0.05,0.5,0.1],["Adrenaline 4 mg in 50 mL",80,"µg/kg/min",0.05,0.5,0.1],["Adrenaline 1 mg in 100 mL (peripheral)",10,"µg/min",1,20,5],["Amiodarone 900 mg in 500 mL",1.8,"mg/h",10,60,37.5],["Propofol 1 % (10 mg/mL)",10,"mg/kg/h",0.5,4,2],["Fentanyl 500 µg in 50 mL",10,"µg/h",25,200,50],["Insulin 50 U in 50 mL",1,"U/h",1,10,2],["Isoprenaline 1 mg in 50 mL",20,"µg/min",1,10,4]];
+function infuse(){ const i = +$("#infDrug").value, kg = +$("#infKg").value, dose = +$("#infDose").value; const [name, conc, unit] = INF[i]; let perH = 0;
+  if(unit==="µg/kg/min") perH = dose*kg*60/conc; else if(unit==="µg/min") perH = dose*60/conc; else if(unit==="µg/h") perH = dose/conc; else if(unit==="mg/kg/h") perH = dose*kg/conc; else if(unit==="mg/h") perH = dose/conc; else if(unit==="U/h") perH = dose/conc;
+  $("#infOut").innerHTML = `<div class="v">${perH.toFixed(1)} mL/h</div><div class="l">${esc(name)} · ${dose} ${unit}${/kg/.test(unit)?" at "+kg+" kg":""}</div>`; }
+function renderTools(){ const box = $("#toolsbox"); if(box.dataset.done) return; box.dataset.done = 1; const kg = 75;
+  box.innerHTML = `
+  <div class="sh-card dose"><h3>Dose card</h3><div class="sl" style="margin:8px 0"><label>Weight (kg)</label><input type="range" id="doseKg" min="30" max="160" value="${kg}" step="1"><output id="doseKgO">${kg}</output></div><div class="tw" style="overflow-x:auto"><table id="doseTbl" style="width:100%;border-collapse:collapse;font-size:13.5px"></table></div><p class="sh-small sh-muted" style="margin-top:6px">Adult doses from the 2025 ALS guidelines and standard antidote references. Check your own formulary.</p></div>
+  <div class="sh-card"><h3>Infusion rate</h3><div class="sh-stack" style="gap:8px;margin-top:8px"><select id="infDrug" class="sh" style="width:100%;padding:8px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)">${INF.map((d,i)=>`<option value="${i}">${esc(d[0])}</option>`).join("")}</select><div class="sl"><label>Weight (kg)</label><input type="range" id="infKg" min="30" max="160" value="${kg}"><output id="infKgO">${kg}</output></div><div class="sl"><label>Dose (<span id="infUnit">µg/kg/min</span>)</label><input type="range" id="infDose" min="0.05" max="0.5" step="0.01" value="0.1"><output id="infDoseO">0.1</output></div><div class="readout"><div id="infOut"></div></div></div></div>
+  <div class="sh-card clock"><h3>Code clock</h3><p class="sh-small sh-muted">For a real arrest: tap what happens; the clock keeps the times and writes the note. Nothing leaves this device.</p><div class="big" id="ckBig">00:00</div><div class="sh-row" style="justify-content:space-between"><span class="sh-small" id="ckCycle">cycle —</span><span class="sh-small" id="ckEpi">adrenaline —</span></div><div class="btns"><button class="hot" data-ck="start">Arrest / CPR</button><button data-ck="check">Rhythm check</button><button data-ck="shock">Shock</button><button data-ck="epi">Adrenaline</button><button data-ck="amio">Amiodarone</button><button data-ck="other">Other…</button><button class="ok" data-ck="rosc">ROSC</button><button data-ck="stop">Stop</button><button data-ck="reset">Reset</button></div><div class="log" id="ckLog"></div><div class="sh-row"><button class="sh-btn sm" data-ck="copy">Copy code note</button></div></div>
+  <div class="sh-card chk"><h3>Post-ROSC bundle</h3>${["Airway secured, waveform capnography","FiO₂ titrated to SpO₂ 92–98 %","Ventilation to PaCO₂ 35–45","MAP ≥65 (fluids, noradrenaline)","12-lead ECG — ST elevation → cath lab","Cause: Hs & Ts, POCUS/echo, CT if unclear","Temperature control: ≤37.5 °C for 36–72 h","Short-acting sedation, head up 30°","Glucose 8–10 mmol/L","EEG if not waking or twitching","Family updated, named contact","No prognosis before 72 h"].map(t=>`<label><input type="checkbox">${t}</label>`).join("")}</div>
+  <div class="sh-card chk"><h3>Before you stop</h3>${["All four Hs and four Ts considered and the likely ones treated","Airway confirmed with capnography; EtCO₂ trend reviewed","Good CPR throughout (fraction, depth, switches)","Shockable rhythm ever? Adequate shocks and antiarrhythmic given","Duration and rhythm trajectory discussed as a team","Special circumstances excluded: hypothermia, toxins, PE after lysis, pregnancy, drowning","ECPR candidacy considered where available","Patient wishes / DNACPR known","Team agrees; time announced; family told in person; debrief planned"].map(t=>`<label><input type="checkbox">${t}</label>`).join("")}</div>
+  <div class="sh-card chk"><h3>ECPR candidate?</h3>${["Witnessed arrest","Bystander or immediate CPR","Initial shockable rhythm or a reversible cause (PE, hypothermia, toxin, STEMI)","Age and comorbidity compatible with a good outcome","Cannulation possible within ~60 min of arrest","EtCO₂ >10 mmHg during CPR","No DNACPR, no terminal illness"].map(t=>`<label><input type="checkbox">${t}</label>`).join("")}<p class="sh-small sh-muted" style="margin-top:6px">AHA 2025: reasonable (2a) in selected patients within a system that can deliver it. ARREST (n=30) positive, Prague OHCA and INCEPTION neutral on the primary outcome.</p></div>
+  <div class="sh-card chk"><h3>Pregnant patient (≥20 weeks)</h3>${["Continuous manual left uterine displacement","IV/IO above the diaphragm","Early advanced airway (difficult airway expected)","Obstetrics, neonatology, anaesthesia called at minute 0","Resuscitative hysterotomy started by 4 min, delivered by 5","Standard drugs and energies; no changes","Causes: haemorrhage, PE/AFE, eclampsia (magnesium), cardiomyopathy, sepsis, anaesthetic"].map(t=>`<label><input type="checkbox">${t}</label>`).join("")}</div>`;
+  const dt = () => { const kg = +$("#doseKg").value; $("#doseKgO").textContent = kg; $("#doseTbl").innerHTML = doseTable(kg).map(r=>`<tr><td style="padding:5px 6px;border-bottom:1px solid var(--line)">${r[0]}</td><td style="padding:5px 6px;border-bottom:1px solid var(--line)">${r[1]}</td><td class="mono" style="padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--f-mono);color:var(--accent-ink)">${r[2]}</td></tr>`).join(""); };
+  $("#doseKg").addEventListener("input", dt); dt();
+  const inf = () => { const d = INF[+$("#infDrug").value]; $("#infUnit").textContent = d[2]; const r = $("#infDose"); r.min = d[3]; r.max = d[4]; r.step = d[2]==="µg/kg/min"?0.01:d[2]==="mg/kg/h"?0.1:1; r.value = d[5]; $("#infDoseO").textContent = r.value; $("#infKgO").textContent = $("#infKg").value; infuse(); };
+  $("#infDrug").addEventListener("change", inf); $("#infKg").addEventListener("input", ()=>{ $("#infKgO").textContent = $("#infKg").value; infuse(); }); $("#infDose").addEventListener("input", ()=>{ $("#infDoseO").textContent = $("#infDose").value; infuse(); }); inf();
+  box.addEventListener("click", e => { const b = e.target.closest("[data-ck]"); if(b) codeClock(b.dataset.ck); });
+}
+/* code clock */
+const CK = { t0:null, log:[], timer:null, lastCheck:null, lastEpi:null, shocks:0, epi:0, rosc:null };
+function ckTick(){ if(!CK.t0) return; const s = (Date.now()-CK.t0)/1000; $("#ckBig").textContent = mmss(s); const lc = CK.lastCheck!==null ? 120-(Date.now()-CK.lastCheck)/1000 : null; $("#ckCycle").textContent = lc===null ? "cycle —" : (lc<=0 ? "RHYTHM CHECK DUE" : "next check in "+mmss(lc)); $("#ckCycle").style.color = lc!==null&&lc<=0 ? "var(--crit)" : ""; const le = CK.lastEpi!==null ? (Date.now()-CK.lastEpi)/1000 : null; $("#ckEpi").textContent = le===null ? "adrenaline —" : "adrenaline "+mmss(le)+" ago"; $("#ckEpi").style.color = le!==null&&le>300 ? "var(--crit)" : le!==null&&le>180 ? "var(--warn)" : ""; }
+function ckAdd(txt){ const s = CK.t0 ? mmss((Date.now()-CK.t0)/1000) : "00:00"; CK.log.push(s+"  "+txt); $("#ckLog").innerHTML = CK.log.map(esc).join("<br>"); $("#ckLog").scrollTop = 1e6; try { navigator.vibrate && navigator.vibrate(10); } catch {} }
+function codeClock(a){
+  if(a==="start"){ if(!CK.t0){ CK.t0 = Date.now(); CK.lastCheck = Date.now(); clearInterval(CK.timer); CK.timer = setInterval(ckTick, 500); ckAdd("Arrest recognised, CPR started"); } else ckAdd("CPR resumed"); return; }
+  if(!CK.t0 && a!=="reset"){ toast("Tap Arrest / CPR first"); return; }
+  if(a==="check"){ CK.lastCheck = Date.now(); ckAdd("Rhythm check"); }
+  if(a==="shock"){ CK.shocks++; ckAdd("Shock #"+CK.shocks); }
+  if(a==="epi"){ CK.epi++; CK.lastEpi = Date.now(); ckAdd("Adrenaline 1 mg (#"+CK.epi+")"); }
+  if(a==="amio"){ ckAdd("Amiodarone"); }
+  if(a==="other"){ let v = null; try { v = window.prompt ? window.prompt("What happened?") : null; } catch {} ckAdd(v || "Other intervention"); }
+  if(a==="rosc"){ CK.rosc = Date.now(); ckAdd("ROSC"); }
+  if(a==="stop"){ ckAdd("Resuscitation stopped"); clearInterval(CK.timer); }
+  if(a==="reset"){ clearInterval(CK.timer); Object.assign(CK, {t0:null, log:[], lastCheck:null, lastEpi:null, shocks:0, epi:0, rosc:null}); $("#ckLog").innerHTML = ""; $("#ckBig").textContent = "00:00"; $("#ckCycle").textContent = "cycle —"; $("#ckEpi").textContent = "adrenaline —"; }
+  if(a==="copy"){ const dur = CK.t0 ? mmss(((CK.rosc||Date.now())-CK.t0)/1000) : "—"; const note = `CARDIAC ARREST NOTE ${new Date().toLocaleDateString("en-GB")}\nCPR duration ${dur}; shocks ${CK.shocks}; adrenaline ${CK.epi} mg.\nTimeline:\n${CK.log.join("\n")}\nReversible causes considered: hypoxia, hypovolaemia, hyper/hypokalaemia, hypothermia, thrombosis (coronary/pulmonary), tension pneumothorax, tamponade, toxins.`; navigator.clipboard?.writeText(note).then(()=>toast("Copied")).catch(()=>toast("Copy blocked; select the log")); }
+  ckTick();
+}
+
+/* ================= ESTIMATES ================= */
+const ESTIMATES = [
+ {q:"Out-of-hospital cardiac arrest: what share of patients survive to hospital discharge?", a:10, lo:8, hi:12, unit:"%", src:"AHA Heart Disease and Stroke Statistics 2025 (US registries ≈10 %)", why:"Most OHCA victims never get a bystander shock; survival depends almost entirely on the first 5 minutes."},
+ {q:"In-hospital cardiac arrest: ROSC is achieved in what share of patients?", a:70, lo:65, hi:75, unit:"%", src:"Get With The Guidelines–Resuscitation (≈70 %)", why:"Hospitals are good at getting a pulse back; the losses come afterwards."},
+ {q:"In-hospital cardiac arrest: survival to discharge?", a:24, lo:22, hi:26, unit:"%", src:"GWTG-R ≈24 %", why:"One in four. Most who survive to discharge (≈85 %) have a favourable neurological outcome."},
+ {q:"PARAMEDIC-2: 30-day survival with adrenaline vs placebo in OHCA. Adrenaline arm?", a:3.2, lo:3, hi:3.5, unit:"%", src:"Perkins NEJM 2018: 3.2 % vs 2.4 %", why:"A real but small survival gain; favourable neurological outcome did not differ (2.2 % vs 1.9 %)."},
+ {q:"DOSE VF: survival to discharge in refractory VF with standard pads?", a:13.3, lo:12, hi:15, unit:"%", src:"Cheskes NEJM 2022: standard 13.3 %, vector change 21.7 %, DSED 30.4 %", why:"The strategy after three failed shocks changed outcomes more than any drug has."},
+ {q:"TTM2: death at 6 months with hypothermia at 33 °C? (normothermia arm was 48 %)", a:50, lo:48, hi:52, unit:"%", src:"Dankiewicz NEJM 2021: 50 % vs 48 %", why:"Cooling to 33 °C did not help; fever prevention is the target now."},
+ {q:"Each minute without CPR in VF reduces survival by about how many percentage points (relative)?", a:8, lo:7, hi:10, unit:"%/min", src:"Larsen 1993; Valenzuela 1997 (7–10 % per minute without CPR; 3–4 % with CPR)", why:"This is why bystander CPR and public AEDs matter more than anything we do later."},
+ {q:"Bystander CPR rate in Europe (EuReCa)?", a:58, lo:55, hi:62, unit:"%", src:"EuReCa TWO; ERC 2025 Systems Saving Lives (58 %, range 13–82 % by region)", why:"The spread between regions is the opportunity: schoolchildren and dispatchers."},
+ {q:"COACT: 90-day survival after OHCA without ST elevation, immediate angiography arm? (delayed arm 67.2 %)", a:64.5, lo:62, hi:67, unit:"%", src:"Lemkes NEJM 2019: 64.5 % vs 67.2 %", why:"No benefit from rushing to the cath lab without ST elevation; TOMAHAWK agreed."},
+ {q:"How often is a palpable pulse check by health professionals wrong (either direction) within 10 s?", a:35, lo:30, hi:45, unit:"%", src:"Eberle 1996; Tibballs 2010 (accuracy ≈65 %)", why:"That is why the 10-second pulse check lost its central role to rhythm analysis, capnography and arterial lines."},
+ {q:"Chance that a comatose post-ROSC patient with bilaterally absent pupillary reflexes at 72 h has a poor outcome?", a:99, lo:97, hi:100, unit:"%", src:"ERC/ESICM 2021–2025 prognostication (FPR ≈0–2 %)", why:"Single signs still need a second concordant finding; the rare false positives are real people."},
+ {q:"Survival to discharge after traumatic cardiac arrest (all comers)?", a:6, lo:3, hi:10, unit:"%", src:"Pooled registries 3–8 %; higher for penetrating with thoracotomy within 15 min", why:"Low but not zero: the survivors are the ones whose reversible cause was treated in the first minutes."},
+];
+let EST = null;
+function estimate(){ const done = new Set(X().est.map(e=>e.i)); let idx = ESTIMATES.map((_,i)=>i).filter(i=>!done.has(i)); if(!idx.length) idx = ESTIMATES.map((_,i)=>i); const i = idx[Math.floor(Math.random()*idx.length)]; const e = ESTIMATES[i]; EST = {i, e};
+  const max = e.unit==="%/min" ? 20 : 100; $("#estbox").innerHTML = `<div class="est"><span class="sh-eyebrow">Estimate · ${X().est.length} done</span><p style="margin:6px 0;font-weight:600">${esc(e.q)}</p><div class="guess" id="estG">${Math.round(max/2)} ${e.unit}</div><input type="range" id="estR" min="0" max="${max}" step="${max>50?1:0.5}" value="${Math.round(max/2)}"><div class="sh-row" style="margin-top:8px"><button class="sh-btn primary" id="estGo">Reveal</button><span class="sh-small sh-muted">Commit before you look. Being within the band counts.</span></div><div id="estOut"></div></div>`;
+  $("#estR").addEventListener("input", ()=>$("#estG").textContent = $("#estR").value+" "+e.unit); $("#estGo").onclick = ()=>{ const g = +$("#estR").value; const ok = g>=e.lo && g<=e.hi; X().est.push({i, g, ok, at:Date.now()}); save(); $("#estOut").innerHTML = `<div class="reveal"><div><span class="sh-eyebrow">You</span><b>${g} ${e.unit}</b></div><div><span class="sh-eyebrow">Answer</span><b style="color:${ok?"var(--ok)":"var(--crit)"}">${e.a} ${e.unit}</b><span class="sh-small sh-muted">band ${e.lo}–${e.hi}</span></div></div><p class="sh-small" style="margin-top:8px">${esc(e.why)}</p><p class="sh-small sh-muted">${esc(e.src)}</p><div class="sh-row" style="margin-top:8px"><button class="sh-btn sm" onclick="EG.X.estimate()">Another</button></div>`; $("#estGo").disabled = true; $("#estR").disabled = true; EG.legDone("estimate"); EG.logDay("quiz"); }; }
+
+/* ================= TEACH IT BACK ================= */
+const TEACH = [
+ {id:"t_epi", node:"c_epi", q:"Explain to a new nurse why adrenaline goes in immediately in PEA but only after the second shock in VF.", rub:["Non-shockable: no other treatment; every minute of delay costs survival","Shockable: the shock itself may restore a rhythm","Catecholamines increase myocardial oxygen demand and VF recurrence","Interval 3–5 min thereafter, IV before IO"]},
+ {id:"t_cpr", node:"c_cpr", q:"Why does a 15-second pause for intubation matter more than it feels?", rub:["Coronary perfusion pressure takes ~15 compressions to rebuild","It collapses within seconds of stopping","Fraction >80 % and pauses <10 s are the targets","Intubation should happen during compressions or not at all"]},
+ {id:"t_vector", node:"c_vector", q:"A colleague wants a 6th shock with the same pads. What do you say?", rub:["After 3 failed shocks VF is 'persistent'","Optimise CPR, drugs, reversible causes first","Change the vector to antero-posterior","DSED may be considered (AHA 2b, DOSE VF)"]},
+ {id:"t_capno", node:"c_capno", q:"What does EtCO₂ tell you during CPR, and what can it never decide alone?", rub:["It reflects cardiac output from compressions","<10 mmHg after 20 min predicts poor outcome","A sudden rise means ROSC","It never terminates a resuscitation on its own"]},
+ {id:"t_rosc", node:"c_rosc", q:"List the first-hour post-ROSC bundle from memory.", rub:["Airway, capnography, SpO₂ 92–98 %, PaCO₂ 35–45","MAP ≥65, arterial line, 12-lead","Cause: ST elevation → cath lab; CT if unclear","Temperature control, sedation, glucose, EEG, no early prognosis"]},
+ {id:"t_hyperk", node:"hyperk", q:"Wide QRS, bradycardia, missed dialysis. Walk through the first ten minutes.", rub:["Calcium first, repeat until QRS narrows","Insulin/dextrose and salbutamol to shift","Bicarbonate if acidotic","Dialysis to remove; VBG for the number"]},
+ {id:"t_pe", node:"pe", q:"Why do we keep compressing for 60–90 minutes after thrombolysis in a PE arrest?", rub:["Lytic needs circulation and time to work","Clot dissolution is gradual","Survivors have been reported after long CPR","ECPR is the bridge where available"]},
+ {id:"t_tor", node:"c_tor", q:"How do you decide to stop, and what would make you keep going?", rub:["Duration, rhythm trajectory, EtCO₂, reversible causes treated","Witnessed, bystander CPR, patient wishes","Team consensus, time announced","Keep going: hypothermia, drowning, toxins, PE after lysis, pregnancy, young"]},
+ {id:"t_anaph", node:"anaph", q:"Explain the three things that save a life in anaphylaxis and the two that do not.", rub:["Adrenaline 0.5 mg IM, repeat at 5 min","Lie flat, legs up; fluids","Oxygen; early airway","Antihistamines and steroids do not treat shock or airway oedema"]},
+ {id:"t_prog", node:"c_prog", q:"The family asks on day 1 whether he will wake up. What do you say and why?", rub:["Too early: 72 h minimum, off sedation","Multimodal: exam, EEG, SSEP, NSE, imaging","Two concordant poor signs needed","Honest uncertainty; named contact; daily updates"]},
+];
+function teach(id){ const t = TEACH.find(x=>x.id===id) || TEACH[Math.floor(Math.random()*TEACH.length)]; EG.show("drill"); const box = $("#teachbox"); box.innerHTML = `<span class="sh-eyebrow">Teach it back</span><p style="margin:6px 0;font-weight:600">${esc(t.q)}</p><textarea class="sh" id="teachTxt" placeholder="Say it in your own words, as if to a junior. At least a few sentences." style="min-height:110px;font-family:var(--f-body);font-size:14px"></textarea><div class="sh-row" style="margin-top:8px"><button class="sh-btn primary" id="teachGo">Compare with the rubric</button></div><div id="teachOut"></div>`;
+  $("#teachGo").onclick = ()=>{ const txt = $("#teachTxt").value.trim(); if(txt.length < 20){ toast("Write a little more first"); return; } $("#teachOut").innerHTML = `<div class="rub" style="margin-top:10px"><span class="sh-eyebrow">Tick what you covered</span>${t.rub.map((r,i)=>`<label><input type="checkbox" data-r="${i}">${esc(r)}</label>`).join("")}<div class="sh-row" style="margin-top:8px"><button class="sh-btn primary" id="teachGrade">Grade</button></div></div>`;
+    $("#teachGrade").onclick = ()=>{ const n = $$("#teachOut input:checked").length; const frac = n/t.rub.length; const st = X().teach[t.id] || {box:0, due:0}; st.box = frac>=0.75 ? Math.min(4, st.box+1) : 0; st.due = Date.now() + [1,3,7,16,35][st.box]*864e5; st.last = frac; X().teach[t.id] = st; save(); $("#teachOut").insertAdjacentHTML("beforeend", `<p class="sh-small" style="margin-top:8px">${n}/${t.rub.length} points. ${frac>=0.75?"Solid: it comes back in "+[1,3,7,16,35][st.box]+" days.":"Read the node once more and teach it again tomorrow."}</p>`); EG.legDone("teach"); EG.logDay("quiz"); }; }; box.scrollIntoView({block:"start"}); }
+
+/* ================= ERROR AUTOPSY + BOSS FIGHTS (hooks into the Ember quiz) ================= */
+const WHY = [["misread","Misread the question"],["slip","Knew it, slipped"],["concept","Did not know the concept"],["mix","Mixed two things up"]];
+function autopsy(qi){ const ex = $("#qEx"); if(!ex) return; const d = document.createElement("div"); d.className = "aut"; d.innerHTML = `<span class="sh-small sh-muted" style="align-self:center">Why?</span>` + WHY.map(w=>`<button data-w="${w[0]}">${w[1]}</button>`).join(""); ex.appendChild(d); d.onclick = e => { const b = e.target.closest("button"); if(!b) return; $$("button", d).forEach(x=>x.classList.toggle("on", x===b)); X().why[b.dataset.w] = (X().why[b.dataset.w]||0)+1; X().whyQ[qi] = b.dataset.w; save(); }; }
+const BOSSES = [["dose","Doses & energies","💉"],["rhythm","Rhythm → next step","📈"],["cause","Causes & antidotes","🧪"],["post","Post-arrest care","🧠"]];
+let BOSS = null;
+function boss(topic){ const idx = QUIZ.map((q,i)=>i).filter(i=>QUIZ[i].t===topic).sort(()=>Math.random()-.5).slice(0,12); if(idx.length<6){ toast("Not enough questions for that boss"); return; } BOSS = {topic, idx, i:0, right:0, end:Date.now()+8*60*1000}; EG.show("drill"); bossQ(); }
+function bossQ(){ const box = $("#bossbox"); if(BOSS.i>=BOSS.idx.length || Date.now()>BOSS.end){ const won = BOSS.right>=10; if(won){ const first = !X().badges[BOSS.topic]; X().badges[BOSS.topic] = {at:Date.now(), score:BOSS.right}; save(); toast(first?"Badge earned":"Badge defended"); } box.innerHTML = `<span class="sh-eyebrow">Boss fight · ${BOSSES.find(b=>b[0]===BOSS.topic)[1]}</span><h3 style="margin-top:4px">${BOSS.right} / ${BOSS.idx.length} ${won?"— badge earned":"— need 10 to win"}</h3><div class="sh-row" style="margin-top:8px"><button class="sh-btn sm" onclick="EG.X.boss('${BOSS.topic}')">Again</button></div>`; EG.logDay("quiz"); return; }
+  const q = QUIZ[BOSS.idx[BOSS.i]]; const order = q.o.map((o,i)=>i).sort(()=>Math.random()-.5); const left = Math.max(0, Math.round((BOSS.end-Date.now())/1000));
+  box.innerHTML = `<div class="sh-row" style="justify-content:space-between"><span class="sh-eyebrow">Boss · ${BOSS.i+1}/${BOSS.idx.length} · ${BOSS.right} right</span><span class="mono" id="bossT">${mmss(left)}</span></div><p style="margin:8px 0;font-weight:600">${esc(q.q)}</p><div class="x-opts">${order.map(i=>`<button class="x-opt" data-i="${i}">${esc(q.o[i])}</button>`).join("")}</div><div id="bossEx" class="sh-small" style="margin-top:8px"></div>`;
+  clearInterval(BOSS.timer); BOSS.timer = setInterval(()=>{ const l = Math.max(0, Math.round((BOSS.end-Date.now())/1000)); const t = $("#bossT"); if(t) t.textContent = mmss(l); if(l<=0){ clearInterval(BOSS.timer); bossQ(); } }, 1000);
+  $$("#bossbox .x-opt").forEach(b=>b.onclick=()=>{ const ok = +b.dataset.i===q.a; if(ok) BOSS.right++; $$("#bossbox .x-opt").forEach(x=>{ x.disabled = true; if(+x.dataset.i===q.a) x.classList.add("r"); else if(x===b) x.classList.add("w"); }); $("#bossEx").innerHTML = (ok?"Correct. ":"No. ")+esc(q.ex||"")+` <button class="sh-btn sm" style="margin-left:6px" id="bossNext">Next</button>`; $("#bossNext").onclick = ()=>{ BOSS.i++; bossQ(); }; }); }
+function renderDrillExtras(){ const b = $("#bossbox"); if(b && !b.dataset.done){ b.dataset.done = 1; b.innerHTML = `<span class="sh-eyebrow">Boss fights</span><p class="sh-small sh-muted" style="margin:4px 0 8px">12 questions, 8 minutes, 10 right wins the badge.</p><div class="badges">${BOSSES.map(x=>`<button class="badge ${X().badges[x[0]]?"won":""}" onclick="EG.X.boss('${x[0]}')"><div class="ic">${x[2]}</div><b>${x[1]}</b><small>${X().badges[x[0]]?"won "+new Date(X().badges[x[0]].at).toLocaleDateString("en-GB"):"not yet"}</small></button>`).join("")}</div>`; }
+  const e = $("#estbox"); if(e && !e.dataset.done){ e.dataset.done = 1; e.innerHTML = `<span class="sh-eyebrow">Estimate</span><p class="sh-small sh-muted" style="margin:4px 0 8px">Commit to a number from the resuscitation literature before you see it. Calibration beats memorisation.</p><button class="sh-btn" onclick="EG.X.estimate()">Give me a number to guess</button>`; }
+  const t = $("#teachbox"); if(t && !t.dataset.done){ t.dataset.done = 1; const due = TEACH.filter(x=>X().teach[x.id] && X().teach[x.id].due<=Date.now()).length; t.innerHTML = `<span class="sh-eyebrow">Teach it back</span><p class="sh-small sh-muted" style="margin:4px 0 8px">Explain a concept in your own words, then grade yourself against the rubric. ${due?due+" due.":""}</p><button class="sh-btn" onclick="EG.X.teach()">Give me a prompt</button>`; }
+  const s = $("#stripbox"); if(s && !s.dataset.done){ s.dataset.done = 1; s.innerHTML = `<span class="sh-eyebrow">Rhythm strips</span><p class="sh-small sh-muted" style="margin:4px 0 8px">Six seconds of lead II from the monitor, no label. Shockable or not?</p><button class="sh-btn" onclick="EG.X.stripDrill()">Show me a strip</button>`; } }
+
+/* ================= THE ROUND ================= */
+const LEGS = [["due","Due drills","Up to 8 Leitner questions that are due (or 5 mixed)","drill"],["concept","Concept of the day","One node of the web, with its links","labs"],["strip","Three rhythm strips","Shockable or not, from the monitor","drill"],["case","One case","A clinical reasoning encounter to the note","cases"],["code","One code","Lead an arrest, cause unknown","codes"],["estimate","One estimate","Commit to a number from the literature","drill"],["teach","Teach it back","Explain one concept in your own words","drill"]];
+function roundState(){ const x = X(); if(!x.round || x.round.date!==today()) x.round = { date:today(), legs:LEGS.map(l=>({k:l[0], done:false})), i:0, started:false, finished:false }; return x.round; }
+function legDone(k){ const r = roundState(); if(!r.started) return; const L = r.legs.find(l=>l.k===k); if(!L || L.done) return; L.done = true; save(); const next = r.legs.findIndex(l=>!l.done); if(next<0 && !r.finished){ r.finished = true; X().rounds = (X().rounds||0)+1; save(); toast("Round complete. Streak kept."); EG.logDay("round"); } else r.i = next; renderRound(); }
+function startRound(){ const r = roundState(); r.started = true; r.i = r.legs.findIndex(l=>!l.done); save(); renderRound(); goLeg(); }
+function goLeg(){ const r = roundState(); const L = r.legs[r.i]; if(!L) return; const k = L.k;
+  if(k==="due"){ EG.show("drill"); const s = EG.stats(); $("#quizMode").value = s.quizDue ? "due" : "mixed"; startQuiz(); }
+  if(k==="concept"){ EG.show("labs","web"); setTimeout(()=>webSelect(conceptOfDay().id), 50); }
+  if(k==="strip") stripDrill();
+  if(k==="case"){ const tg = window.TG; if(tg){ const all = tg.allCases(); const due = tg.dueList(); const unseen = all.filter(c=>tg.lastScore(c.id)==null); const pool = due.length ? due.map(id=>tg.getCase(id)) : unseen.length ? unseen : all; EG.show("cases"); tg.newEncounter(pool[Math.floor(Math.random()*pool.length)]); } }
+  if(k==="code"){ EG.show("codes"); startRandom(false); }
+  if(k==="estimate"){ EG.show("drill"); estimate(); $("#estbox").scrollIntoView({block:"start"}); }
+  if(k==="teach"){ const due = TEACH.filter(x=>X().teach[x.id] && X().teach[x.id].due<=Date.now()); teach(due.length ? due[0].id : null); }
+}
+function skipLeg(){ const r = roundState(); const L = r.legs[r.i]; if(L){ L.done = true; L.skipped = true; } const next = r.legs.findIndex(l=>!l.done); if(next<0){ r.finished = true; save(); renderRound(); toast("Round closed"); return; } r.i = next; save(); renderRound(); goLeg(); }
+function renderRound(){ const r = roundState(); const card = $("#roundcard"); const bar = $("#roundbar");
+  const done = r.legs.filter(l=>l.done).length; const cur = r.legs[r.i];
+  if(card){ card.innerHTML = `<div class="sh-row" style="justify-content:space-between"><div><span class="sh-eyebrow">The Round · ~30 min</span><h3>${r.finished?"Done for today":r.started?"Leg "+(done+1)+" of "+LEGS.length+": "+LEGS[r.i][1]:"One session, seven legs"}</h3></div><div class="sh-row">${r.finished?`<span class="sh-pill ok">complete</span>`:r.started?`<button class="sh-btn primary" data-act="roundGo">Continue</button><button class="sh-btn" data-act="roundSkip">Skip leg</button>`:`<button class="sh-btn primary" data-act="roundStart">Start the Round</button>`}</div></div><div class="legs-list">${r.legs.map((l,i)=>{ const d = LEGS[i]; return `<div class="${l.done?"done":""} ${i===r.i&&r.started&&!r.finished?"now":""}" title="${esc(d[2])}"><b>${l.done?"✓":i+1}</b>${d[1]}</div>`; }).join("")}</div>`; }
+  if(bar){ if(r.started && !r.finished && cur){ bar.hidden = false; bar.innerHTML = `<div class="legs">${r.legs.map((l,i)=>`<i class="${l.done?"done":i===r.i?"now":""}"></i>`).join("")}</div><div class="t">${LEGS[r.i][1]}<span class="sh-small" style="opacity:.7"> · ${LEGS[r.i][2]}</span></div><button data-act="roundGo" class="go">Go</button><button data-act="roundSkip">Skip</button><button data-act="roundStop">✕</button>`; } else bar.hidden = true; }
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-act]"); if(!b) return; const a = b.dataset.act; if(a==="roundStart") startRound(); else if(a==="roundGo") goLeg(); else if(a==="roundSkip") skipLeg(); else if(a==="roundStop"){ const r = roundState(); r.started = false; save(); renderRound(); } else if(a==="labsTab"){ EG.show("labs", b.dataset.sub); } });
+document.addEventListener("click", e => { const b = e.target.closest("#labnav [data-lab]"); if(b) openLab(b.dataset.lab); });
+
+/* ================= PROGRESS EXTRAS ================= */
+function renderProgressExtras(){ const box = $("#progextras"); if(!box) return; const x = X(); const why = x.why||{}; const tot = Object.values(why).reduce((a,b)=>a+b,0);
+  const est = x.est||[]; const estOk = est.filter(e=>e.ok).length;
+  box.innerHTML = `<div class="sh-grid sh-g2">
+   <div class="sh-card"><h3>Why you miss</h3><p class="sh-small sh-muted">From the one-tap autopsy after each miss.</p>${tot?`<div class="bars2" style="margin-top:8px">${WHY.map(w=>`<div class="bar"><span>${w[1]}</span><div class="tr"><i style="width:${Math.round(100*(why[w[0]]||0)/tot)}%"></i></div><b>${why[w[0]]||0}</b></div>`).join("")}</div><p class="sh-small" style="margin-top:8px">${adviceFor(why)}</p>`:`<p class="sh-small sh-muted" style="margin-top:6px">No misses tagged yet.</p>`}</div>
+   <div class="sh-card"><h3>Badges</h3><div class="badges" style="margin-top:8px">${BOSSES.map(b=>`<div class="badge ${x.badges[b[0]]?"won":""}"><div class="ic">${b[2]}</div><b>${b[1]}</b><small>${x.badges[b[0]]?x.badges[b[0]].score+"/12":"—"}</small></div>`).join("")}</div></div>
+   <div class="sh-card"><h3>Estimates</h3><p class="sh-small sh-muted">Inside the band: <b>${estOk}</b> of <b>${est.length}</b>. Rounds completed: <b>${x.rounds||0}</b>. Strips: <b>${x.strips.right}/${x.strips.seen}</b>.</p></div>
+  </div>`; }
+function adviceFor(why){ const top = Object.entries(why).sort((a,b)=>b[1]-a[1])[0]; if(!top) return ""; return {misread:"Most misses are misreads: read the stem twice and underline the rhythm and the timing words before you answer.", slip:"Slips: you know it but rush. Slow down on the sprint and say the answer out loud before tapping.", concept:"Concept gaps: open the concept web for the topic you miss and teach it back before the next drill.", mix:"Mix-ups: drill the pairs that collide (amiodarone vs lidocaine, calcium vs bicarbonate, VC vs DSED) in the Doses boss fight."}[top[0]]; }
+
+/* ================= wiring ================= */
+window.EG.X = { webSelect, stripDrill, estimate, teach, boss, initWeb, openLab, renderTools, renderDrillExtras, renderProgressExtras, renderRound, autopsy, conceptOfDay, LABS };
+window.EG.legDone = legDone;
+// hook: Ember quiz answer → autopsy on a miss, and the 'due' leg when a set ends
+const _answer = window.answer; window.answer = function(i){ const qi = Q.idx[Q.i]; const q = QUIZ[qi]; _answer(i); if(i!==q.a) autopsy(qi); };
+const _nextQ = window.nextQ; window.nextQ = function(){ const ending = Q && Q.i>=Q.idx.length; _nextQ(); if(ending) legDone("due"); };
+// case and code legs
+const _logDay = EG.logDay; EG.logDay = function(kind){ _logDay(kind); if(kind==="cases") legDone("case"); if(kind==="codes") legDone("code"); };
+renderRound();
+})();
 
 </script>
 

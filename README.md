@@ -6,6 +6,6 @@ Open **https://embergine.github.io/embergine/** on your phone: Safari → Share 
 
 **Google & Citrus:** Settings → *Sign in with Google*. Progress is kept in Google Drive at `My Apps/hub/embergine/state.json`, the hub snapshot for Citrus Maxima at `My Apps/hub/embergine/status.json`, and Citrus's plan is read from `My Apps/hub/citrus/plan.json`. One-time setup in the Google Cloud console: add `https://embergine.github.io` to the authorised JavaScript origins of the shared *Citrus web* client.
 
-In the claude.ai copy the AI patient and the AI case generator work (they use the viewer's own Claude); in the installed copy Google Drive works. Both share progress through the Settings → Backup JSON or through Drive.
+In the claude.ai copy the AI patient and the AI case generator work (they use the viewer's own Claude); in the installed copy Google Drive works. Progress moves between copies through Settings → Backup, and between installed devices through Drive. Both merge record by record: nothing done on one device is overwritten by another.
 
-Build e4ef8e8f45. Built from a single source (`index.html`).
+Build f10b39395a. Built from a single source (`index.html`).

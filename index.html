@@ -107,7 +107,7 @@ body.in-sim .tabbar{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* settings */
 .kv{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.kv:last-child{border-bottom:0}.kv .t b{display:block}.kv .t small{color:var(--muted);font-size:13px}
+.kv:last-child{border-bottom:0}.kv .t{min-width:0;flex:1 1 180px}.kv .t b{display:block}.kv .t small{color:var(--muted);font-size:13px}.kv{flex-wrap:wrap}.kv > :not(.t){flex:none}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
 .seg button{border:0;background:none;padding:6px 12px;font-weight:700;color:var(--muted);cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -119,6 +119,8 @@ input.sh{width:100%;background:var(--surface-2);border:1px solid var(--line);bor
 
 .webgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:12px;align-items:start}@media (max-width:900px){.webgrid{grid-template-columns:1fr}}
 .labsub[hidden]{display:none}
+
+.drillgrid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}@media (max-width:760px){.drillgrid{grid-template-columns:1fr}}
 
 /* ===== Embergine 1.1 extras: Round, web, labs, tools, drills ===== */
 .roundbar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:34;background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:10px;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));box-shadow:0 -6px 20px rgba(0,0,0,.25)}
@@ -185,7 +187,7 @@ body.in-sim .roundbar{display:none}
 
 /* ===== Tangerine (scoped) ===== */
 #tg /* Layout: a bedside encounter. Left rail = the patient (triage card + always-dark bedside monitor + clock);
-   right = the current stage of the encounter, #tg with a stage rail across the top. Home is a ward board of cases. */
+   right = the current stage of the encounter, :where(#tg) with a stage rail across the top. Home is a ward board of cases. */
 :root{
   --bg:#F3F5F7; --surface:#FFFFFF; --surface-2:#EDF0F3; --ink:#15202B; --muted:#5A6672; --line:#D9DEE4;
   --accent:#F26A1B; --accent-ink:#B4460A; --accent-soft:#FFE8D9; --on-accent:#FFFFFF;
@@ -196,31 +198,31 @@ body.in-sim .roundbar{display:none}
   --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --r:10px;
-}@media (prefers-color-scheme: dark){}#tg *{box-sizing:border-box}#tg input, #tg select, #tg textarea{font:inherit;color:inherit}#tg h4{font-family:var(--f-display);line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}#tg .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}#tg .eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}#tg .muted{color:var(--muted)}#tg .small{font-size:13.5px}#tg /* top bar */
+}@media (prefers-color-scheme: dark){}#tg *{box-sizing:border-box}:where(#tg) input, :where(#tg) select, :where(#tg) textarea{font:inherit;color:inherit}:where(#tg) h4{font-family:var(--f-display);line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}#tg .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}#tg .eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}#tg .muted{color:var(--muted)}#tg .small{font-size:13.5px}#tg /* top bar */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line)}#tg /* generic */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;border:1px solid var(--line);background:var(--surface);padding:9px 15px;font-weight:700;cursor:pointer;font-size:14.5px;min-height:40px}#tg .btn:hover{border-color:var(--muted)}#tg .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}#tg .btn.primary:hover{filter:brightness(1.05)}#tg .btn.ghost{background:transparent}#tg .btn.danger{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 40%,var(--line))}#tg .btn:disabled{opacity:.45;cursor:not-allowed}#tg .btn.sm{padding:5px 10px;min-height:32px;font-size:13px}#tg .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}#tg .stack{display:flex;flex-direction:column;gap:12px}#tg .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}#tg .pad{padding:18px}#tg .pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap;max-width:100%}#tg .scorehead .pill, #tg .result .pill, #tg .cmp .pill{white-space:normal}#tg .scorehead>*{min-width:0}#tg .pill.er{background:var(--crit-soft);color:var(--crit)}#tg .pill.oh{background:var(--ok-soft);color:var(--ok)}#tg .pill.fm{background:color-mix(in srgb,var(--mon-spo2) 18%,var(--surface));color:color-mix(in srgb,#0B6F96 70%,var(--ink))}#tg .pill.exam{background:var(--accent-soft);color:var(--accent-ink)}#tg .pill.my{background:var(--surface-2);color:var(--ink);border:1px dashed var(--muted)}#tg .pill.ok{background:var(--ok-soft);color:var(--ok)}#tg .pill.warn{background:var(--warn-soft);color:var(--warn)}#tg .pill.crit{background:var(--crit-soft);color:var(--crit)}#tg .pill.acc{background:var(--accent-soft);color:var(--accent-ink)}#tg input[type=text], #tg input[type=search], #tg input[type=number], #tg select, #tg textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%}#tg textarea{min-height:90px;resize:vertical}#tg label.fld{display:flex;flex-direction:column;gap:5px;font-weight:700;font-size:13.5px}#tg .grid{display:grid;gap:14px}#tg /* home */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;border:1px solid var(--line);background:var(--surface);padding:9px 15px;font-weight:700;cursor:pointer;font-size:14.5px;min-height:40px}#tg .btn:hover{border-color:var(--muted)}#tg .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}#tg .btn.primary:hover{filter:brightness(1.05)}#tg .btn.ghost{background:transparent}#tg .btn.danger{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 40%,var(--line))}#tg .btn:disabled{opacity:.45;cursor:not-allowed}#tg .btn.sm{padding:5px 10px;min-height:32px;font-size:13px}#tg .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}#tg .stack{display:flex;flex-direction:column;gap:12px}#tg .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}#tg .pad{padding:18px}#tg .pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap;max-width:100%}#tg .scorehead .pill, #tg .result .pill, #tg .cmp .pill{white-space:normal}#tg .scorehead>*{min-width:0}#tg .pill.er{background:var(--crit-soft);color:var(--crit)}#tg .pill.oh{background:var(--ok-soft);color:var(--ok)}#tg .pill.fm{background:color-mix(in srgb,var(--mon-spo2) 18%,var(--surface));color:color-mix(in srgb,#0B6F96 70%,var(--ink))}#tg .pill.exam{background:var(--accent-soft);color:var(--accent-ink)}#tg .pill.my{background:var(--surface-2);color:var(--ink);border:1px dashed var(--muted)}#tg .pill.ok{background:var(--ok-soft);color:var(--ok)}#tg .pill.warn{background:var(--warn-soft);color:var(--warn)}#tg .pill.crit{background:var(--crit-soft);color:var(--crit)}#tg .pill.acc{background:var(--accent-soft);color:var(--accent-ink)}:where(#tg) input[type=text], :where(#tg) input[type=search], :where(#tg) input[type=number], :where(#tg) select, :where(#tg) textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%}:where(#tg) textarea{min-height:90px;resize:vertical}:where(#tg) label.fld{display:flex;flex-direction:column;gap:5px;font-weight:700;font-size:13.5px}#tg .grid{display:grid;gap:14px}#tg /* home */
 .hero{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:stretch}#tg .hero .lead{padding:22px;display:flex;flex-direction:column;gap:14px;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);position:relative;overflow:hidden}#tg .hero .lead p{max-width:58ch;color:var(--muted)}#tg .ecgline{height:44px;width:100%;color:var(--accent)}#tg .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}#tg .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}#tg .stat b{display:block;font-family:var(--f-mono);font-size:28px;font-weight:700;line-height:1.1}#tg .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}#tg .mode{all:unset;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:6px}#tg .mode:hover{border-color:var(--accent)}#tg .mode:focus-visible{outline:2.5px solid var(--accent)}#tg .mode .k{font-family:var(--f-mono);font-size:11.5px;color:var(--accent-ink);letter-spacing:.06em;text-transform:uppercase}#tg .mode h3{font-size:18px}#tg .mode p{color:var(--muted);font-size:14px}#tg .board{margin-top:26px}#tg .filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}#tg .filters select, #tg .filters input{width:auto;min-width:140px;flex:1 1 160px}#tg .cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}#tg .case{all:unset;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}#tg .case:hover{border-color:var(--accent)}#tg .case:focus-visible{outline:2.5px solid var(--accent)}#tg .case .cc{font-weight:700;line-height:1.35}#tg .case .who{font-size:13px;color:var(--muted)}#tg .case .foot{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;align-items:center}#tg .dots{letter-spacing:2px;color:var(--accent);font-size:12px}#tg .score-chip{margin-left:auto;font-family:var(--f-mono);font-weight:700;font-size:13px}#tg /* encounter */
 .enc{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px;align-items:start}#tg .enc>*, #tg .dash>*, #tg .hero>*, #tg .stats>*, #tg .grid>*{min-width:0}#tg .rail{position:sticky;top:calc(64px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:12px}#tg .ptcard{padding:16px;display:flex;flex-direction:column;gap:8px}#tg .ptcard .cc{font-family:var(--f-display);font-weight:700;font-size:18px;line-height:1.25}#tg .monitor{background:var(--mon-bg);color:var(--mon-ink);border-radius:var(--r);padding:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;border:1px solid var(--mon-line)}#tg .monitor .v{border:1px solid var(--mon-line);border-radius:8px;padding:7px 9px;min-width:0}#tg .monitor .v .l{font-family:var(--f-mono);font-size:10.5px;color:var(--mon-dim);letter-spacing:.06em}#tg .monitor .v .n{font-family:var(--f-mono);font-size:22px;font-weight:700;line-height:1.15}#tg .monitor .v .n small{font-size:11px;color:var(--mon-dim);font-weight:400;margin-left:3px}#tg .monitor .v.hr .n{color:var(--mon-hr)}#tg .monitor .v.spo2 .n{color:var(--mon-spo2)}#tg .monitor .v.bp .n{color:var(--mon-bp)}#tg .monitor .v.rr .n{color:var(--mon-rr)}#tg .monitor .v.abn{border-color:#FF5E57;box-shadow:inset 0 0 0 1px #FF5E57}#tg .monitor .v.abn .l::after{content:" ▲";color:#FF5E57}#tg .monitor .v.flash{animation:flash 1.2s ease 2}@keyframes flash{50%{background:#3A1312}}#tg .monitor .trace{grid-column:1/-1;height:36px;width:100%;display:block}#tg .clock{display:flex;justify-content:space-between;align-items:center;padding:10px 14px}#tg .clock b{font-family:var(--f-mono);font-size:20px}#tg .stages{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:thin}#tg .stages button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;gap:6px;align-items:center}#tg .stages button .i{font-family:var(--f-mono);font-size:11px}#tg .stages button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}#tg .stages button.done{color:var(--ink)}#tg .stages button.done .i::before{content:"✓ "}#tg .stages button:disabled{opacity:.5;cursor:default}#tg .panel{padding:20px;display:flex;flex-direction:column;gap:16px}#tg .panel-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}#tg .panel-head p{color:var(--muted);max-width:62ch;margin-top:4px}#tg .tabs{display:flex;gap:4px;flex-wrap:wrap}#tg .tabs button{border:1px solid var(--line);background:var(--surface);padding:5px 11px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted)}#tg .tabs button[aria-selected="true"]{border-color:var(--ink);color:var(--ink);background:var(--surface-2)}#tg .qlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}#tg .q{all:unset;cursor:pointer;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:14.5px;line-height:1.35;background:var(--surface);display:flex;gap:8px;align-items:flex-start;min-width:0}#tg .q:hover{border-color:var(--accent)}#tg .q:focus-visible{outline:2.5px solid var(--accent)}#tg .q .c{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;flex:none;margin-top:2px;width:58px}#tg .q.used{opacity:.5;cursor:default;background:var(--surface-2)}#tg .q.used:hover{border-color:var(--line)}#tg .transcript{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow:auto;padding:4px 2px}#tg .msg{display:flex;flex-direction:column;gap:2px;max-width:85%}#tg .msg.dr{align-self:flex-end;text-align:right}#tg .msg .who{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}#tg .msg .b{padding:9px 13px;border-radius:12px;background:var(--surface-2);line-height:1.45}#tg .msg.dr .b{background:var(--accent-soft);color:var(--ink)}#tg .msg.sys .b{background:var(--crit-soft);color:var(--crit);font-weight:700}#tg .msg.ex .b{background:color-mix(in srgb,var(--ok-soft) 60%,var(--surface))}#tg .ask{display:flex;gap:8px}#tg .ask input{flex:1}#tg .findings{display:flex;flex-direction:column;gap:8px}#tg .finding{border-left:3px solid var(--line);padding:4px 0 4px 12px}#tg .finding .t{font-weight:700;font-size:14px}#tg .finding.rf{border-left-color:var(--accent)}#tg .ddxpick{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}#tg .chips{display:flex;flex-wrap:wrap;gap:7px}#tg .chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-size:14px;cursor:pointer;font-weight:700}#tg .chip:hover{border-color:var(--accent)}#tg .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}#tg .chip.cm{background:var(--crit-soft);color:var(--crit);border-color:var(--crit)}#tg .slots{display:flex;flex-direction:column;gap:8px}#tg .slot{display:flex;gap:10px;align-items:center;border:1px dashed var(--line);border-radius:9px;padding:9px 12px;min-height:44px}#tg .slot .n{font-family:var(--f-mono);font-weight:700;color:var(--accent-ink);width:18px}#tg .slot.filled{border-style:solid;background:var(--surface-2)}#tg .slot .x{margin-left:auto;background:none;border:0;cursor:pointer;color:var(--muted);font-size:18px;line-height:1}#tg .tests{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}#tg .test{all:unset;cursor:pointer;border:1px solid var(--line);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;background:var(--surface);min-width:0}#tg .test:hover{border-color:var(--accent)}#tg .test:focus-visible{outline:2.5px solid var(--accent)}#tg .test .meta{font-family:var(--f-mono);font-size:11px;color:var(--muted)}#tg .test.ordered{background:var(--surface-2);cursor:default}#tg .test.ordered:hover{border-color:var(--line)}#tg .results{display:flex;flex-direction:column;gap:8px}#tg .result{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--surface)}#tg .result .h{display:flex;justify-content:space-between;gap:8px;font-weight:700;font-size:14px}#tg .result.pending{border-style:dashed;color:var(--muted)}#tg .result.away{border-style:dashed}#tg .acts{display:flex;flex-direction:column;gap:8px}#tg .act{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:9px;padding:10px 12px;cursor:pointer;background:var(--surface)}#tg .act:hover{border-color:var(--accent)}#tg .act input{margin-top:3px;width:18px;height:18px;accent-color:var(--accent);flex:none}#tg .act.done{background:var(--surface-2);cursor:default}#tg .act .tm{margin-left:auto;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);flex:none}#tg .opts{display:flex;flex-direction:column;gap:8px}#tg .opt{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:9px;padding:11px 13px;cursor:pointer;background:var(--surface)}#tg .opt:hover{border-color:var(--accent)}#tg .opt input{margin-top:3px;accent-color:var(--accent);width:18px;height:18px;flex:none}#tg .opt.sel{border-color:var(--accent);background:var(--accent-soft)}#tg .opt.right{border-color:var(--ok);background:var(--ok-soft)}#tg .opt.wrong{border-color:var(--crit);background:var(--crit-soft)}#tg .alert{border-radius:9px;padding:11px 14px;background:var(--crit-soft);color:var(--crit);font-weight:700;display:flex;gap:10px;align-items:flex-start}#tg .note{border-radius:9px;padding:11px 14px;background:var(--surface-2);font-size:14px}#tg .note.acc{background:var(--accent-soft)}#tg .footbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}#tg .conf{display:flex;align-items:center;gap:12px}#tg .conf input{flex:1;accent-color:var(--accent)}#tg /* debrief */
 .scorehead{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}#tg .ring{width:118px;height:118px}#tg .ring text{font-family:var(--f-mono);font-weight:700;fill:var(--ink)}#tg .bars{display:flex;flex-direction:column;gap:8px}#tg .bar{display:grid;grid-template-columns:150px 1fr 54px;gap:10px;align-items:center;font-size:14px}#tg .bar .tr{height:9px;background:var(--surface-2);border-radius:9px;overflow:hidden}#tg .bar .tr i{display:block;height:100%;background:var(--accent);border-radius:9px}#tg .bar .tr i.lo{background:var(--crit)}#tg .bar .tr i.mid{background:var(--warn)}#tg .bar .tr i.hi{background:var(--ok)}#tg .bar b{font-family:var(--f-mono);text-align:right}#tg .cmp{width:100%;border-collapse:collapse;font-size:14px}#tg .cmp th, #tg .cmp td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}#tg .cmp th{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}#tg .tbl{overflow-x:auto}#tg .mark{font-family:var(--f-mono);font-weight:700;font-size:12px}#tg .mark.y{color:var(--ok)}#tg .mark.n{color:var(--crit)}#tg .mark.o{color:var(--muted)}#tg .bias{border:1px solid var(--line);border-radius:9px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}#tg .bias.hit{border-color:var(--crit);background:var(--crit-soft)}#tg .bias .h{font-weight:700;display:flex;gap:8px;align-items:center}#tg .list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}#tg .script{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#tg .script div{background:var(--surface-2);border-radius:9px;padding:10px 12px}#tg .mcq{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:var(--r);padding:16px}#tg .mcq .stem{font-weight:700;line-height:1.45}#tg .ai{border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;background:color-mix(in srgb,var(--accent-soft) 35%,var(--surface))}#tg .ai .out{white-space:pre-wrap;line-height:1.55}#tg .ai .out h4{margin:10px 0 2px}#tg .thinking{display:inline-flex;gap:6px;align-items:center;color:var(--muted)}#tg .thinking::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.25}}#tg /* progress */
-.dash{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}#tg .calib{display:flex;gap:8px;align-items:flex-end;height:140px;padding-top:10px}#tg .calib .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}#tg .calib .col i{display:block;width:100%;max-width:46px;background:var(--accent);border-radius:6px 6px 0 0}#tg .calib .col span{font-family:var(--f-mono);font-size:11px;color:var(--muted)}#tg .empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}#tg pre.json{background:var(--surface-2);border-radius:8px;padding:12px;overflow:auto;max-height:360px;font-family:var(--f-mono);font-size:12px}#tg .vig{line-height:1.6;max-width:72ch}#tg .vig p+p{margin-top:8px}#tg .timer{font-family:var(--f-mono);font-weight:700;font-size:18px;color:var(--accent-ink)}@media (max-width:980px){#tg .enc{grid-template-columns:1fr}#tg .rail{position:static}#tg .monitor{grid-template-columns:repeat(4,1fr)}#tg .monitor .v .n{font-size:18px}#tg .hero{grid-template-columns:1fr}#tg .modes{grid-template-columns:repeat(2,1fr)}#tg .dash{grid-template-columns:1fr}
+.dash{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}#tg .calib{display:flex;gap:8px;align-items:flex-end;height:140px;padding-top:10px}#tg .calib .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}#tg .calib .col i{display:block;width:100%;max-width:46px;background:var(--accent);border-radius:6px 6px 0 0}#tg .calib .col span{font-family:var(--f-mono);font-size:11px;color:var(--muted)}#tg .empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}:where(#tg) pre.json{background:var(--surface-2);border-radius:8px;padding:12px;overflow:auto;max-height:360px;font-family:var(--f-mono);font-size:12px}#tg .vig{line-height:1.6;max-width:72ch}#tg .vig p+p{margin-top:8px}#tg .timer{font-family:var(--f-mono);font-weight:700;font-size:18px;color:var(--accent-ink)}@media (max-width:980px){#tg .enc{grid-template-columns:1fr}#tg .rail{position:static}#tg .monitor{grid-template-columns:repeat(4,1fr)}#tg .monitor .v .n{font-size:18px}#tg .hero{grid-template-columns:1fr}#tg .modes{grid-template-columns:repeat(2,1fr)}#tg .dash{grid-template-columns:1fr}
 }@media (max-width:980px){#tg .enc.is-debrief .rail{display:none} }#tg .railbtns{display:flex;flex-direction:column;gap:8px}@media (max-width:980px){#tg .railbtns{flex-direction:row}#tg .railbtns .btn{flex:1} }@media (max-width:620px){#tg .monitor{grid-template-columns:repeat(4,1fr)!important;gap:5px;padding:8px}#tg .monitor .v{padding:5px 6px}#tg .monitor .v .n{font-size:15px!important}#tg .monitor .v .n small{display:none}#tg .monitor .trace{display:none}#tg .rail{gap:8px}#tg .clock{padding:8px 12px}#tg .clock b{font-size:17px}#tg .ptcard{padding:12px}#tg .ptcard .cc{font-size:16px}#tg .modes{grid-template-columns:1fr}#tg .ddxpick{grid-template-columns:1fr}#tg .bar{grid-template-columns:110px 1fr 46px}#tg .scorehead{grid-template-columns:1fr;justify-items:start}#tg .script{grid-template-columns:1fr}#tg .panel{padding:16px}#tg .msg{max-width:95%}
 }@media (prefers-reduced-motion:reduce){#tg *{animation:none!important;transition:none!important}}
 
 /* ===== Ember (scoped) ===== */
 .em{--bg2:var(--surface);--bg3:var(--surface-2);--fg:var(--ink);--fg2:var(--muted);--mute:var(--muted);--accent2:var(--accent-ink);--green:var(--ok);--yellow:var(--warn);--red:var(--crit);--mon:var(--mon-bg);--fd:var(--f-display);--fb:var(--f-body);--fm:var(--f-mono)}
 .em{font-family:var(--fb);font-size:15px;line-height:1.45}
-.em /* Layout: one-screen resus room on top (monitor + patient feed), .em action console beneath; reference tabs are long-form pages. Dark-first like a real monitor. */
+.em /* Layout: one-screen resus room on top (monitor + patient feed), :where(.em) action console beneath; reference tabs are long-form pages. Dark-first like a real monitor. */
 :root{
   --bg:#0f1114; --bg2:#171a1f; --bg3:#1f242b; --line:#2a3039; --fg:#e8e6e0; --fg2:#a9aeb8; --mute:#6c7380;
   --accent:#ff7a1a; --accent2:#ffb166; --green:#3ddc84; --yellow:#ffd23f; --red:#ff4d4d; --blue:#5cb8ff; --cyan:#4fe3e3;
   --mon:#07090c; --mon-line:#1b2330;
   --fd:"Barlow Condensed","Arial Narrow",sans-serif; --fb:"Barlow","Segoe UI",system-ui,sans-serif; --fm:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   color-scheme:dark;
-}@media (prefers-color-scheme: light){ }.em *{box-sizing:border-box}.em button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}.em button:focus-visible, .em select:focus-visible, .em input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.em h1, .em h2, .em h3{font-family:var(--fd);text-wrap:balance;margin:0;line-height:1.1}.em h2{font-size:24px;font-weight:600}.em h3{font-size:18px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg2)}.em p{margin:0}.em .mono{font-family:var(--fm);font-variant-numeric:tabular-nums}.em /* top bar */
+}@media (prefers-color-scheme: light){ }.em *{box-sizing:border-box}:where(.em) button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}:where(.em) button:focus-visible, :where(.em) select:focus-visible, :where(.em) input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}:where(.em) h1, :where(.em) h2, :where(.em) h3{font-family:var(--fd);text-wrap:balance;margin:0;line-height:1.1}:where(.em) h2{font-size:24px;font-weight:600}:where(.em) h3{font-size:18px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg2)}:where(.em) p{margin:0}.em .mono{font-family:var(--fm);font-variant-numeric:tabular-nums}.em /* top bar */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg2);border-bottom:1px solid var(--line)}.em /* cards */
-.card{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:14px}.em .grid{display:grid;gap:12px}.em .g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.em .g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.em .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:var(--bg3);border:1px solid var(--line);font-weight:500;font-size:14px;min-width:0}.em .btn:hover{border-color:var(--accent)}.em .btn.p{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}.em .btn.d{background:var(--red);color:#fff;border-color:var(--red);font-weight:600}.em .btn.sm{padding:5px 9px;font-size:13px}.em .btn:disabled{opacity:.4;cursor:not-allowed}.em .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;background:var(--bg3);color:var(--fg2)}.em .pill.c{background:var(--accent);color:var(--on-accent)}.em .pill.u{background:var(--blue);color:#001}.em .pill.g{background:var(--green);color:#002}.em .pill.r{background:var(--red);color:#fff}.em .pill.y{background:var(--yellow);color:#211}.em .eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}.em .muted{color:var(--fg2)}.em .small{font-size:13px}.em .stack{display:flex;flex-direction:column;gap:12px}.em .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.em hr{border:0;border-top:1px solid var(--line);margin:10px 0}.em details{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--bg2)}.em details summary{cursor:pointer;font-weight:600;font-family:var(--fd);font-size:17px}.em table{border-collapse:collapse;width:100%;font-size:14px}.em th, .em td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}.em th{font-family:var(--fd);text-transform:uppercase;letter-spacing:.05em;font-size:13px;color:var(--fg2)}.em .tw{overflow-x:auto}.em ul{margin:4px 0 4px 18px;padding:0}.em li{margin:2px 0}.em a{color:var(--blue)}.em /* ===== Simulation ===== */
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:14px}.em .grid{display:grid;gap:12px}.em .g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.em .g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.em .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:var(--bg3);border:1px solid var(--line);font-weight:500;font-size:14px;min-width:0}.em .btn:hover{border-color:var(--accent)}.em .btn.p{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}.em .btn.d{background:var(--red);color:#fff;border-color:var(--red);font-weight:600}.em .btn.sm{padding:5px 9px;font-size:13px}.em .btn:disabled{opacity:.4;cursor:not-allowed}.em .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;background:var(--bg3);color:var(--fg2)}.em .pill.c{background:var(--accent);color:var(--on-accent)}.em .pill.u{background:var(--blue);color:#001}.em .pill.g{background:var(--green);color:#002}.em .pill.r{background:var(--red);color:#fff}.em .pill.y{background:var(--yellow);color:#211}.em .eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}.em .muted{color:var(--fg2)}.em .small{font-size:13px}.em .stack{display:flex;flex-direction:column;gap:12px}.em .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}:where(.em) hr{border:0;border-top:1px solid var(--line);margin:10px 0}:where(.em) details{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--bg2)}:where(.em) details summary{cursor:pointer;font-weight:600;font-family:var(--fd);font-size:17px}:where(.em) table{border-collapse:collapse;width:100%;font-size:14px}:where(.em) th, :where(.em) td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}:where(.em) th{font-family:var(--fd);text-transform:uppercase;letter-spacing:.05em;font-size:13px;color:var(--fg2)}.em .tw{overflow-x:auto}:where(.em) ul{margin:4px 0 4px 18px;padding:0}:where(.em) li{margin:2px 0}:where(.em) a{color:var(--blue)}.em /* ===== Simulation ===== */
 .sim{display:grid;gap:12px;grid-template-columns:1fr;margin-top:12px}@media(min-width:960px){.em .sim{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}}.em .monitor{background:var(--mon);border:1px solid var(--mon-line);border-radius:10px;padding:10px;color:#dfe6ee;min-width:0;position:relative}.em .monitor .hdr{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--fm);font-size:12px;color:#8fa3b8;flex-wrap:wrap}.em .monitor canvas{width:100%;height:auto;display:block;max-width:100%}.em .room{background:#1a1f27;border:1px solid var(--mon-line);border-radius:10px;overflow:hidden;min-width:0}.em .room canvas{width:100%;height:auto;display:block;max-width:100%}.em .nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:6px;margin-top:8px}.em .num{background:#0b1016;border:1px solid var(--mon-line);border-radius:6px;padding:6px 8px;min-width:0}.em .num .l{font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase}.em .num .v{font-family:var(--fm);font-size:28px;font-weight:600;line-height:1.05;font-variant-numeric:tabular-nums}.em .num .u{font-size:11px;color:#8fa3b8}.em .num.hr{color:#3ddc84}.em .num.sp{color:#4fe3e3}.em .num.bp{color:#ff4d4d}.em .num.co2{color:#ffd23f}.em .num.t{color:#dfe6ee}.em .num.rr{color:#dfe6ee}.em .alarm{position:absolute;inset:auto 10px 10px auto;background:var(--red);color:#fff;font-family:var(--fm);font-size:12px;padding:3px 8px;border-radius:4px;animation:blink 1s steps(2) infinite}@keyframes blink{50%{opacity:.25}}@media(prefers-reduced-motion:reduce){.em .alarm{animation:none}}.em .timers{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px}.em .timer{background:var(--bg3);border-radius:6px;padding:6px 8px;border-left:3px solid var(--line)}.em .timer .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}.em .timer .v{font-family:var(--fm);font-size:20px;font-weight:600}.em .timer.ok{border-left-color:var(--green)}.em .timer.warn{border-left-color:var(--yellow)}.em .timer.bad{border-left-color:var(--red)}.em .phasebar{display:flex;gap:4px;align-items:center;font-family:var(--fd);text-transform:uppercase;letter-spacing:.06em;font-size:13px}.em .phasebar span{padding:4px 10px;border-radius:999px;background:var(--bg3);color:var(--mute)}.em .phasebar span.on{background:var(--accent);color:var(--on-accent)}.em .phasebar span.done{background:var(--green);color:#002}.em .feed{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px;height:260px;overflow-y:auto;font-size:14px;display:flex;flex-direction:column;gap:6px}.em .feed .m{display:grid;grid-template-columns:48px 1fr;gap:8px;align-items:start}.em .feed .ts{font-family:var(--fm);font-size:12px;color:var(--mute);padding-top:2px}.em .feed .m.nurse b{color:var(--blue)}.em .feed .m.pt b{color:var(--accent2)}.em .feed .m.sys{color:var(--fg2)}.em .feed .m.warn{color:var(--yellow)}.em .feed .m.bad{color:var(--red)}.em .feed .m.good{color:var(--green)}.em .feed .m.you b{color:var(--green)}.em .console{display:flex;flex-direction:column;gap:10px;min-width:0}.em .acts{display:flex;flex-direction:column;gap:8px}.em .agrp{border:1px solid var(--line);border-radius:8px;background:var(--bg2);padding:8px}.em .agrp .t{font-family:var(--fd);text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--fg2);margin-bottom:6px;display:flex;justify-content:space-between}.em .agrp .b{display:flex;gap:6px;flex-wrap:wrap}.em .ab{padding:7px 10px;border-radius:7px;background:var(--bg3);border:1px solid var(--line);font-size:13px;font-weight:500;line-height:1.2}.em .ab:hover{border-color:var(--accent)}.em .ab.key{border-color:var(--accent)}.em .ab.on{background:var(--green);color:#002;border-color:var(--green)}.em .ab.danger{border-color:var(--red)}.em .ab small{display:block;font-size:10px;color:var(--mute);font-weight:400}.em .ab.on small{color:#024}.em .ctrl{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.em .cprbar{height:8px;border-radius:4px;background:var(--bg3);overflow:hidden}.em .cprbar i{display:block;height:100%;background:var(--green);width:0;transition:width .5s linear}.em .dx{display:flex;gap:6px;flex-wrap:wrap}.em .tl{display:grid;grid-template-columns:60px 1fr;gap:6px 10px;font-size:13px}.em .tl .t{font-family:var(--fm);color:var(--mute)}.em .ok{color:var(--green)}.em .bad{color:var(--red)}.em .warn{color:var(--yellow)}.em .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.em .kpi div{background:var(--bg3);border-radius:8px;padding:8px}.em .kpi .v{font-family:var(--fm);font-size:22px;font-weight:600}.em .kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}.em /* quiz */
-.q{font-size:17px;font-weight:500}.em .opts{display:flex;flex-direction:column;gap:6px}.em .opt{text-align:left;padding:10px 12px;border-radius:8px;background:var(--bg3);border:1px solid var(--line)}.em .opt:hover{border-color:var(--accent)}.em .opt.r{background:var(--green);color:#002;border-color:var(--green)}.em .opt.w{background:var(--red);color:#fff;border-color:var(--red)}.em .algo{display:flex;flex-direction:column;gap:6px}.em .step{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:8px;border-radius:8px;background:var(--bg3)}.em .step i{font-style:normal;font-family:var(--fd);font-weight:700;font-size:20px;color:var(--accent);text-align:center}.em .step.sh{border-left:3px solid var(--yellow)}.em .step.ns{border-left:3px solid var(--blue)}.em .chip{display:inline-block;padding:1px 7px;border-radius:4px;background:var(--bg3);font-family:var(--fm);font-size:12px;border:1px solid var(--line)}.em .sr-only{position:absolute;left:-9999px}.em .today{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.em .today div{background:var(--bg3);border-radius:8px;padding:10px}.em .today .v{font-family:var(--fd);font-size:26px;font-weight:700}.em .today .l{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}.em textarea{width:100%;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px;font-family:var(--fm);font-size:12px;min-height:120px}
+.q{font-size:17px;font-weight:500}.em .opts{display:flex;flex-direction:column;gap:6px}.em .opt{text-align:left;padding:10px 12px;border-radius:8px;background:var(--bg3);border:1px solid var(--line)}.em .opt:hover{border-color:var(--accent)}.em .opt.r{background:var(--green);color:#002;border-color:var(--green)}.em .opt.w{background:var(--red);color:#fff;border-color:var(--red)}.em .algo{display:flex;flex-direction:column;gap:6px}.em .step{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:8px;border-radius:8px;background:var(--bg3)}.em .step i{font-style:normal;font-family:var(--fd);font-weight:700;font-size:20px;color:var(--accent);text-align:center}.em .step.sh{border-left:3px solid var(--yellow)}.em .step.ns{border-left:3px solid var(--blue)}.em .chip{display:inline-block;padding:1px 7px;border-radius:4px;background:var(--bg3);font-family:var(--fm);font-size:12px;border:1px solid var(--line)}.em .sr-only{position:absolute;left:-9999px}.em .today{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.em .today div{background:var(--bg3);border-radius:8px;padding:10px}.em .today .v{font-family:var(--fd);font-size:26px;font-weight:700}.em .today .l{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}:where(.em) textarea{width:100%;background:var(--bg3);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px;font-family:var(--fm);font-size:12px;min-height:120px}
 
 .em .view{display:none}.em .view.on{display:block}.em .score{font-family:var(--fd);font-size:56px;font-weight:700;line-height:1}
 /* Ember additions for the Embergine shell: sim bar, phone action sheet, quick bar */
@@ -246,7 +248,7 @@ body.in-sim .roundbar{display:none}
   .simbar .ctrl{order:3;margin-left:0}
   .feed{height:150px}
   .num .v{font-size:22px}
-  .phasebar{font-size:11px;gap:3px}.phasebar span{padding:3px 8px;white-space:nowrap}
+  .phasebar{font-size:11px;gap:3px;overflow-x:auto;scrollbar-width:none;min-width:0;max-width:100%}.phasebar::-webkit-scrollbar{display:none}.phasebar span{padding:3px 7px;white-space:nowrap;flex:none}
   .cprcard{flex:none}
   .quick{display:grid;grid-template-columns:1.1fr 1fr 1.2fr 1fr 1fr;gap:6px;position:fixed;left:0;right:0;bottom:0;z-index:36;background:var(--surface);border-top:1px solid var(--line);padding:8px max(10px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
   .quick button{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);font-family:var(--f-display);font-weight:800;font-size:15px;padding:12px 4px;letter-spacing:.02em;color:var(--ink)}
@@ -303,7 +305,7 @@ body.in-sim .roundbar{display:none}
       <div class="sh-card"><h3>What changed in the 2025 guidelines</h3>
         <ul class="sh-small" style="margin:8px 0 0 18px;padding:0;display:flex;flex-direction:column;gap:4px">
           <li><b>IV first</b>; IO when IV is not quick. Endotracheal drugs removed. No central line during CPR.</li>
-          <li><b>Adrenaline as early as possible</b> in non-shockable rhythms; after the 2nd shock in shockable rhythms.</li>
+          <li><b>Adrenaline as early as possible</b> in non-shockable rhythms; in shockable rhythms after the 2nd shock (AHA) or the 3rd (ERC).</li>
           <li><b>Persistent VF/pVT</b> (≥3 shocks): optimise basics, change vector to antero-posterior; double sequential defibrillation may be considered (AHA 2b).</li>
           <li><b>Calcium, bicarbonate, steroids</b>: not routine; calcium has an ERC strong recommendation against in OHCA.</li>
           <li><b>POCUS</b> only by experienced hands, never at the cost of compressions, never the sole reason to stop.</li>
@@ -400,7 +402,7 @@ body.in-sim .roundbar{display:none}
       <button id="qCPR" onclick="act('cpr')" data-hint="Compressions|Start or stop. 100–120/min, 5–6 cm, switch every 2 min.">CPR</button>
       <button onclick="act('pulse')" data-hint="Rhythm check|Every 2 min, pause ≤10 s. Pre-charge during compressions.">Check</button>
       <button class="danger" onclick="act('shock')" data-hint="Defibrillate|VF / pulseless VT only. 120–200 J biphasic, escalate.">SHOCK</button>
-      <button onclick="act('epi')" data-hint="Adrenaline 1 mg|Non-shockable: as early as possible. Shockable: after the 2nd shock. Then every 3–5 min.">Epi</button>
+      <button onclick="act('epi')" data-hint="Adrenaline 1 mg|Non-shockable: as early as possible. Shockable: after the 2nd shock (AHA; ERC after the 3rd). Then every 3–5 min.">Epi</button>
       <button class="more" onclick="toggleConsole(true)">Actions</button>
     </div>
   </div>
@@ -423,57 +425,8 @@ body.in-sim .roundbar{display:none}
   </div>
 </section>
 <section class="view" id="v-algos"><div class="stack" id="algoRoot"></div></section>
-
-<!-- ===== DRUGS ===== -->
 <section class="view" id="v-drugs"><div class="stack" id="drugRoot"></div></section>
-
-<!-- ===== QUIZ ===== -->
-<section class="view" id="v-quiz">
-  <div class="stack">
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <h2>Drill</h2>
-        <div class="row">
-          <select id="quizMode" class="btn sm"><option value="mixed">Mixed</option><option value="due">Due for review</option><option value="dose">Doses & energies</option><option value="rhythm">Rhythm → next step</option><option value="cause">Causes</option><option value="post">Post-arrest</option><option value="sprint">Sprint: 10 × 15 s</option></select>
-          <button class="btn sm p" onclick="startQuiz()">Start</button>
-        </div>
-      </div>
-      <p class="muted small" style="margin-top:4px">Misses come back on a Leitner schedule (10 min, then 1 / 3 / 7 / 16 / 35 days). Rate your confidence; calibration is tracked.</p>
-    </div>
-    <div class="card" id="quizBox"><p class="muted">Pick a mode and start.</p></div>
-    <div class="card small" id="quizStats"></div>
-  </div>
-</section>
-<section class="view" id="v-drugs"><div class="stack" id="drugRoot"></div></section>
-
-<!-- ===== QUIZ ===== -->
-<section class="view" id="v-quiz">
-  <div class="stack">
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <h2>Drill</h2>
-        <div class="row">
-          <select id="quizMode" class="btn sm"><option value="mixed">Mixed</option><option value="due">Due for review</option><option value="dose">Doses & energies</option><option value="rhythm">Rhythm → next step</option><option value="cause">Causes</option><option value="post">Post-arrest</option><option value="sprint">Sprint: 10 × 15 s</option></select>
-          <button class="btn sm p" onclick="startQuiz()">Start</button>
-        </div>
-      </div>
-      <p class="muted small" style="margin-top:4px">Misses come back on a Leitner schedule (10 min, then 1 / 3 / 7 / 16 / 35 days). Rate your confidence; calibration is tracked.</p>
-    </div>
-    <div class="card" id="quizBox"><p class="muted">Pick a mode and start.</p></div>
-    <div class="card small" id="quizStats"></div>
-  </div>
-</section>
 <section class="view" id="v-post"><div class="stack" id="postRoot"></div></section>
-
-<!-- ===== LOG ===== -->
-<section class="view" id="v-log">
-  <div class="stack">
-    <div class="card"><h2>Your codes</h2><p class="muted small" style="margin-top:4px">Every simulated code with its score and the key times. Real codes you led can be logged here too (no patient details).</p>
-      <div class="row" style="margin-top:8px"><button class="btn sm" onclick="logReal()">Log a real code</button><button class="btn sm" onclick="exportYuzu()">Copy Yuzu card pack</button><button class="btn sm" onclick="exportLog()">Copy log (JSON)</button><button class="btn sm" onclick="resetAll()">Reset progress</button></div>
-    </div>
-    <div class="card" id="logList"></div>
-  </div>
-</section>
 </section>
 
 <!-- ===== LABS ===== -->
@@ -486,7 +439,7 @@ body.in-sim .roundbar{display:none}
 
 <!-- ===== DRILL ===== -->
 <section class="sh-view em" id="sv-drill">
-  <div class="sh-grid sh-g2" style="margin-bottom:14px"><div class="sh-card" id="stripbox"></div><div class="sh-card" id="estbox"></div><div class="sh-card" id="teachbox"></div><div class="sh-card" id="bossbox"></div></div>
+  <div class="sh-grid drillgrid" style="margin-bottom:14px"><div class="sh-card" id="stripbox"></div><div class="sh-card" id="estbox"></div><div class="sh-card" id="teachbox"></div><div class="sh-card" id="bossbox"></div></div>
   <div class="sh-card" style="margin-bottom:14px"><div class="sh-row" style="justify-content:space-between"><div><h3>Exam block</h3><p class="sh-small sh-muted">Timed single-best-answer questions drawn from every case, 90 s each; missed questions come back.</p></div><button class="sh-btn" data-act="examBlock">Open exam block</button></div></div>
   <section class="view on" id="v-quiz">
   <div class="stack">
@@ -513,7 +466,7 @@ body.in-sim .roundbar{display:none}
   <section class="view on" id="v-log">
   <div class="stack">
     <div class="card"><h2>Your codes</h2><p class="muted small" style="margin-top:4px">Every simulated code with its score and the key times. Real codes you led can be logged here too (no patient details).</p>
-      <div class="row" style="margin-top:8px"><button class="btn sm" onclick="logReal()">Log a real code</button><button class="btn sm" onclick="exportYuzu()">Copy Yuzu card pack</button><button class="btn sm" onclick="exportLog()">Copy log (JSON)</button><button class="btn sm" onclick="resetAll()">Reset progress</button></div>
+      <div class="row" style="margin-top:8px"><button class="btn sm" onclick="logReal()">Log a real code</button><button class="btn sm" onclick="exportYuzu()">Copy Yuzu card pack</button><button class="btn sm" onclick="exportLog()">Copy log (JSON)</button><button class="btn sm" onclick="resetAll(this)">Reset arrest progress</button></div>
     </div>
     <div class="card" id="logList"></div>
   </div>
@@ -2153,7 +2106,7 @@ const QUIZ = [
  {t:'dose',q:'VF persists after the 3rd shock. Which drug and dose next?',o:['Amiodarone 300 mg IV/IO','Amiodarone 150 mg IV/IO','Lidocaine 100 mg then amiodarone','Adrenaline 1 mg and nothing else'],a:0,ex:'Amiodarone 300 mg after the 3rd shock, 150 mg after the 5th. Lidocaine 1–1.5 mg/kg is an alternative, not both.',ref:'AHA 2025 ALS'},
  {t:'dose',q:'Adrenaline in adult cardiac arrest: dose and interval?',o:['1 mg every 3–5 min','1 mg every 2 min','0.5 mg every 3–5 min','3 mg every 5 min'],a:0,ex:'1 mg IV/IO every 3–5 min. With an arterial line, ERC 2025 suggests small boluses (50–100 µg) titrated to diastolic ≥30 mmHg.',ref:'ERC 2025 ALS'},
  {t:'rhythm',q:'PEA. When should the first adrenaline go in?',o:['As soon as access is available','After the 2nd rhythm check','After 2 cycles of CPR','Only if asystole develops'],a:0,ex:'In non-shockable rhythms adrenaline goes in as early as possible; delay reduces survival.',ref:'AHA 2025 ALS'},
- {t:'rhythm',q:'VF. When is the first adrenaline given?',o:['After the 2nd shock','Before the 1st shock','After the 1st shock','After amiodarone'],a:0,ex:'Shock first; adrenaline after the 2nd shock, then every 3–5 min.',ref:'AHA 2025 / ERC 2025'},
+ {t:'rhythm',q:'VF. When is the first adrenaline given (AHA 2025)?',o:['After the 2nd shock','Before the 1st shock','After the 1st shock','After amiodarone'],a:0,ex:'AHA: shock first, adrenaline after the 2nd shock, then every 3–5 min. ERC 2025 gives it after the 3rd shock, together with amiodarone. Both: never before the shocks.',ref:'AHA 2025 ALS; ERC 2025 ALS'},
  {t:'rhythm',q:'VF after 3 shocks with good CPR, adrenaline and amiodarone given. Best next defibrillation strategy?',o:['Change pads to antero-posterior','Give a 4th shock at the same energy with the same pads','Precordial thump','Stop shocking; it is refractory'],a:0,ex:'Persistent VF: optimise basics, change vector to AP; DSED may be considered (AHA 2b, DOSE VF trial).',ref:'AHA 2025 ALS'},
  {t:'dose',q:'Biphasic first shock energy for VF?',o:['120–200 J per manufacturer (ERC: 150 J), escalate if unsuccessful','50 J','360 J always','100 J synchronised'],a:0,ex:'Use the manufacturer-recommended biphasic energy; if unknown, use maximum. Escalating energy is reasonable.',ref:'AHA 2025 ALS'},
  {t:'rhythm',q:'Rhythm check: organised rhythm, no pulse, EtCO₂ 12. Next?',o:['Resume CPR immediately; adrenaline if due','Check pulse for 30 s','Cardiovert','Atropine 1 mg'],a:0,ex:'PEA: resume CPR without delay. Pauses ≤10 s. Atropine has no role in arrest.',ref:'AHA 2025 ALS'},
@@ -2192,6 +2145,18 @@ const QUIZ = [
  {t:'cause',q:'Drowning victim without a pulse. First action?',o:['5 rescue breaths, then 30:2','Compression-only CPR','Shock','Heimlich manoeuvre'],a:0,ex:'Hypoxic arrest; ventilation first.',ref:'ERC 2025'},
  {t:'cause',q:'Smoke inhalation, shock, lactate 12. Antidote?',o:['Hydroxocobalamin 5 g IV','Naloxone','Methylene blue','Atropine'],a:0,ex:'Cyanide from combustion; plus 100 % oxygen for CO.',ref:'ERC 2025'},
  {t:'dose',q:'Atropine for unstable bradycardia?',o:['1 mg IV, repeat every 3–5 min to 3 mg; then pacing or adrenaline 2–10 µg/min','0.5 mg once','3 mg single dose','Not used'],a:0,ex:'Ineffective in infranodal block and post-transplant; go to pacing.',ref:'AHA 2025'},
+ {t:'dose',q:'Amiodarone second dose in persistent VF?',o:['150 mg after the 5th shock','300 mg after every shock','150 mg after the 2nd shock','450 mg once'],a:0,ex:'300 mg after the 3rd shock, 150 mg after the 5th (lidocaine 1–1.5 mg/kg then 0.5–0.75 mg/kg is the alternative).',ref:'AHA 2025 ALS; ERC 2025 ALS'},
+ {t:'dose',q:'Lidocaine in refractory VF: first dose?',o:['1–1.5 mg/kg IV/IO','0.5 mg/kg','3 mg/kg bolus','100 mg/kg'],a:0,ex:'Then 0.5–0.75 mg/kg, maximum 3 mg/kg. Use lidocaine or amiodarone, not both, and never lidocaine in local anaesthetic toxicity.',ref:'AHA 2025 ALS'},
+ {t:'dose',q:'10 mL of 10 % calcium chloride is roughly equivalent to how much 10 % calcium gluconate?',o:['30 mL','10 mL','5 mL','100 mL'],a:0,ex:'Chloride carries about three times the elemental calcium (6.8 vs 2.2 mmol per 10 mL). Gluconate is gentler on peripheral veins.',ref:'BNF; ERC 2025 Special circumstances'},
+ {t:'dose',q:'Local anaesthetic toxicity: first lipid emulsion dose for a 70 kg adult?',o:['20 % lipid 1.5 mL/kg (~100 mL) over 1 min, then 15 mL/kg/h','10 mL of 10 % lipid','500 mL over 1 h only','Propofol 1 mg/kg'],a:0,ex:'Repeat the bolus up to twice at 5-min intervals and double the infusion if unstable; maximum about 12 mL/kg. Propofol is not a substitute.',ref:'AAGBI 2010; ERC 2025'},
+ {t:'dose',q:'High-dose insulin for calcium-channel-blocker shock: starting regimen?',o:['1 U/kg bolus then 1 U/kg/h with dextrose and potassium','0.1 U/kg/h fixed rate','10 U once','Insulin is contraindicated'],a:0,ex:'Titrate up to 10 U/kg/h; check glucose every 15–30 min and potassium hourly. Effect takes 15–60 min, so start early.',ref:'ERC 2025 Special circumstances (poisoning)'},
+ {t:'dose',q:'Tricyclic overdose with QRS 150 ms: sodium bicarbonate?',o:['1–2 mmol/kg IV boluses, aiming for arterial pH 7.45–7.55','50 mmol once only if pH < 7.0','Never in TCA overdose','0.1 mmol/kg infusion'],a:0,ex:'Repeat until the QRS narrows below ~100 ms; hyperventilation is an adjunct once intubated.',ref:'ERC 2025 Special circumstances'},
+ {t:'post',q:'A comatose patient is 34.8 °C 30 min after ROSC. What do you do about temperature?',o:['Do not actively rewarm; prevent fever ≤37.5 °C','Warm to 37 °C quickly','Cool to 33 °C','Nothing for 72 h'],a:0,ex:'ERC 2025: do not actively rewarm mild spontaneous hypothermia (32–36 °C); prevent fever for 36–72 h.',ref:'ERC 2025 Post-resuscitation care'},
+ {t:'post',q:'Prehospital cooling with 2 L of cold IV fluid after ROSC?',o:['Not recommended','Recommended for all','Only for VF','Only after 6 h'],a:0,ex:'It caused more re-arrest and pulmonary oedema without benefit (Kim, JAMA 2014).',ref:'ERC 2025 Post-resuscitation care'},
+ {t:'post',q:'Prophylactic amiodarone after ROSC in a patient with no further arrhythmia?',o:['Not recommended','Always for 24 h','Only if the first rhythm was VF','Lidocaine instead'],a:0,ex:'ERC 2025 no longer recommends prophylactic antiarrhythmics; treat recurrent VT/VF if it happens.',ref:'ERC 2025 Post-resuscitation care'},
+ {t:'post',q:'No ST elevation, no obvious cause after ROSC. ERC 2025 next investigation?',o:['CT head plus CT pulmonary angiography (whole-body CT)','Emergent coronary angiography','MRI brain','Nothing until 72 h'],a:0,ex:'Bleeding and PE are found early this way; angiography first only when ST elevation or a strong coronary suspicion.',ref:'ERC 2025 Post-resuscitation care'},
+ {t:'post',q:'Routine neuromuscular blockade in the first 24 h after ROSC?',o:['Avoid routine use; use for shivering or ventilator dyssynchrony','Give to all for 48 h','Mandatory with temperature control','Only in VF'],a:0,ex:'Paralysis masks seizures; short-acting sedation first, blockade only for a reason.',ref:'ERC 2025 Post-resuscitation care'},
+ {t:'post',q:'When should organ donation be considered after cardiac arrest?',o:['In every patient approaching end of life, as part of end-of-life planning','Never after cardiac arrest','Only if the family raises it','Only before 24 h'],a:0,ex:'ERC 2025 asks for systematic consideration and registry documentation; it is kept separate from the prognostication decision.',ref:'ERC 2025 Post-resuscitation care'},
  {t:'cause',q:'ECPR is most reasonable for:',o:['Witnessed arrest, shockable or reversible cause, good CPR, started within ~60 min, in a system that can deliver it','Unwitnessed asystole >30 min','Any patient over 80','Terminal illness'],a:0,ex:'ARREST, Prague OHCA, INCEPTION; AHA 2a in select patients.',ref:'AHA 2025 / ERC 2025'},
 ];
 
@@ -2201,7 +2166,7 @@ const ALGOS = [
   ['Unresponsive, not breathing normally','Call for help, start CPR 30:2, attach pads/monitor. Minimise interruptions from the first second.'],
   ['Rhythm check ≤10 s','Shockable (VF/pVT) → left branch. Non-shockable (PEA/asystole) → right branch.'],
   ['Shockable: SHOCK','Biphasic 120–200 J (manufacturer; ERC 150 J), escalate. Resume CPR immediately for 2 min; do not check the pulse after the shock.'],
-  ['Shockable: after 2nd shock → adrenaline 1 mg','Then every 3–5 min. IV first; IO if IV not rapid. No ETT drugs.'],
+  ['Shockable: after 2nd shock → adrenaline 1 mg','AHA timing; ERC 2025 gives it after the 3rd shock. Then every 3–5 min. IV first; IO if IV not rapid. No ETT drugs.'],
   ['Shockable: after 3rd shock → amiodarone 300 mg','(or lidocaine 1–1.5 mg/kg); 150 mg (0.5–0.75 mg/kg) after the 5th. Change pads to AP; consider DSED; consider ECPR.'],
   ['Non-shockable: adrenaline 1 mg as early as possible','Then every 3–5 min. CPR 2-min cycles. Treat the cause: this branch is nearly always a reversible cause.'],
   ['Every cycle','Switch compressor, rhythm check ≤10 s, EtCO₂ ≥10 (ERC ≥25), airway (BVM 2-person → SGA/ETT by experienced hands → 10 breaths/min continuous), Hs & Ts, POCUS only in the pause.'],
@@ -2309,7 +2274,9 @@ const RH={ // rhythm descriptors
  asys:{n:'Asystole',sh:false,org:false},
  paced:{n:'Paced rhythm',sh:false,org:true},
 };
+let DRAWGEN=0;
 function startSim(causeId, opts){
+ if(timer){clearInterval(timer);timer=null}
  const c=CMAP[causeId];
  const setting=document.getElementById('setSetting').value;
  S={cause:c,setting,hidden:!!opts.hidden,sound:document.getElementById('setSound').checked,hints:document.getElementById('setHints').checked,
@@ -2336,7 +2303,7 @@ function startSim(causeId, opts){
   say('nurse','Nurse',(S.setting==='er'?'Dr, triage just brought this one in: ':'Resus bay 2: ')+c.pt);
   say('sys','Scene','Pre-arrest. Assess, monitor, find the cause, treat it. The clock is running.');
  }
- if(timer)clearInterval(timer);lastFrame=performance.now();timer=setInterval(tick,100);requestAnimationFrame(draw);
+ if(timer)clearInterval(timer);lastFrame=performance.now();timer=setInterval(tick,100);const g=++DRAWGEN;requestAnimationFrame(ts=>draw(ts,g));
  go('sim');
 }
 function startRandom(common){const pool=CAUSES.filter(c=>c.id!=='commotio'&&(!common||c.freq==='c'));startSim(pool[Math.floor(Math.random()*pool.length)].id,{hidden:true});}
@@ -2496,6 +2463,7 @@ function beginArrest(arrived){
  buildActs();setPhaseBar();
  if(arrived){S.cpr=true;S.cprQ=.7;S.pauseStart=null;S.cprStartT=S.t;cprBtn(true);say('nurse','Nurse','CPR in progress. No pulse, no rhythm seen yet. What do you want?');if(S.setting==='ward')S.t=240,S.arrestT=0,S.phT0=0;}
  else{say('bad','Nurse','No pulse! Not breathing!');say('sys','ARREST','Monitor: '+(S.flags.monitor?RH[S.rhythm].n:'no monitor attached — pads on!'));beep(880,.4,.15);}
+ if(S.firstArrestT==null)S.firstArrestT=S.arrestT;
  document.getElementById('alarm').hidden=false;document.getElementById('alarm').textContent='NO PULSE';
 }
 function rhythmCheck(){
@@ -2510,6 +2478,7 @@ function rhythmCheck(){
  // evolve rhythm / ROSC decision
  let out='';
  if(S.roscPending){S.roscPending=false;declareROSC();return;}
+ if(S.rhythm==='asys'){const c=S.cause;const tf=c.arr.length?keyFracPhase(c.arr,'arrest'):1;const le=S.epi.length?S.t-S.epi[S.epi.length-1]:999;const pc=(tf>=0.5?0.3:0.05)*(le<300?1.3:0.5)*(cprFraction()>0.8?1.1:0.7)*(S.t-S.arrestT>1500?0.4:1);if(Math.random()<pc){S.rhythm=c.rhythm==='pea_wide'?'pea_wide':'brady_pea';S.v.hr=rnd(28,45);S.asysAge=0;say('warn','Nurse','Something on the monitor: slow complexes now.');}}
  const p=roscProb();
  if(Math.random()<p){declareROSC();return;}
  out='Rhythm check: '+RH[S.rhythm].n+(RH[S.rhythm].org?' on the monitor, no pulse.':'.');
@@ -2570,7 +2539,7 @@ function advance(h){
  if(!d.mapTarget&&!S.postChecks.map){S.postChecks.map=1;say('warn','Nurse','MAP has been 55–60 for the last hour.');S.v.sbp=76;}
  if(!d.tempCtrl&&S.postHours>=6&&!S.postChecks.temp){S.postChecks.temp=1;S.v.temp=38.4;say('warn','Nurse','Temp 38.4 °C and climbing.');}
  if(!d.titrateO2&&S.flags.airway!=='none'&&c.id!=='cyanide'&&!S.postChecks.o2){S.postChecks.o2=1;say('warn','Nurse','FiO₂ still 1.0, PaO₂ 380.');}
- if(c.id==='stemi'&&!d.cathlab&&S.postHours>=1&&!S.postChecks.cath){S.postChecks.cath=1;say('bad','Nurse','Runs of VT again; ST elevation persists. The artery is still shut.');S.rhythm='vt';setTimeout(()=>{if(S&&S.phase==='rosc'){S.rhythm='st'}},4000);}
+ if(c.id==='stemi'&&!d.cathlab&&S.postHours>=1&&!S.postChecks.cath){S.postChecks.cath=1;say('bad','Nurse','Runs of VT again; ST elevation persists. The artery is still shut.');S.rhythm='vt';{const me=S;setTimeout(()=>{if(S===me&&S.phase==='rosc'){S.rhythm='st'}},4000);}}
  if(!d.ecg12&&S.postHours>=1&&!S.postChecks.ecg){S.postChecks.ecg=1;say('warn','Nurse','No 12-lead since ROSC.');}
  if(!d.sedate&&S.flags.airway==='ett'&&S.postHours>=1&&!S.postChecks.sed){S.postChecks.sed=1;say('warn','Nurse','Fighting the ventilator.');}
  if(!d.eeg&&S.postHours>=24&&!S.postChecks.eeg){S.postChecks.eeg=1;say('warn','Nurse','Twitching of the face and arm for the last 20 min.');}
@@ -2580,18 +2549,18 @@ function advance(h){
 // ---------- tick ----------
 function tick(){
  if(!S||S.paused||S.phase==='end')return;
- const dt=0.1*S.speed;S.t+=dt;const v=S.v;const c=S.cause;const min=dt/60;
+ const dt=0.1*S.speed;S.t+=dt;if(S.phase==='arrest')S.pulseless=(S.pulseless||0)+dt;const v=S.v;const c=S.cause;const min=dt/60;
  if(S.phase==='pre'){
   const f=keyFracPhase(c.pre,'pre');
   if(f>=0.65||S.stabilising){ // recovering
    const tgt={hr:88,sbp:118,dbp:72,spo2:(c.id==='cyanide'?98:96),rr:18};for(const k in tgt)v[k]+= (tgt[k]-v[k])*0.06*dt;
    if(c.id==='torsades'||c.id==='vt'){S.rhythm='sinus'}
-   if(S.t-S.phT0>150&&!S.prevented){S.prevented=true;say('good','Nurse','Stable. '+(S.setting==='er'?'Ambulance here for transfer.':'ICU bed ready.'));setTimeout(()=>endSim('prevented'),2500);}
+   if(S.t-S.phT0>150&&!S.prevented){S.prevented=true;say('good','Nurse','Stable. '+(S.setting==='er'?'Ambulance here for transfer.':'ICU bed ready.'));const me=S;setTimeout(()=>{if(S===me)endSim('prevented')},2500);}
   }else{
    const k=1-f*0.8;v.hr+=c.drift.hr*min*k;v.sbp+=c.drift.sbp*min*k;v.spo2+=c.drift.spo2*min*k;v.dbp=v.sbp*0.6;
    if(S.flags.o2&&c.drift.spo2<0)v.spo2+=Math.abs(c.drift.spo2)*min*0.5;
    v.hr=clamp(v.hr,20,200);v.sbp=clamp(v.sbp,30,220);v.spo2=clamp(v.spo2,40,100);
-   if(c.id==='torsades'&&S.t-S.phT0>60&&S.rhythm!=='tdp'&&Math.random()<dt*0.02){S.rhythm='tdp';say('warn','Nurse','Run of polymorphic VT!');setTimeout(()=>{if(S&&S.phase==='pre'&&!S.stabilising)S.rhythm='sinus'},5000)}
+   if(c.id==='torsades'&&S.t-S.phT0>60&&S.rhythm!=='tdp'&&Math.random()<dt*0.02){S.rhythm='tdp';say('warn','Nurse','Run of polymorphic VT!');{const me=S;setTimeout(()=>{if(S===me&&S.phase==='pre'&&!S.stabilising)S.rhythm='sinus'},5000)}}
    if(c.id==='vt')S.rhythm='vt';if(c.id==='block')S.rhythm='block';if(c.id==='electric')S.rhythm='af';if(c.id==='hyperk'||c.id==='ccb'||c.id==='dig'||c.id==='opioid'||c.id==='hypogly'||c.id==='hypothermia'||c.id==='op'||c.id==='last')S.rhythm=v.hr<60?'sb':'sinus';else if(!['tdp','paced','sinus'].includes(S.rhythm))S.rhythm='st';
    if(S.rhythm==='sinus'&&v.hr>100)S.rhythm='st';
    const elapsed=S.t-S.phT0;
@@ -2687,8 +2656,8 @@ let afT=0,afNext=0.7,afAcc=0;function afPhase(t){if(t>afT+afNext){afT=t;afNext=r
 function plethAt(t){const v=S.v;if(S.pulse&&S.rhythm!=='vf'){const hr=Math.max(20,v.hr||60),per=60/hr,ph=(t%per)/per;const amp=clamp(v.sbp/120,0.2,1);return amp*(Math.exp(-((ph-0.15)**2)/0.008)+0.35*Math.exp(-((ph-0.42)**2)/0.02));}if(S.cpr){const ph=(t%(60/111))/(60/111);return 0.4*S.cprQ*Math.exp(-((ph-0.3)**2)/0.02);}return 0.02*Math.sin(t*3);}
 function capAt(t){const v=S.v;if(!S.flags.etco2)return 0;const rr=S.cpr?(S.flags.airway==='bvm'?6:10):Math.max(6,v.rr||12);const per=60/rr,ph=(t%per)/per;const lvl=clamp(v.etco2/60,0,1);if(ph<0.08)return lvl*ph/0.08;if(ph<0.5)return lvl*(0.9+0.1*(ph-0.08)/0.42);if(ph<0.56)return lvl*(1-(ph-0.5)/0.06);return 0;}
 let lastDraw=0;
-function draw(ts){
- if(!S||S.phase==='end')return;requestAnimationFrame(draw);
+function draw(ts,g){
+ if(g!==DRAWGEN||!S||S.phase==='end')return;requestAnimationFrame(t=>draw(t,g));
  if(S.paused){lastDraw=ts;drawRoom();return;}
  const dtReal=Math.min(0.1,(ts-lastDraw)/1000||0);lastDraw=ts;const dt=dtReal*S.speed;
  const W=cv.width,H=cv.height;const lanes=[[0.08,0.36],[0.44,0.62],[0.70,0.9]];
@@ -2731,7 +2700,7 @@ function endSim(how){
  if(!S||S.phase==='end')return;clearInterval(timer);timer=null;S.phase='end';setPhaseBar();
  const rep=scoreSim(how);
  S.result=rep;
- DB.codes.push({d:dmy(),ts:Date.now(),cause:S.cause.id,how,score:rep.score,grade:rep.grade,setting:S.setting,m:rep.metrics});save();if(window.EG)EG.logDay('codes');
+ DB.codes.push({d:dmy(),ts:Date.now(),cause:S.cause.id,how,score:rep.score,grade:rep.grade,setting:S.setting,m:rep.metrics});save();if(how!=='aborted'&&window.EG)EG.logDay('codes');
  renderDebrief(rep,how);
  document.getElementById('simRun').hidden=true;document.getElementById('simDebrief').hidden=false;window.scrollTo({top:0});
 }
@@ -2751,11 +2720,11 @@ function scoreSim(how){
  }
  // ---- ARREST
  if(arrested){
-  const a0=S.arrestT;const cprStart=S.cprStartT!==undefined&&S.cprStartT!==null?S.cprStartT-a0:null;
+  const a0=S.firstArrestT!=null?S.firstArrestT:S.arrestT;const cprStart=S.cprStartT!==undefined&&S.cprStartT!==null?S.cprStartT-a0:null;
   if(S.setting!=='ward')add(cprStart!==null&&cprStart<=10,'CPR started within 10 s of arrest'+(cprStart!==null?' ('+Math.round(cprStart)+' s)':' (never)'),'Every 10 s without compressions after arrest costs coronary perfusion pressure.',3,'Arrest');
   const fr=cprFraction();add(fr>=0.8,'Chest compression fraction ≥80 % ('+Math.round(fr*100)+' %)','',2,'Arrest');
   add(S.longestPause<=10,'Longest pause ≤10 s ('+Math.round(S.longestPause)+' s)','Pre-charge during compressions; check and shock inside 5 s.',2,'Arrest');
-  const nSw=d.switch||0;const arrMin=((hadRosc?S.roscT:(S.deadT||S.t))-a0)/60;add(nSw>=Math.floor(arrMin/2.5),'Compressor switched every ~2 min ('+nSw+' switches in '+Math.round(arrMin)+' min)','Quality falls after 2 min even when the compressor feels fine.',1,'Arrest');
+  const nSw=d.switch||0;const arrMin=Math.max(0.5,(S.pulseless||((hadRosc?S.roscT:(S.deadT||S.t))-a0))/60);add(nSw>=Math.floor(arrMin/2.5),'Compressor switched every ~2 min ('+nSw+' switches in '+Math.round(arrMin)+' min)','Quality falls after 2 min even when the compressor feels fine.',1,'Arrest');
   const sh=RH[c.rhythm].sh;
   if(sh){const fs=S.shocks.length?S.shocks[0].t-a0:null;add(fs!==null&&fs<=(S.setting==='ward'?30:60),'First shock within 60 s of a shockable rhythm'+(fs!==null?' ('+Math.round(fs)+' s)':' (none)'),'Defibrillation is the only treatment of VF; survival falls ~10 %/min.',3,'Arrest');
    add(S.epi.length&&S.shocks.length>=2&&S.epi[0]>=S.shocks[1].t-5,'Adrenaline after the 2nd shock','',2,'Arrest');
@@ -2797,7 +2766,7 @@ function scoreSim(how){
  const max=items.filter(i=>i.cat!=='Harm').reduce((s,i)=>s+i.pts,0);const got=items.reduce((s,i)=>s+(i.ok?i.pts:(i.cat==='Harm'?-i.pts:0)),0);
  const score=max?clamp(Math.round(100*got/max),0,100):0;
  const grade=how==='dead'&&score<50?'F':score>=90?'A':score>=80?'B':score>=65?'C':score>=50?'D':'F';
- const metrics={cpr:S.cprStartT!=null&&S.arrestT!=null?Math.round(S.cprStartT-S.arrestT):null,shock:S.shocks.length?Math.round(S.shocks[0].t-S.arrestT):null,epi:S.epi.length?Math.round(S.epi[0]-S.arrestT):null,ccf:Math.round(cprFraction()*100),pause:Math.round(S.longestPause),dur:S.arrestT!=null?Math.round((S.roscT||S.deadT||S.t)-S.arrestT):0,outcome:how};
+ const A0=S.firstArrestT!=null?S.firstArrestT:S.arrestT;const metrics={cpr:S.cprStartT!=null&&A0!=null?Math.max(0,Math.round(S.cprStartT-A0)):null,shock:S.shocks.length&&A0!=null?Math.round(S.shocks[0].t-A0):null,epi:S.epi.length&&A0!=null?Math.round(S.epi[0]-A0):null,ccf:Math.round(cprFraction()*100),pause:Math.round(S.longestPause),dur:Math.round(S.pulseless||0),outcome:how,rearrest:S.rearrest||0};
  return {items,score,grade,metrics};
 }
 function renderDebrief(rep,how){
@@ -2975,6 +2944,7 @@ function renderAlgos(){
 const BOX_MIN=[10/1440,1,3,7,16,35];
 let Q=null;
 function startQuiz(){
+ if(typeof Q!=='undefined'&&Q&&Q.timer){clearInterval(Q.timer);Q.timer=null}
  const mode=document.getElementById('quizMode').value;
  let idx=QUIZ.map((q,i)=>i);
  if(mode==='due')idx=idx.filter(i=>DB.quiz[i]&&DB.quiz[i].due<=Date.now());
@@ -3015,7 +2985,12 @@ function logReal(){const d=document.createElement('div');d.className='card';d.in
 function saveReal(){const t=document.getElementById('realTxt').value.trim();if(!t)return;DB.real.push({d:dmy(),note:t});save();renderLog();}
 function exportLog(){copyText(JSON.stringify(DB.codes,null,1));}
 function exportYuzu(){const cards=[];QUIZ.forEach(q=>cards.push({front:q.q,back:q.o[q.a]+(q.ex?' — '+q.ex:''),tags:['ember',q.t]}));DRUGS.forEach(d=>cards.push({front:d[0]+': dose?',back:d[1]+' — '+d[2],tags:['ember','drug']}));CAUSES.forEach(c=>{cards.push({front:c.n+': arrest-specific treatment?',back:c.teach.arrest,tags:['ember','cause']});cards.push({front:c.n+': how does it present and how do you prevent the arrest?',back:c.teach.pre,tags:['ember','cause']})});copyText(JSON.stringify({deck:'Ember — arrest lead',cards},null,1));}
-function resetAll(){DB={codes:[],quiz:{},cal:{sure:[0,0],unsure:[0,0]},real:[],streak:{},prog:{}};save();renderHome();renderLog();renderQuizStats();toast('Reset.');}
+let resetArm=0;
+function resetAll(btn){
+ if(Date.now()-resetArm>4000){resetArm=Date.now();if(btn){btn.textContent='Tap again to erase';btn.classList.add('d');setTimeout(()=>{if(btn&&Date.now()-resetArm>=3900){btn.textContent='Reset arrest progress';btn.classList.remove('d')}},4000)}toast('Tap Reset again within 4 s to erase codes, drills and badges.');return}
+ resetArm=0;const keep=DB.days||{};DB={codes:[],quiz:{},cal:{sure:[0,0],unsure:[0,0]},real:[],streak:{},prog:{},days:keep,x:undefined,resetAt:Date.now()};delete DB.x;save();renderHome();renderLog();renderQuizStats();
+ if(btn){btn.textContent='Reset arrest progress';btn.classList.remove('d')}toast('Arrest progress erased.');
+}
 
 // ===================== INIT =====================
 renderHome();renderCauses();renderAlgos();renderQuizStats();renderLog();
@@ -3026,7 +3001,7 @@ document.querySelectorAll('.view').forEach(v=>{});
 /* ================= EMBERGINE SHELL ================= */
 "use strict";
 const EG = (function(){
-const APP_VERSION = "1.1.0";
+const APP_VERSION = "1.2.0";
 const IS_PWA = !!window.EMBERGINE_PWA;
 const APP_URL = "https://embergine.github.io/embergine/";
 const $ = (s, el=document) => el.querySelector(s);
@@ -3074,6 +3049,7 @@ let tab = "today", learnSub = "causes", labsSub = "web";
 function show(t, sub){
   if(t==="more"){ moreSheet(); return; }
   if(!TABS.includes(t)) t = "today";
+  if(t!=="codes" && typeof S!=="undefined" && S && S.phase && S.phase!=="end" && !S.paused && typeof togglePause==="function"){ togglePause(); toast("Code paused. It resumes when you tap Resume in Codes."); }
   tab = t;
   $$(".sh-view").forEach(v => v.classList.toggle("on", v.id === "sv-"+t));
   $$("#topnav button, #tabbar button").forEach(b => b.setAttribute("aria-current", b.dataset.tab===t || (t!=="today" && b.dataset.tab==="more" && !["cases","codes","drill"].includes(t))));
@@ -3114,7 +3090,7 @@ function sheet(items){
 /* ---------- activity log (shared by both engines) ---------- */
 function dayLog(){ if(typeof DB==="undefined") return {}; DB.days = DB.days || {}; return DB.days; }
 function logDay(kind){ try { const L = dayLog(); const k = todayKey(); L[k] = L[k] || {}; L[k][kind] = (L[k][kind]||0)+1; save(); dirty(); renderToday(); } catch {} }
-let dirtyAt = ""; function dirty(){ dirtyAt = new Date().toISOString(); hubSchedule(); }
+function dirty(){ hubSchedule(); }
 
 /* ---------- Today ---------- */
 function stats(){
@@ -3158,15 +3134,49 @@ function renderSettings(){
   $("#aboutLine").textContent = `Embergine ${APP_VERSION} · ${IS_PWA ? (navigator.serviceWorker && navigator.serviceWorker.controller ? "installed, works offline" : "web app") : "claude.ai copy (AI patient and case generator work here; Google sign-in needs the installed app)"}.`;
   hubPaint();
 }
-function backupJson(){ return JSON.stringify({ app:"embergine", v:1, exportedAt:new Date().toISOString(), ember: typeof DB!=="undefined"?DB:null, tangerine: window.TG ? { profile:TG.Store.profile, my:TG.Store.my } : null, settings:SET }, null, 1); }
-function applyState(st, {merge=false}={}){
+function backupJson(){ return JSON.stringify(Object.assign({ app:"embergine", v:1, exportedAt:new Date().toISOString() }, stateCore(), { settings:{ theme:SET.theme, sound:SET.sound, hints:SET.hints } }), null, 1); }
+/* ---------- merging two copies of the progress (backup restore and Drive sync) ----------
+   Records are unioned (codes, case attempts, exam answers, estimates, real-code notes, own cases), review schedules keep the
+   further-along entry, counters keep the maximum. A reset on one device (DB.resetAt) drops the other copy's older arrest data. */
+const EMBER0 = () => ({codes:[], quiz:{}, cal:{sure:[0,0], unsure:[0,0]}, real:[], streak:{}, prog:{}, days:{}});
+function union(a, b, key){ const m = new Map(); (a||[]).forEach(x => { if(x) m.set(key(x), x); }); (b||[]).forEach(x => { if(x && !m.has(key(x))) m.set(key(x), x); }); return [...m.values()]; }
+function maxObj(a, b){ const o = Object.assign({}, a||{}); for(const k in (b||{})){ const v = b[k]; if(typeof v === "number") o[k] = Math.max(+o[k]||0, v); else if(v && typeof v === "object" && !Array.isArray(v)) o[k] = maxObj(o[k], v); else if(!(k in o)) o[k] = v; } return o; }
+function newer(a, b, f){ const o = Object.assign({}, b||{}); for(const k in (a||{})){ if(!o[k] || f(a[k]) >= f(o[k])) o[k] = a[k]; } return o; }
+function mergeX(a, b){ if(!a) return b; if(!b) return a;
+  const done = r => r && r.legs ? r.legs.filter(l => l.done).length : 0;
+  let round = a.round || b.round; if(a.round && b.round){ round = a.round.date !== b.round.date ? (a.round.date > b.round.date ? a.round : b.round) : (done(b.round) > done(a.round) ? b.round : a.round); }
+  return Object.assign({}, b, a, { est: union(a.est, b.est, e => e.i+"@"+e.at).sort((p,q) => p.at-q.at),
+    strips: { seen: Math.max(a.strips?.seen||0, b.strips?.seen||0), right: Math.max(a.strips?.right||0, b.strips?.right||0) },
+    why: maxObj(a.why, b.why), whyQ: Object.assign({}, b.whyQ, a.whyQ), badges: newer(a.badges, b.badges, v => v.score||0), teach: newer(a.teach, b.teach, v => v.due||0),
+    rounds: Math.max(a.rounds||0, b.rounds||0), round, web: Object.assign({}, b.web, a.web) }); }
+function mergeEmber(a, b){ if(!a) return b; if(!b) return a;
+  const ra = a.resetAt||0, rb = b.resetAt||0;
+  if(ra !== rb){ const nw = ra > rb ? a : b, old = ra > rb ? b : a, R = Math.max(ra, rb);
+    return Object.assign(EMBER0(), nw, { codes: union(nw.codes, (old.codes||[]).filter(c => c.ts > R), c => c.ts+":"+c.cause).sort((p,q) => p.ts-q.ts), days: maxObj(nw.days, old.days) }); }
+  const calN = c => c ? (c.sure?.[1]||0) + (c.unsure?.[1]||0) : 0;
+  return Object.assign(EMBER0(), b, a, { codes: union(a.codes, b.codes, c => c.ts+":"+c.cause).sort((p,q) => p.ts-q.ts),
+    quiz: newer(a.quiz, b.quiz, v => v.seen||0), cal: calN(b.cal) > calN(a.cal) ? b.cal : a.cal, real: union(a.real, b.real, r => r.d+"|"+r.note),
+    days: maxObj(a.days, b.days), x: mergeX(a.x, b.x) }); }
+function mergeTG(a, b){ if(!a) return b; if(!b) return a; const pa = a.profile||{}, pb = b.profile||{};
+  return { profile: Object.assign({}, pb, pa, { attempts: union(pa.attempts, pb.attempts, x => x.caseId+"@"+x.at).sort((p,q) => p.at-q.at),
+      exams: union(pa.exams, pb.exams, x => x.caseId+":"+x.qi+"@"+x.at).sort((p,q) => p.at-q.at), review: newer(pa.review, pb.review, v => v.due||0) }),
+    my: union(a.my, b.my, c => c.id) }; }
+function mergeState(local, other){ return { ember: mergeEmber(local.ember, other.ember), tangerine: mergeTG(local.tangerine, other.tangerine) }; }
+function stateCore(){ return { ember: typeof DB !== "undefined" ? JSON.parse(JSON.stringify(DB)) : null, tangerine: window.TG ? JSON.parse(JSON.stringify({ profile:TG.Store.profile, my:TG.Store.my })) : null }; }
+function applyState(st){
   if(!st) return;
-  if(st.ember && typeof DB!=="undefined"){ if(merge){ const ids = new Set(DB.codes.map(c=>c.ts)); st.ember.codes = (st.ember.codes||[]).filter(c=>!ids.has(c.ts)).concat(DB.codes); } DB = Object.assign({codes:[],quiz:{},cal:{sure:[0,0],unsure:[0,0]},real:[],streak:{},prog:{},days:{}}, st.ember); save(); try { renderLog(); renderQuizStats(); } catch {} }
-  if(st.tangerine && window.TG){ const P = st.tangerine.profile||{attempts:[],review:{},exams:[]}; if(merge){ const seen = new Set(TG.Store.profile.attempts.map(a=>a.caseId+a.at)); P.attempts = (P.attempts||[]).concat(TG.Store.profile.attempts.filter(a=>!seen.has(a.caseId+a.at))); P.review = Object.assign({}, P.review, TG.Store.profile.review); } TG.Store.profile = Object.assign({attempts:[],review:{},exams:[]}, P); const mine = st.tangerine.my||[]; if(merge){ const ids = new Set(mine.map(c=>c.id)); TG.Store.my = mine.concat(TG.Store.my.filter(c=>!ids.has(c.id))); } else TG.Store.my = mine; TG.Store.cacheLocal(); TG.Store.saveProfile(); TG.App.refresh(); }
-  if(st.settings){ const g = SET.google; SET = Object.assign(SET, st.settings); SET.google = Object.assign({}, SET.google||{}, g); saveSet(); applyTheme(); }
-  renderToday();
+  if(st.ember && typeof DB !== "undefined"){ DB = Object.assign(EMBER0(), st.ember); save(); try { renderLog(); renderQuizStats(); } catch {} }
+  if(st.tangerine && window.TG){ TG.Store.profile = Object.assign({attempts:[], review:{}, exams:[]}, st.tangerine.profile||{}); TG.Store.my = st.tangerine.my||[]; TG.Store.cacheLocal(); TG.Store.saveProfile(); if(TG.App.view !== "encounter") TG.App.refresh(); }
+  renderToday(); if(window.EG && EG.X) EG.X.renderRound();
 }
-function restore(text){ let b; try { b = JSON.parse(text); } catch { toast("That is not valid JSON"); return; } if(b.app==="tangerine"){ applyState({tangerine:{profile:b.profile, my:b.cases}}, {merge:true}); toast("Tangerine backup merged"); return; } if(b.app!=="embergine"){ if(Array.isArray(b.codes)){ applyState({ember:b},{merge:true}); toast("Ember backup merged"); return; } toast("Not an Embergine backup"); return; } applyState(b, {merge:true}); dirty(); toast("Backup merged"); }
+function restore(text){ let b; try { b = JSON.parse(text); } catch { toast("That is not valid JSON"); return; }
+  let inc = null, label = "Backup";
+  if(b && b.app === "tangerine"){ inc = { tangerine:{ profile:b.profile, my:b.cases||[] } }; label = "Tangerine backup"; }
+  else if(b && b.app === "embergine"){ inc = { ember:b.ember, tangerine:b.tangerine }; if(b.settings){ SET = Object.assign(SET, { theme:b.settings.theme||SET.theme, sound:b.settings.sound!==false, hints:!!b.settings.hints }); saveSet(); applyTheme(); } }
+  else if(b && Array.isArray(b.codes)){ inc = { ember:b }; label = "Ember backup"; }
+  if(!inc){ toast("Not an Embergine, Ember or Tangerine backup"); return; }
+  applyState(mergeState(stateCore(), inc)); dirty(); toast(label+" merged");
+}
 
 /* ================= CITRUS HUB + GOOGLE DRIVE ================= */
 // One shared Google Cloud project (claude/hub-contract.md), no backend.
@@ -3175,7 +3185,7 @@ function restore(text){ let b; try { b = JSON.parse(text); } catch { toast("That
 //   My Apps/hub/citrus/plan.json       — Citrus's answer: today's blocks per app
 // Sign-in: Google Identity Services token client. Only in the installed app / GitHub Pages copy: the claude.ai artifact origin cannot sign in.
 const HUB = { APP:"embergine", ROOT:"My Apps", SCOPES:"openid email https://www.googleapis.com/auth/drive", DRIVE:"https://www.googleapis.com/drive/v3", UPLOAD:"https://www.googleapis.com/upload/drive/v3", FOLDER:"application/vnd.google-apps.folder",
-  KEY:"embergine_google", IDS:"embergine_drive_ids", busy:false, syncing:false, last:{}, fp:"", statusFp:"", statusAt:0, stateAt:0, timer:null, plan:null, conflict:null };
+  KEY:"embergine_google", IDS:"embergine_drive_ids", busy:false, syncing:false, last:{}, fp:"", statusFp:"", statusAt:0, stateAt:0, timer:null, plan:null };
 const hubCan = () => IS_PWA && window.isSecureContext;
 const gAuth = () => { try { return JSON.parse(localStorage.getItem(HUB.KEY)||"null"); } catch { return null; } };
 const gSet = a => { try { if(a) localStorage.setItem(HUB.KEY, JSON.stringify(a)); else localStorage.removeItem(HUB.KEY); } catch {} };
@@ -3209,23 +3219,27 @@ async function withRetry(fn){ try { return await fn(false); } catch(e){ if(/http
 const fmtTime = iso => { try { const d = new Date(iso); return fmtD(keyOf(d))+" "+p2(d.getHours())+":"+p2(d.getMinutes()); } catch { return ""; } };
 function hubErr(e){ const m = String(e&&e.message||e); return m==="signed_out"?"Sign-in needed":m==="no_client"?"Client ID missing":/http_403/.test(m)?"No access (check the Drive API and the origin on the client)":/http_/.test(m)?"Google answered "+m.slice(5):/popup|denied/.test(m)?"Sign-in cancelled":m==="gsi"?"Google script did not load (offline?)":m; }
 // 1. state.json
-function stateObj(){ return { v:1, savedAt:new Date().toISOString(), ember: typeof DB!=="undefined"?DB:null, tangerine: window.TG ? { profile:TG.Store.profile, my:TG.Store.my } : null, settings:{ theme:SET.theme, sound:SET.sound, hints:SET.hints } }; }
+function stateObj(){ return Object.assign({ v:1, savedAt:new Date().toISOString(), device:gDevice() }, stateCore()); }
 function fingerprint(o){ const s = JSON.stringify(o); let h = 0; for(let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i))|0; return h+":"+s.length; }
-function stateFingerprint(){ const o = stateObj(); delete o.savedAt; return fingerprint(o); }
-function localEmpty(){ const s = stats(); return !s.codes && !s.attempts && !Object.keys(DB.quiz||{}).length; }
-async function hubPullState(o={}){ if(SET.google.syncState===false || !gAuth()) return null; return withRetry(async retry => { const folder = await hubFolder(retry); const f = await dFile(folder, "state.json"); if(!f){ HUB.last.state = "no copy on Drive yet"; return null; } const remote = await dRead(f.id); if(!remote || remote.v!==1) return null;
-    const rAt = remote.savedAt || f.modifiedTime || ""; HUB.last.remoteAt = rAt; const mine = syncedAt();
-    if(rAt && rAt!==mine){ if(localEmpty() || o.force || !(dirtyAt && dirtyAt > mine)){ try { localStorage.setItem("embergine_before_drive", backupJson()); } catch {} applyState(remote); setSynced(rAt); HUB.stateAt = Date.now(); HUB.fp = stateFingerprint(); HUB.conflict = null; dirtyAt = ""; HUB.last.state = "loaded "+fmtTime(rAt); return "pulled"; }
-      HUB.last.state = "conflict"; HUB.conflict = {at:rAt}; return "conflict"; }
-    HUB.last.state = HUB.last.state || "up to date"; return "same"; }); }
-async function hubPushState(force){ if(SET.google.syncState===false || !gAuth()) return; const fp = stateFingerprint(); if(!force && fp===HUB.fp) return; if(!force && Date.now()-HUB.stateAt < 120000) return; if(HUB.busy) return; HUB.busy = true;
-  try { await withRetry(async retry => { const folder = await hubFolder(retry); const f = await dFile(folder, "state.json"); const st = stateObj(); await dWrite(folder, "state.json", st, f&&f.id); setSynced(st.savedAt); HUB.fp = fp; HUB.stateAt = Date.now(); HUB.conflict = null; dirtyAt = ""; HUB.last.state = "saved "+fmtTime(st.savedAt); HUB.last.err = ""; }); }
+const core = o => ({ ember:o.ember||null, tangerine:o.tangerine||null });
+function stateFingerprint(){ return fingerprint(stateCore()); }
+// Always read Drive first, merge record by record, apply locally if anything new arrived, write back only if Drive lacks something.
+async function hubSyncState(){ if(SET.google.syncState===false || !gAuth()) return; if(HUB.busy) return; HUB.busy = true;
+  try { await withRetry(async retry => { const folder = await hubFolder(retry); const f = await dFile(folder, "state.json");
+      let remote = null; if(f){ try { remote = await dRead(f.id); } catch {} if(!remote || remote.v !== 1) remote = null; }
+      const local = stateCore(); const merged = remote ? mergeState(local, core(remote)) : local;
+      const fL = fingerprint(local), fM = fingerprint(merged), fR = remote ? fingerprint(core(remote)) : "";
+      if(fM !== fL){ applyState(merged); HUB.last.state = "merged from "+(remote.device||"Drive")+" "+fmtTime(remote.savedAt); }
+      if(!remote || fM !== fR){ const out = Object.assign({ v:1, savedAt:new Date().toISOString(), device:gDevice() }, merged); await dWrite(folder, "state.json", out, f&&f.id); setSynced(out.savedAt); if(fM === fL) HUB.last.state = "saved "+fmtTime(out.savedAt); }
+      else if(fM === fL) HUB.last.state = "up to date";
+      HUB.fp = stateFingerprint(); HUB.stateAt = Date.now(); HUB.last.err = ""; }); }
   catch(e){ HUB.last.err = hubErr(e); } finally { HUB.busy = false; hubPaint(); } }
+async function hubPushState(force){ if(!force && stateFingerprint() === HUB.fp) return; return hubSyncState(); }
 // 2. status.json (contract shape)
 function hubStatus(){ const s = stats(); const t = todayKey(); const L = dayLog()[t]||{}; const wk = s.week; const done = wk.filter(w=>w.done).length; const target = 4;
   const items = []; if(L.codes) items.push({title:"Codes led", count:L.codes, minutes:L.codes*15}); if(L.cases) items.push({title:"Cases", count:L.cases, minutes:L.cases*12}); if(L.quiz) items.push({title:"Drill answers", count:L.quiz});
   const asks = wk.filter(w=>w.date>=t && !w.done).slice(0, Math.max(0, target-done)).map(w=>({date:w.date, title:"Embergine: a case and a code"+(w.date===t&&s.due?" (+ "+s.due+" reviews)":""), minutes:w.date===t ? 30 + Math.min(20, s.due*2) : 30, slot:"free"}));
-  const pending = []; if(s.quizDue) pending.push(s.quizDue+" drill questions due"); if(s.caseDue) pending.push(s.caseDue+" cases due for review"); if(HUB.conflict) pending.push("Sync conflict: choose a copy in Settings");
+  const pending = []; if(s.quizDue) pending.push(s.quizDue+" drill questions due"); if(s.caseDue) pending.push(s.caseDue+" cases due for review");
   const summary = `${L.codes||L.cases?"Trained today":"Not yet today"} · ${done}/${target} sessions this week · ${s.codes} codes led (avg ${s.avgCode??"–"}) · ${s.casesSeen}/${s.casesTotal} cases · ${s.due} due.`;
   return { title:"Embergine", icon:"🔥", color:"#F26A1B", app:HUB.APP, version:APP_VERSION, device:gDevice(), url:APP_URL, updatedAt:new Date().toISOString(), summary,
     due:Math.max(0,target-done), estimatedMinutes:30, streak:s.streak, nextDue: (L.codes||L.cases) ? (done>=target?"done for the week":"tomorrow") : "today",
@@ -3240,7 +3254,7 @@ function planBlocks(p){ const out = []; const t = todayKey(); const walk = (x,d)
     if(/embergine|tangerine|ember/.test(app) && (x.minutes||x.start||x.time||x.title)){ const date = x.date||x.day||t; if(!x.date || x.date===t || d<=2) out.push({date, start:x.start||x.time||x.at||"", minutes:+x.minutes||+x.duration||0, title:x.title||x.label||"Embergine"}); }
     Object.keys(x).forEach(k => { if(typeof x[k]==="object") walk(x[k], d+1); }); }; walk(p,0); return out.slice(0,4); }
 // orchestration
-async function hubSync(force){ if(!hubCan() || !gAuth()) return; if(HUB.syncing) return; HUB.syncing = true; hubPaint(); try { await gEnsure(); const r = await hubPullState({force:false}); if(r!=="pulled" && r!=="conflict") await hubPushState(force); await hubPushStatus(force); await hubPullPlan(); HUB.last.sync = fmtTime(new Date().toISOString()); } catch(e){ HUB.last.err = hubErr(e); } finally { HUB.syncing = false; hubPaint(); } }
+async function hubSync(force){ if(!hubCan() || !gAuth()) return; if(HUB.syncing) return; HUB.syncing = true; hubPaint(); try { await gEnsure(); await hubSyncState(); await hubPushStatus(force); await hubPullPlan(); HUB.last.sync = fmtTime(new Date().toISOString()); } catch(e){ HUB.last.err = hubErr(e); } finally { HUB.syncing = false; hubPaint(); } }
 function hubSchedule(){ if(!hubCan() || !gAuth()) return; clearTimeout(HUB.timer); HUB.timer = setTimeout(()=>{ hubPushState(false); hubPushStatus(false); }, 90000); }
 function hubPaint(){ const dot = $("#hubdot"); const a = gAuth(); if(dot){ dot.className = "hubdot" + (a ? (HUB.last.err ? " err" : " on") : ""); }
   const box = $("#hubBox"); if(!box) return; const g = SET.google; const L = HUB.last;
@@ -3248,8 +3262,7 @@ function hubPaint(){ const dot = $("#hubdot"); const a = gAuth(); if(dot){ dot.c
   box.innerHTML = `
     ${a ? `<div class="kv"><div class="t"><b>${esc(a.email||"Signed in")}</b><small>${esc(L.sync?"Last sync "+L.sync:"Not synced yet")}${L.err?" · <span style=\"color:var(--crit)\">"+esc(L.err)+"</span>":""}</small></div><div class="sh-row"><button class="sh-btn sm" data-act="hubSync">${HUB.syncing?"Syncing…":"Sync now"}</button><button class="sh-btn sm" data-act="hubSignOut">Sign out</button></div></div>`
         : `<div class="kv"><div class="t"><b>Not connected</b><small>One Google sign-in: Drive keeps your progress, Citrus plans your sessions.</small></div><button class="sh-btn primary" data-act="hubConnect">Sign in with Google</button></div>`}
-    ${HUB.conflict ? `<div class="kv" style="background:var(--warn-soft);border-radius:8px;padding:10px"><div class="t"><b>Two copies differ</b><small>Drive was saved ${esc(fmtTime(HUB.conflict.at))}; this device changed since the last sync.</small></div><div class="sh-row"><button class="sh-btn sm" data-act="hubUseRemote">Use Drive copy</button><button class="sh-btn sm" data-act="hubKeepLocal">Keep this device</button></div></div>` : ""}
-    <div class="kv"><div class="t"><b>Progress on Drive</b><small>My Apps/hub/embergine/state.json · every device loads the newest copy${L.state?" · "+esc(L.state):""}</small></div><input type="checkbox" class="sw" data-hub="syncState" ${g.syncState!==false?"checked":""}></div>
+    <div class="kv"><div class="t"><b>Progress on Drive</b><small>My Apps/hub/embergine/state.json · every device merges its work into one copy${L.state?" · "+esc(L.state):""}</small></div><input type="checkbox" class="sw" data-hub="syncState" ${g.syncState!==false?"checked":""}></div>
     <div class="kv"><div class="t"><b>Status for Citrus</b><small>status.json: summary, week, time asks, pending${L.status?" · written "+esc(L.status):""}</small></div><input type="checkbox" class="sw" data-hub="publish" ${g.publish!==false?"checked":""}></div>
     <details style="margin-top:8px"><summary class="sh-small sh-muted" style="cursor:pointer">Client ID (advanced)</summary><input class="sh" id="hubCid" value="${esc(g.clientId||"")}" style="margin-top:6px"><p class="sh-small sh-muted" style="margin-top:4px">The shared "Citrus web" client of the My Apps project. Add <code>https://embergine.github.io</code> to its authorised JavaScript origins once.</p></details>`;
 }
@@ -3260,7 +3273,7 @@ document.addEventListener("click", e => {
   const tb = e.target.closest("[data-tab]"); if(tb){ show(tb.dataset.tab); return; }
   const sb = e.target.closest("#learnnav [data-sub]"); if(sb){ show("learn", sb.dataset.sub); return; }
   const th = e.target.closest("#themeSeg [data-theme]"); if(th){ SET.theme = th.dataset.theme; saveSet(); applyTheme(); return; }
-  const b = e.target.closest("#shellmain [data-act], .topbar [data-act]"); if(!b) return;
+  const b = e.target.closest("#shellmain [data-act], .topbar [data-act]"); if(!b || b.closest("#tg")) return;
   const tg = window.TG;
   switch(b.dataset.act){
     case "randomCase": if(tg){ const all = tg.allCases(); const unseen = all.filter(c=>tg.lastScore(c.id)==null); const pool = unseen.length?unseen:all; show("cases"); tg.newEncounter(pool[Math.floor(Math.random()*pool.length)]); } break;
@@ -3277,8 +3290,6 @@ document.addEventListener("click", e => {
     case "hubConnect": hubConnect(); break;
     case "hubSync": hubSync(true); break;
     case "hubSignOut": gSet(null); HUB.last = {}; toast("Signed out"); hubPaint(); break;
-    case "hubUseRemote": hubPullState({force:true}).then(()=>{ HUB.conflict=null; hubPaint(); }); break;
-    case "hubKeepLocal": HUB.conflict = null; setSynced(HUB.last.remoteAt||""); hubPushState(true); break;
     case "updateApp": if(SW.waiting){ SW.waiting.postMessage({type:"SKIP_WAITING"}); } break;
     case "repair": (async()=>{ try { if(navigator.serviceWorker){ const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r=>r.unregister())); } if(window.caches){ const ks = await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); } } catch {} toast("Cache cleared. Reloading…"); setTimeout(()=>location.reload(), 700); })(); break;
   }
@@ -3314,7 +3325,7 @@ function boot(){
   const s = $("#setSound"); if(s) s.checked = SET.sound!==false; const h = $("#setHints"); if(h) h.checked = !!SET.hints;
   new MutationObserver(()=>{ document.body.classList.toggle("in-sim", tab==="codes" && !$("#simRun").hidden); if($("#simRun").hidden) $("#console")?.classList.remove("open"); }).observe($("#simRun"), {attributes:true, attributeFilter:["hidden"]});
   const h0 = (location.hash||"").replace("#",""); show(TABS.includes(h0) ? h0 : "today");
-  window.addEventListener("hashchange", ()=>{ const k = (location.hash||"").replace("#",""); if(TABS.includes(k) && k!==tab) show(k); });
+  window.addEventListener("hashchange", ()=>{ const k = (location.hash||"").replace("#",""); if(k!==tab) show(TABS.includes(k) ? k : "today"); });
   if(hubCan() && gAuth()){ setTimeout(()=>hubSync(false), 1500); setInterval(()=>hubSync(false), 10*60*1000); }
   document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden"){ hubPushState(false); hubPushStatus(false); } });
 }
@@ -3345,7 +3356,7 @@ const CONCEPTS = [
  {id:"c_cpr", n:"CPR quality", grp:"K", why:"Coronary perfusion pressure builds over ~15 compressions and collapses within seconds of a pause. Fraction >80 %, pauses <10 s, switch every 2 min.", link:["c_capno","c_vector"]},
  {id:"c_defib", n:"Defibrillation", grp:"K", why:"VF is the only rhythm with a cure. Each minute without a shock costs about 7–10 % survival when nobody is doing CPR; CPR slows that loss.", link:["vf","vt","tdp","c_vector"]},
  {id:"c_vector", n:"Vector change & DSED", grp:"K", why:"After three failed shocks the problem is usually the current path, not the energy. AP pads change the vector; DOSE VF found both VC and DSED beat standard pads.", link:["vf"]},
- {id:"c_epi", n:"Adrenaline timing", grp:"K", why:"Non-shockable: as early as possible, every minute of delay costs survival. Shockable: after the 2nd shock, because a shock may be enough and catecholamines raise VF recurrence.", link:["pea","asys","vf"]},
+ {id:"c_epi", n:"Adrenaline timing", grp:"K", why:"Non-shockable: as early as possible, every minute of delay costs survival. Shockable: after the 2nd shock (AHA; ERC 2025 after the 3rd), because a shock may be enough and catecholamines raise VF recurrence.", link:["pea","asys","vf"]},
  {id:"c_airway", n:"Airway & ventilation", grp:"K", why:"Two-person bag-mask is enough early; an advanced airway must not pause compressions. After it: 10 breaths/min, no more. Hypoxic arrests are the exception where ventilation is the treatment.", link:["hypoxia","opioid","drown","asthma","c_capno"]},
  {id:"c_capno", n:"Capnography", grp:"K", why:"EtCO₂ is cardiac output during CPR. <10 after 20 min is a poor sign (never alone); a sudden jump is ROSC before you feel a pulse; ERC target ≥25.", link:["c_cpr","c_rosc"]},
  {id:"c_rosc", n:"Post-ROSC care", grp:"K", why:"The injury continues after the pulse returns: MAP ≥65, SpO₂ 92–98 %, normocapnia, 12-lead, fever prevention, cause hunt, no early prognosis.", link:["c_temp","c_prog","c_cath"]},
@@ -3360,7 +3371,7 @@ const DRUG_NODES = [["d_epi","Adrenaline",["vf","vt","pea","asys","anaph"]],["d_
 const RHYTHM_NODES = [["vf","VF / fine VF"],["vt","Pulseless VT"],["tdp","Torsades"],["pea","PEA"],["asys","Asystole"]];
 
 /* ================= CONCEPT WEB ================= */
-const WEB = { nodes:[], edges:[], sel:null, drag:null, raf:null, built:false, w:900, h:720 };
+const WEB = { nodes:[], edges:[], sel:null, drag:null, raf:null, built:false, w:900, h:720, idle:0, s:1, narrow:false, link:110 };
 const COL = { H:"#47C8F5", T:"#F7A8E0", X:"#F5F07A", K:"#FF7A1A", R:"#FF5E57", D:"#4BE38A" };
 function buildWeb(){
   if(WEB.built) return; WEB.built = true;
@@ -3379,7 +3390,7 @@ function buildWeb(){
 function stepWeb(k){
   const N = WEB.nodes, W = WEB.w, H = WEB.h;
   for(let i=0;i<N.length;i++){ const a = N[i]; for(let j=i+1;j<N.length;j++){ const b = N[j]; let dx = b.x-a.x, dy = b.y-a.y, d2 = dx*dx+dy*dy+0.01, d = Math.sqrt(d2); const f = 4200/d2; dx/=d; dy/=d; a.vx -= dx*f; a.vy -= dy*f; b.vx += dx*f; b.vy += dy*f; } }
-  WEB.edges.forEach(e=>{ const dx = e.b.x-e.a.x, dy = e.b.y-e.a.y, d = Math.sqrt(dx*dx+dy*dy)+0.01; const f = (d-110)*0.012; e.a.vx += dx/d*f; e.a.vy += dy/d*f; e.b.vx -= dx/d*f; e.b.vy -= dy/d*f; });
+  WEB.edges.forEach(e=>{ const dx = e.b.x-e.a.x, dy = e.b.y-e.a.y, d = Math.sqrt(dx*dx+dy*dy)+0.01; const f = (d-WEB.link)*0.012; e.a.vx += dx/d*f; e.a.vy += dy/d*f; e.b.vx -= dx/d*f; e.b.vy -= dy/d*f; });
   N.forEach(n=>{ n.vx += (W/2-n.x)*0.004; n.vy += (H/2-n.y)*0.004; if(WEB.drag===n){ n.vx = n.vy = 0; return; } n.x += n.vx*k; n.y += n.vy*k; n.vx *= 0.82; n.vy *= 0.82; n.x = clamp(n.x, 30, W-30); n.y = clamp(n.y, 24, H-24); });
 }
 function masteryOf(n){
@@ -3392,14 +3403,19 @@ function drawWeb(){
   const cv = $("#webcv"); if(!cv) return; const cx = cv.getContext("2d"); const W = WEB.w, H = WEB.h;
   cx.clearRect(0,0,W,H); cx.fillStyle = "#07090C"; cx.fillRect(0,0,W,H);
   const sel = WEB.sel; const near = sel ? new Set(WEB.edges.filter(e=>e.a===sel||e.b===sel).flatMap(e=>[e.a.id,e.b.id])) : null;
-  WEB.edges.forEach(e=>{ const hot = sel && (e.a===sel||e.b===sel); cx.strokeStyle = hot ? "rgba(255,122,26,.9)" : "rgba(140,160,180,.18)"; cx.lineWidth = hot?2:1; cx.beginPath(); cx.moveTo(e.a.x,e.a.y); cx.lineTo(e.b.x,e.b.y); cx.stroke();
-    if(hot){ cx.fillStyle = "rgba(255,255,255,.7)"; cx.font = "10px JetBrains Mono, monospace"; cx.textAlign = "center"; cx.fillText(e.k, (e.a.x+e.b.x)/2, (e.a.y+e.b.y)/2-3); } });
-  WEB.nodes.forEach(n=>{ const dim = sel && n!==sel && !near.has(n.id); cx.globalAlpha = dim ? .25 : 1; cx.fillStyle = COL[n.grp]||"#ccc"; cx.beginPath(); cx.arc(n.x,n.y,n.r,0,7); cx.fill();
-    if(n===sel){ cx.strokeStyle = "#fff"; cx.lineWidth = 3; cx.stroke(); }
-    const m = masteryOf(n); if(m!==null){ cx.fillStyle = m>=1?"#4BE38A":m>0?"#F5F07A":"#555"; cx.beginPath(); cx.arc(n.x+n.r*0.7, n.y-n.r*0.7, 4, 0, 7); cx.fill(); }
-    cx.fillStyle = "#E7EDF2"; cx.font = (n.grp==="K"?"700 12px":"10.5px")+" Atkinson Hyperlegible, sans-serif"; cx.textAlign = "center"; cx.fillText(n.n, n.x, n.y+n.r+12); cx.globalAlpha = 1; });
+  const S2 = WEB.s;
+  WEB.edges.forEach(e=>{ const hot = sel && (e.a===sel||e.b===sel); cx.strokeStyle = hot ? "rgba(255,122,26,.9)" : "rgba(140,160,180,.18)"; cx.lineWidth = (hot?2:1)*S2; cx.beginPath(); cx.moveTo(e.a.x,e.a.y); cx.lineTo(e.b.x,e.b.y); cx.stroke();
+    if(hot && !WEB.narrow){ cx.fillStyle = "rgba(255,255,255,.7)"; cx.font = "10px JetBrains Mono, monospace"; cx.textAlign = "center"; cx.fillText(e.k, (e.a.x+e.b.x)/2, (e.a.y+e.b.y)/2-3); } });
+  WEB.nodes.forEach(n=>{ const dim = sel && n!==sel && !near.has(n.id); const r = n.r*S2; cx.globalAlpha = dim ? .25 : 1; cx.fillStyle = COL[n.grp]||"#ccc"; cx.beginPath(); cx.arc(n.x,n.y,r,0,7); cx.fill();
+    if(n===sel){ cx.strokeStyle = "#fff"; cx.lineWidth = 3*S2; cx.stroke(); }
+    const m = masteryOf(n); if(m!==null){ cx.fillStyle = m>=1?"#4BE38A":m>0?"#F5F07A":"#555"; cx.beginPath(); cx.arc(n.x+r*0.7, n.y-r*0.7, 4*S2, 0, 7); cx.fill(); }
+    const label = !WEB.narrow || n.grp==="K" || n.grp==="R" || n===sel || (near && near.has(n.id));
+    if(label){ cx.fillStyle = "#E7EDF2"; cx.font = (n.grp==="K"||n===sel?"700 ":"")+Math.round((n.grp==="K"?12:10.5)*S2)+"px Atkinson Hyperlegible, sans-serif"; cx.textAlign = "center"; const tw = cx.measureText(n.n).width/2 + 4; cx.fillText(n.n, clamp(n.x, tw, W-tw), n.y+r+12*S2); }
+    cx.globalAlpha = 1; });
 }
-function webLoop(){ stepWeb(0.5); drawWeb(); WEB.raf = requestAnimationFrame(webLoop); }
+function webVisible(){ const v = document.getElementById("sv-labs"), w = document.getElementById("labs-web"); return !!(v && v.classList.contains("on") && w && !w.hidden && document.visibilityState !== "hidden"); }
+function webLoop(){ if(!webVisible() || (WEB.idle++ > 240 && !WEB.drag)){ WEB.raf = null; drawWeb(); return; } stepWeb(0.5); drawWeb(); WEB.raf = requestAnimationFrame(webLoop); }
+function webKick(){ WEB.idle = 0; if(!WEB.raf) WEB.raf = requestAnimationFrame(webLoop); }
 function webInfo(n){
   const box = $("#webinfo"); if(!n){ box.innerHTML = `<span class="sh-eyebrow">Concept web</span><p class="sh-small sh-muted" style="margin-top:4px">${WEB.nodes.length} nodes: ${CONCEPTS.length} concepts, ${RHYTHM_NODES.length} rhythms, ${CAUSES.length} causes, ${DRUG_NODES.length} drugs. Tap a node to see what it connects to and why; drag to rearrange. The dot on a cause is your best code score on it.</p>`; return; }
   const links = WEB.edges.filter(e=>e.a===n||e.b===n).map(e=>({o:e.a===n?e.b:e.a, k:e.k}));
@@ -3408,24 +3424,26 @@ function webInfo(n){
   if(k) why = k.why;
   else if(c){ why = `<b>Before:</b> ${esc(c.teach.pre)}<br><b>During:</b> ${esc(c.teach.arrest)}`; acts = `<button class="sh-btn sm primary" onclick="EG.show('codes');startSim('${c.id}',{hidden:false})">Run this code</button>${CASE_OF[c.id]&&window.TG&&TG.getCase(CASE_OF[c.id])?`<button class="sh-btn sm" onclick="EG.show('cases');TG.newEncounter(TG.getCase('${CASE_OF[c.id]}'))">Open the case</button>`:""}`; }
   else if(n.grp==="R"){ const rid = n.id.slice(2); const R = RH[rid]; why = R ? `${R.sh?"Shockable":"Non-shockable"}. ${R.org?"Organised electrical activity":"No organised activity"}. ${rid==="vf"?"Shock it, even when fine. Adrenaline after the 2nd shock, amiodarone after the 3rd, vector change after 3 failures.":rid==="vt"?"Treated exactly like VF while pulseless.":rid==="tdp"?"Magnesium 2 g; unsynchronised shock; speed the heart up; never amiodarone.":rid==="pea"?"Adrenaline as early as possible; it is almost always an H or a T.":"Adrenaline as early as possible; CPR; look hard for a reversible cause; pacing does not help."}` : ""; acts = `<button class="sh-btn sm" onclick="EG.X.stripDrill('${rid}')">Strip drill</button>`; }
-  else { const d = DRUGS.find(x=>x[0].toLowerCase().startsWith(n.n.toLowerCase().split(" ")[0])); why = d ? `<b>${esc(d[0])}</b> · ${esc(d[1])}<br>${esc(d[2])}` : ""; }
+  else { const DMAP = {d_epi:"Adrenaline",d_amio:"Amiodarone",d_mg:"Magnesium",d_ca:"Calcium chloride 10 %",d_bic:"Sodium bicarbonate 8.4 %",d_lipid:"Lipid emulsion 20 %",d_tpa:"Alteplase",d_nalox:"Naloxone",d_hdi:"Insulin (HDI)",d_fab:"Digoxin Fab",d_hydroxo:"Hydroxocobalamin",d_atrop:"Atropine",d_epiIM:"Adrenaline"}; const d = DRUGS.find(x=>x[0]===DMAP[n.id]); why = d ? `<b>${esc(d[0])}</b> · ${esc(d[1])}<br>${esc(d[2])}` : ""; }
   const teach = TEACH.find(t=>t.node===n.id);
   box.innerHTML = `<div class="sh-row" style="justify-content:space-between"><div><span class="sh-eyebrow">${n.grp==="K"?"Concept":n.grp==="R"?"Rhythm":n.grp==="D"?"Drug":"Cause"}</span><h3>${esc(n.n)}</h3></div><div class="sh-row">${acts}${teach?`<button class="sh-btn sm" onclick="EG.X.teach('${teach.id}')">Teach it back</button>`:""}</div></div>
     <p class="sh-small" style="margin-top:8px">${why}</p>
-    <div class="sh-row" style="margin-top:8px">${links.map(l=>`<button class="sh-pill" style="cursor:pointer" onclick="EG.X.webSelect('${l.o.id}')">${esc(l.k)} → ${esc(l.o.n)}</button>`).join("")}</div>`;
+    <div class="sh-row" style="margin-top:8px">${links.map(l=>`<button class="sh-pill" style="cursor:pointer" onclick="EG.X.webSelect('${l.o.id}', true)">${esc(l.k)} → ${esc(l.o.n)}</button>`).join("")}</div>`;
 }
-function webSelect(id){ const n = WEB.nodes.find(x=>x.id===id); WEB.sel = n||null; X().web.last = id; webInfo(WEB.sel); EG.legDone("concept"); }
+function webSelect(id, user){ buildWeb(); const n = WEB.nodes.find(x=>x.id===id); WEB.sel = n||null; if(id) X().web.last = id; webInfo(WEB.sel); drawWeb(); if(n && user!==false) EG.legDone("concept"); }
 function conceptOfDay(){ const d = new Date(); const i = (d.getFullYear()*372+d.getMonth()*31+d.getDate()) % CONCEPTS.length; return CONCEPTS[i]; }
 function initWeb(){
-  buildWeb(); const cv = $("#webcv"); if(!cv || cv.dataset.wired) { drawWeb(); return; } cv.dataset.wired = 1;
+  const cv = $("#webcv"); if(!cv) return;
+  if(!WEB.built){ const narrow = (cv.parentElement.clientWidth||900) < 620; if(narrow){ Object.assign(WEB, {narrow:true, s:1.55, w:560, h:900, link:84}); cv.width = 560; cv.height = 900; } }
+  buildWeb(); if(cv.dataset.wired){ webInfo(WEB.sel); webKick(); return; } cv.dataset.wired = 1;
   const pos = e => { const r = cv.getBoundingClientRect(); return { x:(e.clientX-r.left)*WEB.w/r.width, y:(e.clientY-r.top)*WEB.h/r.height }; };
-  const hit = p => WEB.nodes.find(n => (n.x-p.x)**2+(n.y-p.y)**2 <= (n.r+8)**2);
+  const hit = p => WEB.nodes.find(n => (n.x-p.x)**2+(n.y-p.y)**2 <= (n.r*WEB.s+8)**2);
   let down = null;
-  cv.addEventListener("pointerdown", e => { const p = pos(e); const n = hit(p); down = {p, n, moved:false}; if(n){ WEB.drag = n; cv.setPointerCapture(e.pointerId); } });
+  cv.addEventListener("pointerdown", e => { const p = pos(e); const n = hit(p); down = {p, n, moved:false}; if(n){ WEB.drag = n; cv.setPointerCapture(e.pointerId); webKick(); } });
   cv.addEventListener("pointermove", e => { if(!down||!WEB.drag) return; const p = pos(e); if(Math.abs(p.x-down.p.x)>4||Math.abs(p.y-down.p.y)>4) down.moved = true; WEB.drag.x = p.x; WEB.drag.y = p.y; });
-  const up = e => { if(down && !down.moved){ webSelect(down.n ? down.n.id : null); } WEB.drag = null; down = null; };
+  const up = e => { if(down && !down.moved){ webSelect(down.n ? down.n.id : null, true); } WEB.drag = null; down = null; };
   cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", up);
-  if(!WEB.raf) webLoop();
+  webKick();
   if(!WEB.sel){ WEB.sel = WEB.nodes.find(n=>n.id===conceptOfDay().id)||null; }
   webInfo(WEB.sel);
 }
@@ -3464,10 +3482,10 @@ const STRIP_SET = [["vf","Coarse VF",{hr:0}],["vff","Fine VF",{hr:0}],["vt","Mon
 let STRIP = null;
 function renderStrip(cv, rid, hr){ const cx = cv.getContext("2d"); const W = cv.width, H = cv.height; cx.fillStyle = "#07090C"; cx.fillRect(0,0,W,H); cx.strokeStyle = "#121a24"; for(let x=0;x<W;x+=25){ cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,H); cx.stroke(); } for(let y=0;y<H;y+=25){ cx.beginPath(); cx.moveTo(0,y); cx.lineTo(W,y); cx.stroke(); }
   const saved = S; S = { rhythm:rid, v:{hr:hr||60}, cpr:false, cause:null, phase:"x" }; afT = 0; cx.strokeStyle = "#4BE38A"; cx.lineWidth = 2; cx.beginPath(); const t0 = Math.random()*5; for(let x=0;x<W;x++){ const t = t0 + x/W*6; const y = H*0.6 - ecgAt(t)*H*0.38; x?cx.lineTo(x,y):cx.moveTo(x,y); } cx.stroke(); S = saved; }
-function stripDrill(pref){ const pool = STRIP_SET; const pick = pref && pool.find(p=>p[0]===pref) || pool[Math.floor(Math.random()*pool.length)]; const opts = [pick].concat(pool.filter(p=>p!==pick).sort(()=>Math.random()-.5).slice(0,3)).sort(()=>Math.random()-.5); STRIP = {pick, opts, n:(STRIP?STRIP.n:0)+1};
+function stripDrill(pref){ EG.show("drill"); const pool = STRIP_SET; const pick = pref && pool.find(p=>p[0]===pref) || pool[Math.floor(Math.random()*pool.length)]; const opts = [pick].concat(pool.filter(p=>p!==pick).sort(()=>Math.random()-.5).slice(0,3)).sort(()=>Math.random()-.5); STRIP = {pick, opts, n:(STRIP?STRIP.n:0)+1};
   const box = $("#stripbox"); box.innerHTML = `<div class="sh-row" style="justify-content:space-between"><span class="sh-eyebrow">Rhythm strip ${STRIP.n} · pulseless patient unless told otherwise</span><span class="sh-small sh-muted">${X().strips.right}/${X().strips.seen} right</span></div><div class="strip" style="margin-top:8px"><canvas id="stripcv" width="900" height="160"></canvas></div><div class="x-opts" style="margin-top:8px">${opts.map(o=>`<button class="x-opt" data-r="${o[0]}">${o[1]}</button>`).join("")}</div><div id="stripex" class="sh-small" style="margin-top:8px"></div>`;
-  renderStrip($("#stripcv"), pick[0], pick[2].hr); $$("#stripbox .x-opt").forEach(b=>b.onclick=()=>stripAnswer(b.dataset.r)); EG.show("drill"); $("#stripbox").scrollIntoView({block:"start"}); }
-function stripAnswer(r){ const ok = r===STRIP.pick[0]; X().strips.seen++; if(ok) X().strips.right++; $$("#stripbox .x-opt").forEach(b=>{ b.disabled = true; if(b.dataset.r===STRIP.pick[0]) b.classList.add("r"); else if(b.dataset.r===r) b.classList.add("w"); }); const R = RH[STRIP.pick[0]]; const next = R.sh ? "Shockable: charge during compressions, shock, resume CPR." : (STRIP.pick[0]==="asys"||/pea/.test(STRIP.pick[0])) ? "Non-shockable: resume CPR, adrenaline as early as possible, hunt the cause." : "Perfusing rhythm if there is a pulse: check it, then treat the patient, not the monitor."; $("#stripex").innerHTML = `${ok?'<span style="color:var(--ok)">Correct.</span>':'<span style="color:var(--crit)">No: '+esc(STRIP.pick[1])+'.</span>'} ${next} <button class="sh-btn sm" style="margin-left:8px" onclick="EG.X.stripDrill()">Next strip</button>`; save(); if(X().strips.seen % 3 === 0) EG.legDone("strip"); EG.logDay("quiz"); }
+  renderStrip($("#stripcv"), pick[0], pick[2].hr); $$("#stripbox .x-opt").forEach(b=>b.onclick=()=>stripAnswer(b.dataset.r)); $("#stripbox").scrollIntoView({block:"nearest"}); }
+function stripAnswer(r){ const ok = r===STRIP.pick[0]; X().strips.seen++; if(ok) X().strips.right++; $$("#stripbox .x-opt").forEach(b=>{ b.disabled = true; if(b.dataset.r===STRIP.pick[0]) b.classList.add("r"); else if(b.dataset.r===r) b.classList.add("w"); }); const R = RH[STRIP.pick[0]]; const next = R.sh ? "Shockable: charge during compressions, shock, resume CPR." : (STRIP.pick[0]==="asys"||/pea/.test(STRIP.pick[0])) ? "Non-shockable: resume CPR, adrenaline as early as possible, hunt the cause." : "Perfusing rhythm if there is a pulse: check it, then treat the patient, not the monitor."; $("#stripex").innerHTML = `${ok?'<span style="color:var(--ok)">Correct.</span>':'<span style="color:var(--crit)">No: '+esc(STRIP.pick[1])+'.</span>'} ${next} <button class="sh-btn sm" style="margin-left:8px" onclick="EG.X.stripDrill()">Next strip</button>`; save(); const rr = roundState(); if(rr.started && !rr.finished){ rr.strips = (rr.strips||0)+1; if(rr.strips >= 3) EG.legDone("strip"); else toast((3-rr.strips)+" more strip"+(rr.strips===2?"":"s")+" for the Round"); } EG.logDay("quiz"); }
 
 /* ================= TOOLS ================= */
 function doseTable(kg){ const r = (x,d=1) => (Math.round(x*Math.pow(10,d))/Math.pow(10,d)).toString(); return [
@@ -3476,7 +3494,7 @@ function doseTable(kg){ const r = (x,d=1) => (Math.round(x*Math.pow(10,d))/Math.
   ["Alteplase (PE arrest)","50 mg bolus",""],["Lipid 20 %","1.5 mL/kg bolus, then 15 mL/kg/h", r(kg*1.5,0)+" mL, then "+r(kg*15,0)+" mL/h (max "+r(kg*12,0)+" mL)"],
   ["High-dose insulin","1 U/kg bolus, 1 U/kg/h", r(kg,0)+" U, then "+r(kg,0)+" U/h + dextrose"],["Naloxone","0.4–2 mg, repeat 2–3 min",""],["Hydroxocobalamin","5 g over 15 min",""],["TXA (trauma)","1 g over 10 min, 1 g over 8 h",""],
   ["Ketamine (RSI)","1–2 mg/kg", r(kg)+"–"+r(kg*2)+" mg"],["Rocuronium","1.2 mg/kg", r(kg*1.2)+" mg"],["Adrenaline infusion","0.05–0.5 µg/kg/min", r(kg*0.05*60/1000,2)+"–"+r(kg*0.5*60/1000,2)+" mg/h"],
-  ["Noradrenaline","0.05–0.5 µg/kg/min", r(kg*0.05*60/1000,2)+"–"+r(kg*0.5*60/1000,2)+" mg/h"],["Dextrose 10 %","2.5 mL/kg (25 g adult)", r(kg*2.5,0)+" mL"],["Crystalloid bolus","10–20 mL/kg", r(kg*10,0)+"–"+r(kg*20,0)+" mL"] ]; }
+  ["Noradrenaline","0.05–0.5 µg/kg/min", r(kg*0.05*60/1000,2)+"–"+r(kg*0.5*60/1000,2)+" mg/h"],["Dextrose 10 %","150–250 mL (15–25 g), recheck glucose at 10 min",""],["Crystalloid bolus","10–20 mL/kg", r(kg*10,0)+"–"+r(kg*20,0)+" mL"] ]; }
 const INF = [["Noradrenaline 4 mg in 50 mL",80,"µg/kg/min",0.05,0.5,0.1],["Noradrenaline 8 mg in 50 mL",160,"µg/kg/min",0.05,0.5,0.1],["Adrenaline 4 mg in 50 mL",80,"µg/kg/min",0.05,0.5,0.1],["Adrenaline 1 mg in 100 mL (peripheral)",10,"µg/min",1,20,5],["Amiodarone 900 mg in 500 mL",1.8,"mg/h",10,60,37.5],["Propofol 1 % (10 mg/mL)",10,"mg/kg/h",0.5,4,2],["Fentanyl 500 µg in 50 mL",10,"µg/h",25,200,50],["Insulin 50 U in 50 mL",1,"U/h",1,10,2],["Isoprenaline 1 mg in 50 mL",20,"µg/min",1,10,4]];
 function infuse(){ const i = +$("#infDrug").value, kg = +$("#infKg").value, dose = +$("#infDose").value; const [name, conc, unit] = INF[i]; let perH = 0;
   if(unit==="µg/kg/min") perH = dose*kg*60/conc; else if(unit==="µg/min") perH = dose*60/conc; else if(unit==="µg/h") perH = dose/conc; else if(unit==="mg/kg/h") perH = dose*kg/conc; else if(unit==="mg/h") perH = dose/conc; else if(unit==="U/h") perH = dose/conc;
@@ -3492,7 +3510,7 @@ function renderTools(){ const box = $("#toolsbox"); if(box.dataset.done) return;
   <div class="sh-card chk"><h3>Pregnant patient (≥20 weeks)</h3>${["Continuous manual left uterine displacement","IV/IO above the diaphragm","Early advanced airway (difficult airway expected)","Obstetrics, neonatology, anaesthesia called at minute 0","Resuscitative hysterotomy started by 4 min, delivered by 5","Standard drugs and energies; no changes","Causes: haemorrhage, PE/AFE, eclampsia (magnesium), cardiomyopathy, sepsis, anaesthetic"].map(t=>`<label><input type="checkbox">${t}</label>`).join("")}</div>`;
   const dt = () => { const kg = +$("#doseKg").value; $("#doseKgO").textContent = kg; $("#doseTbl").innerHTML = doseTable(kg).map(r=>`<tr><td style="padding:5px 6px;border-bottom:1px solid var(--line)">${r[0]}</td><td style="padding:5px 6px;border-bottom:1px solid var(--line)">${r[1]}</td><td class="mono" style="padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--f-mono);color:var(--accent-ink)">${r[2]}</td></tr>`).join(""); };
   $("#doseKg").addEventListener("input", dt); dt();
-  const inf = () => { const d = INF[+$("#infDrug").value]; $("#infUnit").textContent = d[2]; const r = $("#infDose"); r.min = d[3]; r.max = d[4]; r.step = d[2]==="µg/kg/min"?0.01:d[2]==="mg/kg/h"?0.1:1; r.value = d[5]; $("#infDoseO").textContent = r.value; $("#infKgO").textContent = $("#infKg").value; infuse(); };
+  const inf = () => { const d = INF[+$("#infDrug").value]; $("#infUnit").textContent = d[2]; const r = $("#infDose"); r.min = d[3]; r.max = d[4]; r.step = d[2]==="µg/kg/min"?0.01:d[2]==="mg/kg/h"?0.1:d[2]==="mg/h"?0.5:1; r.value = d[5]; $("#infDoseO").textContent = r.value; $("#infKgO").textContent = $("#infKg").value; infuse(); };
   $("#infDrug").addEventListener("change", inf); $("#infKg").addEventListener("input", ()=>{ $("#infKgO").textContent = $("#infKg").value; infuse(); }); $("#infDose").addEventListener("input", ()=>{ $("#infDoseO").textContent = $("#infDose").value; infuse(); }); inf();
   box.addEventListener("click", e => { const b = e.target.closest("[data-ck]"); if(b) codeClock(b.dataset.ck); });
 }
@@ -3501,7 +3519,7 @@ const CK = { t0:null, log:[], timer:null, lastCheck:null, lastEpi:null, shocks:0
 function ckTick(){ if(!CK.t0) return; const s = (Date.now()-CK.t0)/1000; $("#ckBig").textContent = mmss(s); const lc = CK.lastCheck!==null ? 120-(Date.now()-CK.lastCheck)/1000 : null; $("#ckCycle").textContent = lc===null ? "cycle —" : (lc<=0 ? "RHYTHM CHECK DUE" : "next check in "+mmss(lc)); $("#ckCycle").style.color = lc!==null&&lc<=0 ? "var(--crit)" : ""; const le = CK.lastEpi!==null ? (Date.now()-CK.lastEpi)/1000 : null; $("#ckEpi").textContent = le===null ? "adrenaline —" : "adrenaline "+mmss(le)+" ago"; $("#ckEpi").style.color = le!==null&&le>300 ? "var(--crit)" : le!==null&&le>180 ? "var(--warn)" : ""; }
 function ckAdd(txt){ const s = CK.t0 ? mmss((Date.now()-CK.t0)/1000) : "00:00"; CK.log.push(s+"  "+txt); $("#ckLog").innerHTML = CK.log.map(esc).join("<br>"); $("#ckLog").scrollTop = 1e6; try { navigator.vibrate && navigator.vibrate(10); } catch {} }
 function codeClock(a){
-  if(a==="start"){ if(!CK.t0){ CK.t0 = Date.now(); CK.lastCheck = Date.now(); clearInterval(CK.timer); CK.timer = setInterval(ckTick, 500); ckAdd("Arrest recognised, CPR started"); } else ckAdd("CPR resumed"); return; }
+  if(a==="start"){ if(!CK.t0){ CK.t0 = Date.now(); CK.lastCheck = Date.now(); clearInterval(CK.timer); CK.timer = setInterval(ckTick, 500); ckAdd("Arrest recognised, CPR started"); } else { if(!CK.timer){ CK.timer = setInterval(ckTick, 500); CK.lastCheck = Date.now(); } ckAdd("CPR resumed"); } ckTick(); return; }
   if(!CK.t0 && a!=="reset"){ toast("Tap Arrest / CPR first"); return; }
   if(a==="check"){ CK.lastCheck = Date.now(); ckAdd("Rhythm check"); }
   if(a==="shock"){ CK.shocks++; ckAdd("Shock #"+CK.shocks); }
@@ -3509,8 +3527,8 @@ function codeClock(a){
   if(a==="amio"){ ckAdd("Amiodarone"); }
   if(a==="other"){ let v = null; try { v = window.prompt ? window.prompt("What happened?") : null; } catch {} ckAdd(v || "Other intervention"); }
   if(a==="rosc"){ CK.rosc = Date.now(); ckAdd("ROSC"); }
-  if(a==="stop"){ ckAdd("Resuscitation stopped"); clearInterval(CK.timer); }
-  if(a==="reset"){ clearInterval(CK.timer); Object.assign(CK, {t0:null, log:[], lastCheck:null, lastEpi:null, shocks:0, epi:0, rosc:null}); $("#ckLog").innerHTML = ""; $("#ckBig").textContent = "00:00"; $("#ckCycle").textContent = "cycle —"; $("#ckEpi").textContent = "adrenaline —"; }
+  if(a==="stop"){ ckAdd("Resuscitation stopped"); clearInterval(CK.timer); CK.timer = null; }
+  if(a==="reset"){ clearInterval(CK.timer); Object.assign(CK, {t0:null, timer:null, log:[], lastCheck:null, lastEpi:null, shocks:0, epi:0, rosc:null}); $("#ckLog").innerHTML = ""; $("#ckBig").textContent = "00:00"; $("#ckCycle").textContent = "cycle —"; $("#ckEpi").textContent = "adrenaline —"; }
   if(a==="copy"){ const dur = CK.t0 ? mmss(((CK.rosc||Date.now())-CK.t0)/1000) : "—"; const note = `CARDIAC ARREST NOTE ${new Date().toLocaleDateString("en-GB")}\nCPR duration ${dur}; shocks ${CK.shocks}; adrenaline ${CK.epi} mg.\nTimeline:\n${CK.log.join("\n")}\nReversible causes considered: hypoxia, hypovolaemia, hyper/hypokalaemia, hypothermia, thrombosis (coronary/pulmonary), tension pneumothorax, tamponade, toxins.`; navigator.clipboard?.writeText(note).then(()=>toast("Copied")).catch(()=>toast("Copy blocked; select the log")); }
   ckTick();
 }
@@ -3537,7 +3555,7 @@ function estimate(){ const done = new Set(X().est.map(e=>e.i)); let idx = ESTIMA
 
 /* ================= TEACH IT BACK ================= */
 const TEACH = [
- {id:"t_epi", node:"c_epi", q:"Explain to a new nurse why adrenaline goes in immediately in PEA but only after the second shock in VF.", rub:["Non-shockable: no other treatment; every minute of delay costs survival","Shockable: the shock itself may restore a rhythm","Catecholamines increase myocardial oxygen demand and VF recurrence","Interval 3–5 min thereafter, IV before IO"]},
+ {id:"t_epi", node:"c_epi", q:"Explain to a new nurse why adrenaline goes in immediately in PEA but only after the shocks in VF (2nd shock AHA, 3rd shock ERC).", rub:["Non-shockable: no other treatment; every minute of delay costs survival","Shockable: the shock itself may restore a rhythm","Catecholamines increase myocardial oxygen demand and VF recurrence","Interval 3–5 min thereafter, IV before IO"]},
  {id:"t_cpr", node:"c_cpr", q:"Why does a 15-second pause for intubation matter more than it feels?", rub:["Coronary perfusion pressure takes ~15 compressions to rebuild","It collapses within seconds of stopping","Fraction >80 % and pauses <10 s are the targets","Intubation should happen during compressions or not at all"]},
  {id:"t_vector", node:"c_vector", q:"A colleague wants a 6th shock with the same pads. What do you say?", rub:["After 3 failed shocks VF is 'persistent'","Optimise CPR, drugs, reversible causes first","Change the vector to antero-posterior","DSED may be considered (AHA 2b, DOSE VF)"]},
  {id:"t_capno", node:"c_capno", q:"What does EtCO₂ tell you during CPR, and what can it never decide alone?", rub:["It reflects cardiac output from compressions","<10 mmHg after 20 min predicts poor outcome","A sudden rise means ROSC","It never terminates a resuscitation on its own"]},
@@ -3556,12 +3574,13 @@ function teach(id){ const t = TEACH.find(x=>x.id===id) || TEACH[Math.floor(Math.
 const WHY = [["misread","Misread the question"],["slip","Knew it, slipped"],["concept","Did not know the concept"],["mix","Mixed two things up"]];
 function autopsy(qi){ const ex = $("#qEx"); if(!ex) return; const d = document.createElement("div"); d.className = "aut"; d.innerHTML = `<span class="sh-small sh-muted" style="align-self:center">Why?</span>` + WHY.map(w=>`<button data-w="${w[0]}">${w[1]}</button>`).join(""); ex.appendChild(d); d.onclick = e => { const b = e.target.closest("button"); if(!b) return; $$("button", d).forEach(x=>x.classList.toggle("on", x===b)); X().why[b.dataset.w] = (X().why[b.dataset.w]||0)+1; X().whyQ[qi] = b.dataset.w; save(); }; }
 const BOSSES = [["dose","Doses & energies","💉"],["rhythm","Rhythm → next step","📈"],["cause","Causes & antidotes","🧪"],["post","Post-arrest care","🧠"]];
-let BOSS = null;
-function boss(topic){ const idx = QUIZ.map((q,i)=>i).filter(i=>QUIZ[i].t===topic).sort(()=>Math.random()-.5).slice(0,12); if(idx.length<6){ toast("Not enough questions for that boss"); return; } BOSS = {topic, idx, i:0, right:0, end:Date.now()+8*60*1000}; EG.show("drill"); bossQ(); }
-function bossQ(){ const box = $("#bossbox"); if(BOSS.i>=BOSS.idx.length || Date.now()>BOSS.end){ const won = BOSS.right>=10; if(won){ const first = !X().badges[BOSS.topic]; X().badges[BOSS.topic] = {at:Date.now(), score:BOSS.right}; save(); toast(first?"Badge earned":"Badge defended"); } box.innerHTML = `<span class="sh-eyebrow">Boss fight · ${BOSSES.find(b=>b[0]===BOSS.topic)[1]}</span><h3 style="margin-top:4px">${BOSS.right} / ${BOSS.idx.length} ${won?"— badge earned":"— need 10 to win"}</h3><div class="sh-row" style="margin-top:8px"><button class="sh-btn sm" onclick="EG.X.boss('${BOSS.topic}')">Again</button></div>`; EG.logDay("quiz"); return; }
+let BOSS = null, BOSS_T = null;
+const bossNeed = n => Math.ceil(n*10/12);
+function boss(topic){ clearInterval(BOSS_T); BOSS_T = null; const idx = QUIZ.map((q,i)=>i).filter(i=>QUIZ[i].t===topic).sort(()=>Math.random()-.5).slice(0,12); if(idx.length<6){ toast("Not enough questions for that boss"); return; } BOSS = {topic, idx, i:0, right:0, end:Date.now()+8*60*1000, over:false}; EG.show("drill"); bossQ(); $("#bossbox").scrollIntoView({block:"nearest"}); }
+function bossQ(){ const box = $("#bossbox"); if(BOSS.over) return; if(BOSS.i>=BOSS.idx.length || Date.now()>BOSS.end){ BOSS.over = true; clearInterval(BOSS_T); BOSS_T = null; const won = BOSS.right>=bossNeed(BOSS.idx.length); if(won){ const first = !X().badges[BOSS.topic]; X().badges[BOSS.topic] = {at:Date.now(), score:BOSS.right}; save(); toast(first?"Badge earned":"Badge defended"); } box.innerHTML = `<span class="sh-eyebrow">Boss fight · ${BOSSES.find(b=>b[0]===BOSS.topic)[1]}</span><h2 style="margin-top:4px">${BOSS.right} / ${BOSS.idx.length} ${won?"— badge earned":"— need "+bossNeed(BOSS.idx.length)+" to win"}</h2><div class="sh-row" style="margin-top:8px"><button class="sh-btn sm" onclick="EG.X.boss('${BOSS.topic}')">Again</button></div>`; EG.logDay("quiz"); return; }
   const q = QUIZ[BOSS.idx[BOSS.i]]; const order = q.o.map((o,i)=>i).sort(()=>Math.random()-.5); const left = Math.max(0, Math.round((BOSS.end-Date.now())/1000));
   box.innerHTML = `<div class="sh-row" style="justify-content:space-between"><span class="sh-eyebrow">Boss · ${BOSS.i+1}/${BOSS.idx.length} · ${BOSS.right} right</span><span class="mono" id="bossT">${mmss(left)}</span></div><p style="margin:8px 0;font-weight:600">${esc(q.q)}</p><div class="x-opts">${order.map(i=>`<button class="x-opt" data-i="${i}">${esc(q.o[i])}</button>`).join("")}</div><div id="bossEx" class="sh-small" style="margin-top:8px"></div>`;
-  clearInterval(BOSS.timer); BOSS.timer = setInterval(()=>{ const l = Math.max(0, Math.round((BOSS.end-Date.now())/1000)); const t = $("#bossT"); if(t) t.textContent = mmss(l); if(l<=0){ clearInterval(BOSS.timer); bossQ(); } }, 1000);
+  if(!BOSS_T) BOSS_T = setInterval(()=>{ if(!BOSS || BOSS.over){ clearInterval(BOSS_T); BOSS_T = null; return; } const l = Math.max(0, Math.round((BOSS.end-Date.now())/1000)); const t = $("#bossT"); if(t) t.textContent = mmss(l); if(l<=0) bossQ(); }, 1000);
   $$("#bossbox .x-opt").forEach(b=>b.onclick=()=>{ const ok = +b.dataset.i===q.a; if(ok) BOSS.right++; $$("#bossbox .x-opt").forEach(x=>{ x.disabled = true; if(+x.dataset.i===q.a) x.classList.add("r"); else if(x===b) x.classList.add("w"); }); $("#bossEx").innerHTML = (ok?"Correct. ":"No. ")+esc(q.ex||"")+` <button class="sh-btn sm" style="margin-left:6px" id="bossNext">Next</button>`; $("#bossNext").onclick = ()=>{ BOSS.i++; bossQ(); }; }); }
 function renderDrillExtras(){ const b = $("#bossbox"); if(b && !b.dataset.done){ b.dataset.done = 1; b.innerHTML = `<span class="sh-eyebrow">Boss fights</span><p class="sh-small sh-muted" style="margin:4px 0 8px">12 questions, 8 minutes, 10 right wins the badge.</p><div class="badges">${BOSSES.map(x=>`<button class="badge ${X().badges[x[0]]?"won":""}" onclick="EG.X.boss('${x[0]}')"><div class="ic">${x[2]}</div><b>${x[1]}</b><small>${X().badges[x[0]]?"won "+new Date(X().badges[x[0]].at).toLocaleDateString("en-GB"):"not yet"}</small></button>`).join("")}</div>`; }
   const e = $("#estbox"); if(e && !e.dataset.done){ e.dataset.done = 1; e.innerHTML = `<span class="sh-eyebrow">Estimate</span><p class="sh-small sh-muted" style="margin:4px 0 8px">Commit to a number from the resuscitation literature before you see it. Calibration beats memorisation.</p><button class="sh-btn" onclick="EG.X.estimate()">Give me a number to guess</button>`; }
@@ -3575,7 +3594,7 @@ function legDone(k){ const r = roundState(); if(!r.started) return; const L = r.
 function startRound(){ const r = roundState(); r.started = true; r.i = r.legs.findIndex(l=>!l.done); save(); renderRound(); goLeg(); }
 function goLeg(){ const r = roundState(); const L = r.legs[r.i]; if(!L) return; const k = L.k;
   if(k==="due"){ EG.show("drill"); const s = EG.stats(); $("#quizMode").value = s.quizDue ? "due" : "mixed"; startQuiz(); }
-  if(k==="concept"){ EG.show("labs","web"); setTimeout(()=>webSelect(conceptOfDay().id), 50); }
+  if(k==="concept"){ EG.show("labs","web"); setTimeout(()=>{ webSelect(conceptOfDay().id, false); toast("Read today's concept, then tap one of its links"); }, 60); }
   if(k==="strip") stripDrill();
   if(k==="case"){ const tg = window.TG; if(tg){ const all = tg.allCases(); const due = tg.dueList(); const unseen = all.filter(c=>tg.lastScore(c.id)==null); const pool = due.length ? due.map(id=>tg.getCase(id)) : unseen.length ? unseen : all; EG.show("cases"); tg.newEncounter(pool[Math.floor(Math.random()*pool.length)]); } }
   if(k==="code"){ EG.show("codes"); startRandom(false); }
@@ -3602,10 +3621,10 @@ function renderProgressExtras(){ const box = $("#progextras"); if(!box) return; 
 function adviceFor(why){ const top = Object.entries(why).sort((a,b)=>b[1]-a[1])[0]; if(!top) return ""; return {misread:"Most misses are misreads: read the stem twice and underline the rhythm and the timing words before you answer.", slip:"Slips: you know it but rush. Slow down on the sprint and say the answer out loud before tapping.", concept:"Concept gaps: open the concept web for the topic you miss and teach it back before the next drill.", mix:"Mix-ups: drill the pairs that collide (amiodarone vs lidocaine, calcium vs bicarbonate, VC vs DSED) in the Doses boss fight."}[top[0]]; }
 
 /* ================= wiring ================= */
-window.EG.X = { webSelect, stripDrill, estimate, teach, boss, initWeb, openLab, renderTools, renderDrillExtras, renderProgressExtras, renderRound, autopsy, conceptOfDay, LABS };
+window.EG.X = { bossState: () => BOSS, webIds: () => { buildWeb(); return WEB.nodes.map(n=>n.id); }, webSelect, stripDrill, estimate, teach, boss, initWeb, openLab, renderTools, renderDrillExtras, renderProgressExtras, renderRound, autopsy, conceptOfDay, LABS };
 window.EG.legDone = legDone;
 // hook: Ember quiz answer → autopsy on a miss, and the 'due' leg when a set ends
-const _answer = window.answer; window.answer = function(i){ const qi = Q.idx[Q.i]; const q = QUIZ[qi]; _answer(i); if(i!==q.a) autopsy(qi); };
+const _answer = window.answer; window.answer = function(i){ if(!Q || Q.i>=Q.idx.length || document.querySelector("#qEx .ok, #qEx .bad")) return; const qi = Q.idx[Q.i]; const q = QUIZ[qi]; _answer(i); if(q && i!==q.a) autopsy(qi); };
 const _nextQ = window.nextQ; window.nextQ = function(){ const ending = Q && Q.i>=Q.idx.length; _nextQ(); if(ending) legDone("due"); };
 // case and code legs
 const _logDay = EG.logDay; EG.logDay = function(kind){ _logDay(kind); if(kind==="cases") legDone("case"); if(kind==="codes") legDone("code"); };

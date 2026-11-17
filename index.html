@@ -4984,7 +4984,7 @@ document.querySelectorAll('.view').forEach(v=>{});
 /* ================= EMBERGINE SHELL ================= */
 "use strict";
 const EG = (function(){
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.3.1";
 const IS_PWA = !!window.EMBERGINE_PWA;
 const APP_URL = "https://embergine.github.io/embergine/";
 const $ = (s, el=document) => el.querySelector(s);
@@ -5380,9 +5380,9 @@ function restoreBasic(text){ let b; try { b = JSON.parse(text); } catch { toast(
 
 /* ================= CITRUS HUB + GOOGLE DRIVE ================= */
 // One shared Google Cloud project (claude/hub-contract.md), no backend.
-//   My Apps/hub/embergine/state.json   — the whole progress (Drive is the master copy; every device syncs it)
-//   My Apps/hub/embergine/status.json  — the hub snapshot Citrus reads (summary, today, week, asks, pending, extra)
-//   My Apps/hub/citrus/plan.json       — Citrus's answer: today's blocks per app
+//   <embergine folder>/state.json (found by tag citrusApp=embergine; old place My Apps/hub/embergine)   — the whole progress (Drive is the master copy; every device syncs it)
+//   <embergine folder>/status.json  — the hub snapshot Citrus reads (summary, today, week, asks, pending, extra)
+//   <citrus folder>/plan.json (tag citrus)       — Citrus's answer: today's blocks per app
 // Sign-in: Google Identity Services token client. Only in the installed app / GitHub Pages copy: the claude.ai artifact origin cannot sign in.
 const HUB = { APP:"embergine", ROOT:"My Apps", SCOPES:"openid email https://www.googleapis.com/auth/drive", DRIVE:"https://www.googleapis.com/drive/v3", UPLOAD:"https://www.googleapis.com/upload/drive/v3", FOLDER:"application/vnd.google-apps.folder",
   KEY:"embergine_google", IDS:"embergine_drive_ids", busy:false, busyAt:0, syncing:false, syncAt:0, last:{}, fp:"", statusFp:"", statusAt:0, stateAt:0, timer:null, plan:null,
@@ -5450,8 +5450,8 @@ const dMeta = id => gJSON(`${HUB.DRIVE}/files/${encodeURIComponent(id)}?fields=i
 async function mergeFolders(keep, others){ for(const o of others){ const kids = await dList(o.id); for(const k of kids) await dMove(k.id, keep.id, o.id); await dTrash(o.id); } }
 // one lookup per path at a time in this tab; find before create; re-list after create
 function serial(fn){ const p = HUB.chain.then(fn, fn); HUB.chain = p.catch(()=>{}); return p; }
-function dFolder(path, verify, noCreate){ return serial(async () => { const key = path.join("/"); const ids = idsGet(); if(ids[key] && !verify) return ids[key]; let parent = null, acc = [];
-  for(const name of path){ acc.push(name); const k = acc.join("/"); if(ids[k] && !verify){ parent = ids[k]; continue; }
+function dFolder(path, verify, noCreate, root){ return serial(async () => { const pre = root ? "@"+root+"/" : ""; const key = pre+path.join("/"); const ids = idsGet(); if(ids[key] && !verify) return ids[key]; let parent = root || null, acc = [];
+  for(const name of path){ acc.push(name); const k = pre+acc.join("/"); if(ids[k] && !verify){ parent = ids[k]; continue; }
     let L = await dList(parent, name, true);
     if(!L.length){ if(noCreate) return null; let made = null;
       try { made = await gJSON(`${HUB.DRIVE}/files?fields=id`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name, mimeType:HUB.FOLDER, parents:parent?[parent]:[]})}, {once:true}); } catch(e){ if(!/timeout|network|http_5/.test(e.message)) throw e; }
@@ -5467,7 +5467,27 @@ function dWrite(folderId, name, data, fileId, props){ const b = "embergine"+Date
   const body = `--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${typeof data === "string" ? data : JSON.stringify(data)}\r\n--${b}--`;
   const url = fileId ? `${HUB.UPLOAD}/files/${encodeURIComponent(fileId)}?uploadType=multipart&fields=id,modifiedTime,appProperties` : `${HUB.UPLOAD}/files?uploadType=multipart&fields=id,modifiedTime,appProperties`;
   return gJSON(url, {method:fileId?"PATCH":"POST", headers:{"Content-Type":`multipart/related; boundary=${b}`}, body}, {once:!fileId}); }
-const hubFolder = verify => dFolder([HUB.ROOT,"hub",HUB.APP], verify);
+/* Folders are found by tag (claude/drive-layout.md): appProperties.citrusApp = "<id>", oldest wins. Citrus may move or rename them;
+   Embergine never does. Checked once per session, cached per account. Nothing tagged yet → the old path; a folder made there is tagged at once.
+   A tagged folder anywhere means no folder is ever created by path. */
+async function dTagFind(tag){ const qs = `mimeType = '${HUB.FOLDER}' and trashed = false and appProperties has { key='citrusApp' and value='${q(tag)}' }`;
+  const L = (await gJSON(`${HUB.DRIVE}/files?`+new URLSearchParams({q:qs, fields:"files(id,name,parents,createdTime)", pageSize:"50", spaces:"drive"})))?.files || [];
+  return L.slice().sort((a,b) => String(a.createdTime||"").localeCompare(String(b.createdTime||"")) || String(a.id).localeCompare(String(b.id)))[0] || null; }
+const dTag = (id, tag) => gJSON(`${HUB.DRIVE}/files/${encodeURIComponent(id)}?fields=id,appProperties`, {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify({appProperties:{citrusApp:tag}})});
+HUB.tagSeen = HUB.tagSeen || {};
+async function tagFolder(tag, olds, o={}){ const ids = idsGet(), k = "#tag:"+tag, seen = HUB.tagSeen[acct()+"|"+tag];
+  if(ids[k] && seen && !o.verify) return ids[k];
+  const f = await dTagFind(tag);                       // a failed lookup throws: never fall back to creating by path on an error
+  if(f){ const n = idsGet(); n[k] = f.id; idsSet(n); HUB.tagSeen[acct()+"|"+tag] = 1; HUB.byTag[tag] = "tag"; return f.id; }
+  let id = null;
+  for(const path of olds){ id = await dFolder(path, o.verify, true); if(id) break; }
+  let made = false; if(!id && !o.noCreate){ id = await dFolder(olds[0], o.verify); made = true; }
+  if(!id) return null;
+  if(o.own || made) await dTag(id, tag).catch(()=>{});   // our own folder, or one we just made, carries the tag; another app's folder is Citrus's to tag
+  const n = idsGet(); n[k] = id; idsSet(n); HUB.tagSeen[acct()+"|"+tag] = 1; HUB.byTag[tag] = "path"; return id; }
+HUB.byTag = HUB.byTag || {};
+const hubFolder = verify => tagFolder(HUB.APP, [[HUB.ROOT,"hub",HUB.APP]], {verify, own:true});
+async function hubSub(name, verify, noCreate){ const base = await hubFolder(verify); return dFolder([name], verify, noCreate, base); }
 async function withRetry(fn){ try { return await fn(false); } catch(e){ if(/http_404/.test(e.message)) return fn(true); throw e; } }
 const fmtTime = iso => { try { const d = new Date(iso); if(isNaN(d)) return ""; return fmtD(keyOf(d))+" "+p2(d.getHours())+":"+p2(d.getMinutes()); } catch { return ""; } };
 function hubErr(e){ const m = String(e&&e.message||e); return m==="signed_out"?"Sign-in needed":m==="needs_tap"?"Google sign-in expired · tap to reconnect":m==="no_client"?"Client ID missing":m==="offline"?"Offline · your changes wait on this device":m==="timeout"?"Google did not answer in "+Math.round(HUB.timeout/1000)+" s (timeout); nothing was written":m==="network"?"No connection to Google; nothing was written":m==="bad_json"?"Google sent an unreadable answer":m==="silent_timeout"?"Google did not answer the reconnect · tap again":/http_429/.test(m)?"Google is busy (429) · try again in a minute":/http_403/.test(m)?"No access (check the Drive API and the origin on the client)":/http_/.test(m)?"Google answered "+m.slice(5):/popup|denied/.test(m)?"Sign-in cancelled":m==="gsi"?"Google script did not load (offline?)":m; }
@@ -5506,14 +5526,14 @@ async function readTwin(folder, f, repair){ let text;
 const BK_RE = /^state-(\d{4}-\d{2}-\d{2})\.json$/;
 const isSunday = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d).getDay() === 0; };
 async function dailyBackup(f){ const day = todayKey(); const done = lsObj("embergine_backup_day"); if(done[acct()] === day) return;
-  const bf = await dFolder([HUB.ROOT,"hub",HUB.APP,"backups"]); const name = `state-${day}.json`;
+  const bf = await hubSub("backups"); const name = `state-${day}.json`;
   if(!(await dList(bf, name)).length) await gJSON(`${HUB.DRIVE}/files/${encodeURIComponent(f.id)}/copy?fields=id`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name, parents:[bf]})}, {once:true});
   done[acct()] = day; lsPut("embergine_backup_day", done); await pruneBackups(bf); }
 async function pruneBackups(bf){ const L = (await dList(bf)).filter(f => BK_RE.test(f.name)); const seen = new Set(), dup = [];
   L.forEach(f => { const d = f.name.match(BK_RE)[1]; if(seen.has(d)) dup.push(f); else seen.add(d); });
   const dates = [...seen].sort().reverse(); const keep = new Set(dates.slice(0,7)); dates.slice(7).filter(isSunday).slice(0,4).forEach(d => keep.add(d));
   for(const f of L) if(dup.includes(f) || !keep.has(f.name.match(BK_RE)[1])) await dTrash(f.id).catch(()=>{}); }
-async function driveBackups(){ if(!hubCan() || !gAuth()) return []; const bf = await dFolder([HUB.ROOT,"hub",HUB.APP,"backups"], false, true); if(!bf) return [];
+async function driveBackups(){ if(!hubCan() || !gAuth()) return []; const bf = await hubSub("backups", false, true); if(!bf) return [];
   const L = (await dList(bf)).filter(f => BK_RE.test(f.name)); const by = new Map(); L.forEach(f => { const d = f.name.match(BK_RE)[1]; if(!by.has(d)) by.set(d, f); });
   return [...by.entries()].sort((a,b) => b[0].localeCompare(a[0])).map(([d,f]) => ({ id:f.id, name:f.name, date:d, label:fmtD(d), weekly:isSunday(d), size:+f.size||0, modifiedTime:f.modifiedTime||"" })); }
 // Bring back: merge a backup into this device and Drive, or (mode "replace", after an explicit confirm) make arrest progress equal to it
@@ -5578,7 +5598,7 @@ function hubStatus(){ const s = stats(); const t = todayKey(); const L = dayLog(
 async function hubPushStatus(force){ if(SET.google.publish===false || !gAuth()) return; const st = hubStatus(); const o = Object.assign({}, st); delete o.updatedAt; const fp = fingerprint(o); if(!force && fp===HUB.statusFp) return; if(!force && Date.now()-HUB.statusAt < 300000) return; const g0 = HUB.gen;
   try { await withRetry(async retry => { const folder = await hubFolder(retry); const L = await dList(folder, "status.json"); const f = L[L.length-1]; alive(g0); await dWrite(folder, "status.json", st, f&&f.id); for(const t of L.slice(0,-1)) await dTrash(t.id).catch(()=>{}); }); HUB.statusFp = fp; HUB.statusAt = Date.now(); HUB.last.status = fmtTime(st.updatedAt); HUB.last.serr = ""; } catch(e){ if(e.code !== "cancelled") HUB.last.serr = hubErr(e); } hubPaint(); }
 // 3. plan.json from Citrus
-async function hubPullPlan(){ if(!gAuth()) return; const g0 = HUB.gen; try { let folder = await dFolder([HUB.ROOT,"hub","citrus"], false, true); if(!folder) folder = await dFolder([HUB.ROOT,"hub","scheduler"], false, true); if(HUB.gen !== g0) return; if(!folder){ HUB.plan = null; return; } const f = await dFile(folder, "plan.json"); if(!f){ HUB.plan = null; return; } const raw = await dRead(f.id); const p = planBlocks(raw); if(HUB.gen !== g0 || !gAuth()) return; HUB.planRaw = raw; planCache(raw); HUB.plan = p; HUB.last.plan = ""; renderToday(); if(EG.X) EG.X.renderRound(); } catch(e){ HUB.last.plan = hubErr(e); } }
+async function hubPullPlan(){ if(!gAuth()) return; const g0 = HUB.gen; try { const folder = await tagFolder("citrus", [[HUB.ROOT,"hub","citrus"],[HUB.ROOT,"hub","scheduler"]], {noCreate:true}); if(HUB.gen !== g0) return; if(!folder){ HUB.plan = null; return; } const f = await dFile(folder, "plan.json"); if(!f){ HUB.plan = null; return; } const raw = await dRead(f.id); const p = planBlocks(raw); if(HUB.gen !== g0 || !gAuth()) return; HUB.planRaw = raw; planCache(raw); HUB.plan = p; HUB.last.plan = ""; renderToday(); if(EG.X) EG.X.renderRound(); } catch(e){ HUB.last.plan = hubErr(e); } }
 function planBlocks(p){ HUB.planDays = p && p.days && typeof p.days === "object" && !Array.isArray(p.days) ? p.days : null; const out = []; const t = todayKey(); const walk = (x,d) => { if(!x || d>6) return; if(Array.isArray(x)){ x.forEach(y=>walk(y,d+1)); return; } if(typeof x!=="object") return; const app = String(x.app||x.id||x.name||"").toLowerCase();
     if(/embergine|tangerine|ember/.test(app) && (x.minutes||x.start||x.time||x.title)){ const date = x.date||x.day||t; if(!x.date || x.date===t || d<=2) out.push({date, start:x.start||x.time||x.at||"", end:x.end||"", minutes:+x.minutes||+x.duration||0, title:x.title||x.label||"Embergine", status:x.status||""}); }
     Object.keys(x).forEach(k => { if(typeof x[k]==="object") walk(x[k], d+1); }); }; walk(p,0); const seen = new Set(); return out.filter(b => { const k = b.date+"|"+b.start+"|"+b.title; if(seen.has(k)) return false; seen.add(k); return true; }).slice(0,4); }
@@ -5595,7 +5615,7 @@ function hubPaint(){ const dot = $("#hubdot"); const a = gAuth(); const L = HUB.
   box.innerHTML = `
     ${a ? `<div class="kv"><div class="t"><b>${esc(a.email||"Signed in")}</b><small>${esc(L.sync?"Last sync "+L.sync:"Not synced yet")}${why?" · <span style=\"color:var(--crit)\">"+esc(why)+"</span>":""}${HUB.pending&&why?" · changes wait on this device":""}</small></div><div class="sh-row">${tapNeed?`<button class="sh-btn sm primary" data-act="hubReconnect">Reconnect</button>`:`<button class="sh-btn sm" data-act="hubSync">${HUB.syncing?"Syncing…":"Sync now"}</button>`}${L.fix==="repair"&&!tapNeed?`<button class="sh-btn sm" data-act="hubRepair">Repair Drive copy</button>`:""}<button class="sh-btn sm" data-act="hubSignOut">Sign out</button></div></div>`
         : `<div class="kv"><div class="t"><b>Not connected</b><small>One Google sign-in: Drive keeps your progress, Citrus plans your sessions.</small></div><button class="sh-btn primary" data-act="hubConnect">Sign in with Google</button></div>`}
-    <div class="kv"><div class="t"><b>Progress on Drive</b><small>My Apps/hub/embergine/state.json · every device merges its work into one copy${L.state?" · "+esc(L.state):""}${L.backup?" · backup: "+esc(L.backup):""}</small></div><input type="checkbox" class="sw" data-hub="syncState" ${g.syncState!==false?"checked":""}></div>
+    <div class="kv"><div class="t"><b>Progress on Drive</b><small>state.json in your Embergine folder on Drive (${HUB.byTag[HUB.APP]==="tag"?"found by its tag, wherever Citrus puts it":"My Apps/hub/embergine until Citrus moves it"}) · every device merges its work into one copy${L.state?" · "+esc(L.state):""}${L.backup?" · backup: "+esc(L.backup):""}</small></div><input type="checkbox" class="sw" data-hub="syncState" ${g.syncState!==false?"checked":""}></div>
     <div class="kv"><div class="t"><b>Status for Citrus</b><small>status.json: summary, week, time asks, pending${L.status?" · written "+esc(L.status):""}</small></div><input type="checkbox" class="sw" data-hub="publish" ${g.publish!==false?"checked":""}></div>
     <details style="margin-top:8px"><summary class="sh-small sh-muted" style="cursor:pointer">Client ID (advanced)</summary><input class="sh" id="hubCid" value="${esc(g.clientId||"")}" style="margin-top:6px"><p class="sh-small sh-muted" style="margin-top:4px">The shared "Citrus web" client of the My Apps project. Add <code>https://embergine.github.io</code> to its authorised JavaScript origins once.</p></details>`;
 }
@@ -5725,7 +5745,7 @@ function boot(){
 return { on, emit, toast, logDay, dirty, renderToday, show, stats, todayKey, dayKeyAt, dayStartH, shiftLoad, dayCounts, weekDays, progState, dayCheck, armDayTurn, settings: () => SET, saveSet, version:APP_VERSION, hubStatus, backupJson, restore, boot, HUB, mergeX,
   esc, fmtD, stateCore, applyState, mergeState, normTG, normSet, stateCounts, restoreBasic, quarantine, persistKey, isBusy, whenIdle, LIVE, applyTheme, renderSettings, getSet: () => SET, setSet: o => { SET = normSet(o); }, readOnly:false,
   mergeEmber, mergeTG, resetTomb, gcInit: e => gcNorm(e, devId(), gcBase(resetsOf(e))), devId, fingerprint, driveBackups, bringBack, hubErr, hubSync, hubSyncState, hubPaint,
-  drive: { can: () => hubCan(), auth: () => gAuth(), folder: (p, r, n) => dFolder(p, r, n), file: (f, n) => dFile(f, n), write: (f, n, o, id) => dWrite(f, n, o, id) } };
+  drive: { can: () => hubCan(), auth: () => gAuth(), folder: (p, r, n, root) => dFolder(p, r, n, root), tagged: (t, olds, o) => tagFolder(t, olds, o||{}), file: (f, n) => dFile(f, n), write: (f, n, o, id) => dWrite(f, n, o, id) } };
 })();
 window.EG = EG; window.renderHome = EG.renderToday;
 EG.boot();
@@ -8985,7 +9005,7 @@ if(typeof window.resetAll === "function"){ const orig = window.resetAll; window.
 const BB = { list:null, busy:false, arm:"", msg:"" };
 function bbCard(){ const set = $("#sv-settings"); if(!set) return null; let host = $("#egBringBack"); if(host) return host;
   const hub = $("#hubBox"); const card = document.createElement("div"); card.className = "sh-card"; card.id = "bbCard";
-  card.innerHTML = `<h3>Bring back a Drive backup</h3><p class="sh-small sh-muted">Once a day, before the first write, Drive keeps a copy of your progress in My Apps/hub/embergine/backups (7 daily + 4 Sundays). Bringing one back merges it in; nothing on this device is lost.</p><div id="egBringBack" style="margin-top:8px"></div>`;
+  card.innerHTML = `<h3>Bring back a Drive backup</h3><p class="sh-small sh-muted">Once a day, before the first write, Drive keeps a copy of your progress in the backups folder inside your Embergine folder (7 daily + 4 Sundays). Bringing one back merges it in; nothing on this device is lost.</p><div id="egBringBack" style="margin-top:8px"></div>`;
   const after = hub ? hub.closest(".sh-card") : null; if(after) after.after(card); else set.append(card); return $("#egBringBack"); }
 function bbPaint(){ const host = bbCard(); if(!host) return; const signed = !!localStorage.getItem("embergine_google") && window.EMBERGINE_PWA && window.isSecureContext;
   if(!signed){ host.innerHTML = `<p class="sh-small sh-muted">Sign in with Google (above) to keep daily Drive backups.</p>`; return; }
@@ -9085,11 +9105,11 @@ function hubV2(st, s){ const t = today(); const wk = isoWeek(t); const mon = mon
   if(s.due) inbox.push({id:`embergine-due-${wk}`, type:"task", title:`Embergine: ${s.due} review${s.due > 1 ? "s" : ""} due`, minutes:Math.min(30, Math.max(5, s.due*2)), pri:1, url:linkFor(s.quizDue ? "drill" : "case"), expires:sunEnd});
   const r = X().round; const rToday = r && r.date === t ? r : null; if(slotFor(t) === "free" && !(rToday && (rToday.started || rToday.finished))) inbox.push({id:`embergine-round-${wk}`, type:"task", title:"Embergine: The Round is not started today", minutes:30, pri:2, url:linkFor("round"), expires:endOfDay(t)});
   const actions = [["round","Start the Round","🔥",30],["code","Lead a random code","🫀",15],["case","Random case","🩺",12],["drill","Drill due questions","🎯",10],["boss","Boss fight","⚔️",8],["strips","Rhythm strips","📈",5]].map(([id,label,icon,minutes]) => ({id, label, url:linkFor(id), icon, minutes}));
-  const o = Object.assign({}, st, { contract:2, version:EG.version, metrics, progress, inbox, actions });
+  const o = Object.assign({}, st, { contract:2, version:EG.version, metrics, progress, inbox, actions, drive:{ byTag:true } });
   o.week = Object.assign({}, st.week, { days:(st.week.days||[]).map(d => { const sh = shiftOf(d.date); return Object.assign({}, d, { shift:sh ? String(sh.code || sh.label || "") : (d.shift || ""), studied:!!d.trained, slot:slotFor(d.date) }); }) });
   o.asks = (st.asks||[]).map(a => { const sl = slotFor(a.date); return Object.assign({}, a, { slot:sl, minutes:LIGHT[sl] ? Math.min(a.minutes, LIGHT[sl]) : a.minutes }); });
   return o; }
-EG.hubV2 = (st, s) => { try { return hubV2(st, s); } catch(e){ console.warn("d19 status v2", e); return Object.assign({}, st, { contract:2, metrics:[], progress:[], inbox:[], actions:[] }); } }; EG.isoWeek = isoWeek; EG.slotFor = slotFor;
+EG.hubV2 = (st, s) => { try { return hubV2(st, s); } catch(e){ console.warn("d19 status v2", e); return Object.assign({}, st, { contract:2, metrics:[], progress:[], inbox:[], actions:[], drive:{ byTag:true } }); } }; EG.isoWeek = isoWeek; EG.slotFor = slotFor;
 
 // ================= deep links from Citrus =================
 const FROM = "embergine.fromCitrus";
@@ -9118,7 +9138,7 @@ EG.deepLink = deepLink;
 readLink();
 
 // ================= Yuzu packs =================
-const YUZU_PATH = ["My Apps","Yuzu","collection","inbox"];
+const YUZU_OLD = ["My Apps","Yuzu"], YUZU_SUB = ["collection","inbox"];   // yuzu-data folder by tag (drive-layout.md), then collection/inbox inside it
 function buildPack(){ const y = yz(); const t = today(); const wk = isoWeek(t); const monTs = kDate(monday(t)).getTime(); const items = [];
   if(typeof QUIZ !== "undefined") QUIZ.forEach((q, i) => { const k = qid(q, i); const st = qStat(q, i); let ts = y.miss[k] || 0; if(!ts && st && st.seen > st.right) ts = 1; if(!ts) return;
     const id = "embergine-q-" + k; const sentAt = y.sent[id] || 0; const isNew = ts > sentAt; if(!isNew && sentAt < monTs) return;
@@ -9128,7 +9148,7 @@ function buildPack(){ const y = yz(); const t = today(); const wk = isoWeek(t); 
   return { pack, file:"embergine-"+wk+".json", items, nNew:items.filter(i => i.isNew).length, nQ:items.filter(i => i.isNew && i.kind === "q").length, nT:items.filter(i => i.isNew && i.kind === "t").length, nKept:items.filter(i => !i.isNew).length }; }
 function markSent(P, to){ const y = yz(); const now = Date.now(); P.pack.cards.forEach(c => { y.sent[c.id] = now; }); y.last = now; y.log.push({ id:P.pack.id, at:now, n:P.pack.cards.length, to }); if(y.log.length > 30) y.log.splice(0, y.log.length - 30); persist(); }
 function download(name, obj){ const blob = new Blob([JSON.stringify(obj, null, 1)], {type:"application/json"}); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
-async function upload(P){ const D = EG.drive; const go = async retry => { const folder = await D.folder(YUZU_PATH, retry); const f = await D.file(folder, P.file); await D.write(folder, P.file, P.pack, f && f.id); return !!f; };
+async function upload(P){ const D = EG.drive; const go = async retry => { const base = await D.tagged("yuzu-data", [YUZU_OLD], {verify:retry}); const folder = await D.folder(YUZU_SUB, retry, false, base); const f = await D.file(folder, P.file); await D.write(folder, P.file, P.pack, f && f.id); return !!f; };
   try { return await go(false); } catch(e){ if(/http_404/.test(String(e && e.message))) return go(true); throw e; } }
 const canDrive = () => { try { return !!(EG.drive && EG.drive.can() && EG.drive.auth()); } catch { return false; } };
 const OPEN = {};
@@ -9140,7 +9160,7 @@ function renderYuzu(box){ if(!box) return; const P = buildPack(); const y = yz()
   else { const prev = P.items.slice(0, 6).map(i => `<li><span class="sh-pill">${i.kind === "q" ? "question" : "takeaway"}</span> ${esc((i.card.question || i.card.front || "").slice(0, 120))}${i.isNew ? "" : ' <span class="sh-muted">(already sent this week)</span>'}</li>`).join("");
     const drive = canDrive();
     html += `<div class="yz-prev" role="region" aria-label="Pack preview"><b>${esc(P.file)}</b> · ${P.pack.cards.length} card${P.pack.cards.length === 1 ? "" : "s"}${P.nKept ? ` (${P.nNew} new, ${P.nKept} already sent this week stay in the file)` : ""}<ul>${prev}</ul>${P.items.length > 6 ? `<p class="sh-small sh-muted">and ${P.items.length - 6} more</p>` : ""}
-      <p class="sh-small sh-muted">${drive ? "Goes to My Apps/Yuzu/collection/inbox on your Drive. Yuzu asks you before adding." : "Download the file and open it in Yuzu (Import). Google upload works in the installed app once signed in."}</p></div>
+      <p class="sh-small sh-muted">${drive ? "Goes to Yuzu's collection/inbox folder on your Drive. Yuzu asks you before adding." : "Download the file and open it in Yuzu (Import). Google upload works in the installed app once signed in."}</p></div>
       <div class="sh-row" style="margin-top:8px">${drive ? `<button class="sh-btn primary" data-yz="drive">Send to Yuzu</button><button class="sh-btn" data-yz="download">Download .json</button>` : `<button class="sh-btn primary" data-yz="download">Download .json</button><button class="sh-btn" data-yz="copy">Copy JSON</button>`}<button class="sh-btn" data-yz="cancel">Cancel</button></div>`; }
   box.innerHTML = html; }
 function renderYuzuAll(){ renderYuzu($("#yuzuBox")); renderYuzu($("#yuzuProgBox")); }
@@ -9158,7 +9178,7 @@ EG.on("show", ({tab}) => { if(tab !== "progress") return; let box = $("#yuzuProg
 
 // ================= Settings groups =================
 const WHATSNEW = (window.EG_WHATSNEW = window.EG_WHATSNEW || []);
-WHATSNEW.unshift(["1.3.0", "Settings in labelled groups with a jump row; each group says whether it syncs."], ["1.3.0", "Citrus Maxima can open Embergine straight into the Round, a code, a case, a drill, a boss fight or rhythm strips; a ← Citrus chip takes you back."], ["1.3.0", "Send to Yuzu: missed questions and debrief takeaways become flashcards."], ["1.3.0", "Citrus sees this week's codes, CPR fraction, drill accuracy, cases, causes practised and suggested tasks."]);
+WHATSNEW.unshift(["1.3.1", "Drive: Embergine finds its folders by tag, so Citrus can tidy them into one Citrus folder without breaking sync."], ["1.3.0", "Settings in labelled groups with a jump row; each group says whether it syncs."], ["1.3.0", "Citrus Maxima can open Embergine straight into the Round, a code, a case, a drill, a boss fight or rhythm strips; a ← Citrus chip takes you back."], ["1.3.0", "Send to Yuzu: missed questions and debrief takeaways become flashcards."], ["1.3.0", "Citrus sees this week's codes, CPR fraction, drill accuracy, cases, causes practised and suggested tasks."]);
 function applySimDefaults(){ const S0 = EG.settings ? EG.settings() : {}; const d = S0.simDefaults || {}; const a = $("#setSetting"), b = $("#setSpeed");
   if(a && d.setting && [...a.options].some(o => o.value === d.setting)) a.value = d.setting; if(b && d.speed && [...b.options].some(o => o.value === String(d.speed))) b.value = String(d.speed); }
 function nameControls(root){ $$("input, select, textarea", root).forEach(el => { if(el.type === "hidden" || el.getAttribute("aria-label") || el.getAttribute("aria-labelledby") || (el.id && $(`label[for="${el.id}"]`)) || el.closest("label")) return;

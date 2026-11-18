@@ -8,4 +8,4 @@ Open **https://embergine.github.io/embergine/** on your phone: Safari → Share 
 
 In the claude.ai copy the AI patient and the AI case generator work (they use the viewer's own Claude); in the installed copy Google Drive works. Progress moves between copies through Settings → Backup, and between installed devices through Drive. Both merge record by record: nothing done on one device is overwritten by another.
 
-Build 33e3d1b1c5. Built from a single source (`index.html`).
+Build 0805a3b2f0. Built from a single source (`index.html`).

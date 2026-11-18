@@ -934,6 +934,15 @@ html.sf-locked body{overflow:hidden}
 @media (min-width:1000px) and (max-height:900px){ #sv-codes #simRun .room .team{display:none} }
 #pauseCover .btn{padding-right:34px}
 @media (max-width:480px){ #timers .timer .l,#timers .timer .v{white-space:nowrap;overflow:visible;text-overflow:clip;font-size:.72rem;letter-spacing:.02em} }
+/* Your data card (1.3.2) */
+.eg-data{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 10px;background:var(--surface-2)}
+.eg-data-say{margin:4px 0 8px;font-weight:600}
+.eg-data-say.ok{color:var(--ink)} .eg-data-say.warn{color:var(--warn)} .eg-data-say.crit{color:var(--crit)}
+.eg-data-rows{display:grid;gap:6px}
+.eg-data-rows>div{display:grid;grid-template-columns:7.5rem 1fr;gap:8px;align-items:baseline}
+.eg-data-rows span{font-weight:600;font-size:.86rem} .eg-data-rows small{color:var(--muted);overflow-wrap:anywhere}
+@media (max-width:480px){ .eg-data-rows>div{grid-template-columns:1fr;gap:0} }
+.eg-data-diag{margin-top:6px} .eg-data-diag p{overflow-wrap:anywhere}
 
 /* ===== Tangerine (scoped) ===== */
 #tg /* Layout: a bedside encounter. Left rail = the patient (triage card + always-dark bedside monitor + clock);
@@ -4984,7 +4993,7 @@ document.querySelectorAll('.view').forEach(v=>{});
 /* ================= EMBERGINE SHELL ================= */
 "use strict";
 const EG = (function(){
-const APP_VERSION = "1.3.1";
+const APP_VERSION = "1.4.0";
 const IS_PWA = !!window.EMBERGINE_PWA;
 const APP_URL = "https://embergine.github.io/embergine/";
 const $ = (s, el=document) => el.querySelector(s);
@@ -5312,7 +5321,8 @@ function resetTomb(e){ e = e || {}; const me = devId(); const gc = gcNorm(e, me,
   const tomb = { id: me+"-"+Date.now().toString(36)+Math.random().toString(36).slice(2,6), at:Date.now(), dev:me, codes:arr(e.codes).filter(c => c && typeof c === "object").map(codeKey), est:arr(x.est).filter(Boolean).map(estKey), quiz, x:xf, rounds: x.round ? [fpOf(x.round)] : [], base };
   return { tomb, gc }; }
 function mergeEmber(a, b){ if(!a) return b; if(!b) return a;
-  const me = devId(), resets = union(resetsOf(a), resetsOf(b), r => r.id).sort((p,q) => (p.at-q.at) || String(p.id).localeCompare(String(q.id))), dead = deadOf(resets);
+  const U = new Set([...arr(a.undone), ...arr(b.undone)].map(String)), rs = side => resetsOf(side).filter(r => !U.has(String(r.id)));
+  const me = devId(), resets = union(rs(a), rs(b), r => r.id).sort((p,q) => (p.at-q.at) || String(p.id).localeCompare(String(q.id))), dead = deadOf(resets);
   // legacy (1.2.0) wall-clock tombstone, clamped to this clock or Drive's
   const cap = Math.max(Date.now(), HUB.driveTime || 0) + 300000, lg = v => { v = +v || 0; return v > cap ? 0 : v; }, ra = lg(a.resetAt), rb = lg(b.resetAt), RL = Math.max(ra, rb);
   const oldSide = ra === rb ? null : (ra > rb ? b : a);
@@ -5327,21 +5337,22 @@ function mergeEmber(a, b){ if(!a) return b; if(!b) return a;
   const out = Object.assign(EMBER0(), B, A, { codes: union(A.codes, B.codes, codeKey).sort((p,q) => (p.ts-q.ts) || codeKey(p).localeCompare(codeKey(q))),
     quiz: newer(A.quiz, B.quiz, v => v.seen||0), real: union(arr(a.real), arr(b.real), realKey).sort((p,q) => (realT(p)-realT(q)) || realKey(p).localeCompare(realKey(q))), x: mergeX(A.x, B.x) });
   // counters: per-device G-counter (a legacy reset keeps only the newer side's counters, as 1.2.0 did)
-  const gA = gcNorm(a, me, gcBase(resetsOf(a)));
+  const gA = gcNorm(a, me, gcBase(rs(a)));
   // a copy without per-device counters (1.2.0 device, old backup) is not independent of ours: it counts as max, never as an addition
-  let gB; if(b.gc && typeof b.gc === "object" && Object.keys(b.gc).length) gB = gcNorm(b, "legacy", gcBase(resetsOf(b)));
-  else { const vb = ctrVals(b), own = gcValue(Object.fromEntries(Object.entries(gA).filter(([d]) => d !== "legacy")), gcBase(resetsOf(a))); gB = { legacy:{} }; for(const k in vb){ const v = Math.max(0, vb[k] - (own[k]||0)); if(v) gB.legacy[k] = v; } }
+  let gB; if(b.gc && typeof b.gc === "object" && Object.keys(b.gc).length) gB = gcNorm(b, "legacy", gcBase(rs(b)));
+  else { const vb = ctrVals(b), own = gcValue(Object.fromEntries(Object.entries(gA).filter(([d]) => d !== "legacy")), gcBase(rs(a))); gB = { legacy:{} }; for(const k in vb){ const v = Math.max(0, vb[k] - (own[k]||0)); if(v) gB.legacy[k] = v; } }
   let gc = gcMax(gA, gB); if(oldSide){ const keep = oldSide === a ? gB : gA, drop = oldSide === a ? gA : gB; gc = gcMax(keep, {}); for(const d in drop) for(const k in drop[d]) if(k.startsWith("days|")){ gc[d] = gc[d] || {}; gc[d][k] = Math.max(gc[d][k]||0, drop[d][k]); } }
   out.gc = gc; gcApply(out, gcValue(gc, gcBase(resets)));
   if(resets.length) out.resets = resets; else delete out.resets;
+  if(U.size) out.undone = [...U].sort(); else delete out.undone;
   if(RL) out.resetAt = RL; else delete out.resetAt;
   return out; }
 function mergeTG(a, b){ if(!a) return b; if(!b) return a; const pa = obj(a.profile), pb = obj(b.profile);
-  const del = maxObj(pa.myDel, pb.myDel); const my = new Map();
+  const del = maxObj(pa.myDel, pb.myDel), undo = maxObj(pa.myUndo, pb.myUndo); for(const k in undo) if(del[k] <= undo[k]) delete del[k]; const my = new Map();
   [...arr(a.my), ...arr(b.my)].forEach(c => { if(!c || c.id == null) return; const o = my.get(c.id); if(!o || (+c.updatedAt||0) > (+o.updatedAt||0)) my.set(c.id, c); });
   const prof = Object.assign({}, pb, pa, { attempts: union(arr(pa.attempts), arr(pb.attempts), x => x.caseId+"@"+x.at).sort((p,q) => p.at-q.at),
       exams: union(arr(pa.exams), arr(pb.exams), x => x.caseId+":"+x.qi+"@"+x.at).sort((p,q) => p.at-q.at), review: newer(obj(pa.review), obj(pb.review), v => v.due||0) });
-  if(Object.keys(del).length) prof.myDel = del;
+  if(Object.keys(del).length) prof.myDel = del; else delete prof.myDel; if(Object.keys(undo).length) prof.myUndo = undo;
   return { profile: prof, my: [...my.values()].sort((p,q) => String(p.id).localeCompare(String(q.id))).filter(c => !(del[c.id] >= (+c.updatedAt||0))) }; }
 function mergeState(local, other){ return { ember: mergeEmber(local.ember, other.ember), tangerine: mergeTG(local.tangerine, other.tangerine) }; }
 function stateCore(){ return { ember: typeof DB !== "undefined" ? JSON.parse(JSON.stringify(DB)) : null, tangerine: window.TG ? JSON.parse(JSON.stringify({ profile:TG.Store.profile, my:TG.Store.my })) : null }; }
@@ -5405,18 +5416,75 @@ const jitter = ms => Math.round(ms * (0.5 + Math.random()));
 function hubE(code, msg, extra){ const e = new Error(msg || code); e.code = code; return Object.assign(e, extra||{}); }
 let gisP = null;
 function gisLoad(){ if(window.google && google.accounts && google.accounts.oauth2) return Promise.resolve(); if(gisP) return gisP; gisP = new Promise((res,rej)=>{ const s = document.createElement("script"); s.src = "https://accounts.google.com/gsi/client"; s.async = true; s.onload = ()=>res(); s.onerror = ()=>{ gisP=null; rej(new Error("gsi")); }; document.head.appendChild(s); }); return gisP; }
-// o.silent: prompt "" — only ever called inside a tap (phones block the popup otherwise)
-async function gConnect(o={}){ const cid = (SET.google.clientId||"").trim(); if(!cid) throw new Error("no_client"); await gisLoad();
-  return new Promise((res,rej)=>{ let done=false; const tc = google.accounts.oauth2.initTokenClient({ client_id:cid, scope:HUB.SCOPES, callback: async r => { if(done) return; done=true; if(!r||!r.access_token){ rej(new Error((r&&r.error)||"denied")); return; }
-      const a = { token:r.access_token, exp:Date.now()+Math.max(60,(+r.expires_in||3600)-60)*1000, email:"" };
-      try { const ac = new AbortController(); const to = setTimeout(()=>ac.abort(), HUB.timeout); const u = await fetch("https://www.googleapis.com/oauth2/v3/userinfo",{headers:{Authorization:"Bearer "+a.token}, signal:ac.signal}); clearTimeout(to); if(u.ok) a.email = (await u.json()).email||""; } catch {}
-      if(!a.email){ const p = gAuth(); if(p && p.email) a.email = p.email; }
-      res(a); }, error_callback: e => { if(done) return; done=true; rej(new Error(e&&e.type||"popup")); } });
-    tc.requestAccessToken({prompt:o.silent?"":"consent"}); setTimeout(()=>{ if(!done){ done=true; rej(new Error(o.silent?"silent_timeout":"popup")); } }, o.silent ? 15000 : 180000); }); }
+/* Google sign-in (Sudachi 1.3.1 + 1.4.1, claude/cloud-model.md).
+   Popup: one token client, made as soon as Google's script is in, so a tap opens the window at once (inside the tap).
+   On phones Google can report "window closed" BEFORE the token arrives: the token is still awaited for 8 s and kept if it
+   comes late (also with nothing waiting for it). No second window is ever opened by itself.
+   Same window ("redirect"): an installed app often never gets the popup's answer, so there — and on any device where the
+   popup lost its answer once — the whole page goes to Google and comes back with the token in the address. The return
+   address (this page, e.g. https://embergine.github.io/embergine/) must be an Authorized redirect URI of the client. */
+const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive", GMODE = "embergine.google.mode", GBACK = "embergine.google.back";
+HUB.auth = { lastEvent:"", lastError:"" }; HUB.pend = null; HUB.grace = null; HUB.tc = null;
+const installed = () => { try { return matchMedia("(display-mode: standalone)").matches || matchMedia("(display-mode: minimal-ui)").matches || navigator.standalone === true; } catch { return false; } };
+const redirectMode = () => { try { const m = localStorage.getItem(GMODE); if(m === "redirect") return true; if(m === "popup") return false; } catch {} return installed(); };
+const returnAddress = () => location.origin + location.pathname.replace(/index\.html$/, "");
+async function gWho(token){ try { const ac = new AbortController(); const to = setTimeout(()=>ac.abort(), HUB.timeout); const u = await fetch("https://www.googleapis.com/oauth2/v3/userinfo",{headers:{Authorization:"Bearer "+token}, signal:ac.signal}); clearTimeout(to); if(u.ok) return (await u.json()).email||""; } catch {} return ""; }
+async function gTokenObj(r){ const a = { token:r.access_token, exp:Date.now()+Math.max(60,(+r.expires_in||3600)-60)*1000, email:"" };
+  a.email = await gWho(a.token); if(!a.email){ const p = gAuth(); if(p && p.email) a.email = p.email; } return a; }
+function gisPrep(){ const cid = (SET.google.clientId||"").trim(); if(!cid || !hubCan()) return Promise.resolve(false); return gisLoad().then(() => gSetupTC(cid), () => false); }
+function gSetupTC(cid){ if(HUB.tc && HUB.tcId === cid) return true; HUB.tcId = cid;
+  HUB.tc = google.accounts.oauth2.initTokenClient({ client_id:cid, scope:HUB.SCOPES, include_granted_scopes:true,
+    callback: async r => { const p = HUB.pend; HUB.pend = null; clearTimeout(HUB.grace); HUB.auth.lastEvent = r && r.error ? "error: "+r.error : "token";
+      if(r && r.access_token){ const ok = google.accounts.oauth2.hasGrantedAllScopes ? google.accounts.oauth2.hasGrantedAllScopes(r, DRIVE_SCOPE) : true;
+        if(!ok){ HUB.auth.lastError = "Drive was not allowed"; const e = hubE("no_drive", "Google signed you in but did not allow Drive. Sign in again and tick the box for Google Drive."); if(p) p.rej(e); else { toast(e.message); hubPaint(); } return; } }
+      if(!r || !r.access_token){ if(!p) return; HUB.auth.lastError = (r && (r.error_description || r.error)) || "denied"; p.rej(new Error((r && r.error) || "denied")); return; }
+      const a = await gTokenObj(r); HUB.auth.lastError = "";
+      if(p) p.res(a); else gLateToken(a); },
+    error_callback: e => { const type = (e && e.type) || "error"; HUB.auth.lastEvent = "window: "+type; const p = HUB.pend; if(!p) return;
+      if(type === "popup_closed"){ clearTimeout(HUB.grace); HUB.grace = setTimeout(() => { if(HUB.pend === p){ HUB.pend = null; try { localStorage.setItem(GMODE, "redirect"); } catch {}
+          p.rej(hubE("popup_lost", "Google's window lost its answer. Tap Sign in once more: this time Google opens in this window and comes back here.")); } }, +window.__egGraceMs || 8000); return; }
+      HUB.pend = null; p.rej(type === "popup_failed_to_open" ? hubE("popup_blocked", "The browser blocked Google's window · tap again") : new Error("popup")); } });
+  return true; }
+// a token that arrived after the window was reported closed: keep it and carry on as a normal sign-in
+async function gLateToken(a){ const old = gAuth(); HUB.auth.lastEvent = "late token kept";
+  if(old && old.email && a.email && old.email !== a.email && !(await acctCheck(a))) return;
+  if(!old && !(await acctCheck(a))) return;
+  gSet(Object.assign({}, old||{}, a, {needsTap:false})); HUB.last.err = ""; HUB.last.fix = ""; saveSet(); toast("Connected: "+(a.email||"Google")); hubSync(true, false); }
+function gRedirect(o={}){ const cid = (SET.google.clientId||"").trim(); if(!cid) throw new Error("no_client");
+  const st = Array.from(crypto.getRandomValues(new Uint8Array(12)), b => b.toString(16).padStart(2,"0")).join("");
+  try { localStorage.setItem(GBACK, JSON.stringify({ state:st, hash:location.hash, at:Date.now(), renew:!!o.renew })); } catch {}
+  const q = new URLSearchParams({ client_id:cid, redirect_uri:returnAddress(), response_type:"token", scope:HUB.SCOPES, include_granted_scopes:"true", state:st });
+  if(!o.renew) q.set("prompt", "consent"); const a = gAuth(); if(a && a.email) q.set("login_hint", a.email);
+  HUB.auth.lastEvent = "redirect: away"; (window.__egAssign || (u => location.assign(u)))("https://accounts.google.com/o/oauth2/v2/auth?" + q);
+  return new Promise(() => {}); }
+// on start-up, before routing: Google just sent us back? keep the token, tidy the address. → null | {ok, message, a}
+function takeRedirect(){ const h = location.hash || ""; if(!/[#&](access_token|error)=/.test(h)) return null;
+  const r = Object.fromEntries(new URLSearchParams(h.slice(1))); let back = null; try { back = JSON.parse(localStorage.getItem(GBACK) || "null"); localStorage.removeItem(GBACK); } catch {}
+  history.replaceState(null, "", location.pathname + location.search + (back && back.hash && !/access_token|error=/.test(back.hash) ? back.hash : "#settings"));
+  if(!back || back.state !== r.state){ HUB.auth.lastEvent = "redirect: state mismatch"; return { ok:false, message:"That Google answer was not for this sign-in · tap Sign in again" }; }
+  if(r.error){ HUB.auth.lastEvent = "redirect: "+r.error; HUB.auth.lastError = r.error; return { ok:false, message: r.error === "access_denied" ? "Google sign-in was cancelled" : "Google sign-in: "+r.error }; }
+  if(!String(r.scope||"").split(/\s+/).includes(DRIVE_SCOPE)){ HUB.auth.lastEvent = "redirect: no drive"; HUB.auth.lastError = "Drive was not allowed"; return { ok:false, message:"Google signed you in but did not allow Drive. Sign in again and tick the box for Google Drive." }; }
+  HUB.auth.lastEvent = "redirect: token"; return { ok:true, r }; }
+async function finishRedirect(res){ if(!res) return; if(!res.ok){ toast(res.message); hubPaint(); return; }
+  const a = await gTokenObj(res.r), old = gAuth();
+  if(old && old.email && a.email && old.email !== a.email){ if(!(await acctCheck(a))){ toast("Kept "+old.email+" · nothing was mixed"); hubPaint(); return; } HUB.gen++; HUB.fp = ""; idsSet({}); }
+  else if(!old && !(await acctCheck(a))){ toast("Sign-in cancelled · nothing was mixed"); hubPaint(); return; }
+  gSet(Object.assign({}, old||{}, a, {needsTap:false})); HUB.last = {}; HUB.auth.lastError = ""; saveSet(); toast((old ? "Reconnected: " : "Connected: ")+(a.email||"Google")); await hubSync(true, false); hubPaint(); }
+// o.silent: no consent screen (the account already agreed). Popup mode: must run inside a tap.
+function gConnect(o={}){ const cid = (SET.google.clientId||"").trim(); if(!cid) return Promise.reject(new Error("no_client"));
+  if(redirectMode()) return gRedirect({ renew:!!o.silent });
+  if(HUB.pend) return HUB.pend.promise;
+  const go = () => { let res, rej; const promise = new Promise((a, b) => { res = a; rej = b; }); HUB.pend = { res, rej, promise };
+    const t = setTimeout(() => { if(HUB.pend && HUB.pend.promise === promise){ HUB.pend = null; rej(new Error(o.silent ? "silent_timeout" : "popup")); } }, o.silent ? 20000 : 180000);
+    promise.then(() => clearTimeout(t), () => clearTimeout(t)); const a = gAuth();
+    HUB.tc.requestAccessToken(Object.assign({ prompt: o.silent ? "" : "consent" }, a && a.email ? { hint:a.email } : {})); return promise; };   // synchronous inside the tap
+  if(HUB.tc && HUB.tcId === cid) return go();
+  return gisLoad().then(() => { gSetupTC(cid); return go(); }); }
 function markNeedsTap(){ const a = gAuth(); if(a && !a.needsTap){ a.needsTap = true; gSet(a); } }
-// Background calls never open Google; an expired token keeps the account and waits for a tap (F08-09).
+// Background calls never open Google; an expired token keeps the account and waits for a tap (F08-09). In same-window mode
+// only Reconnect leaves the page (a sync never does).
 async function gEnsure(tap){ const t = gToken(); if(t) return t; const a = gAuth(); if(!a) throw new Error("signed_out");
-  if(!tap){ markNeedsTap(); throw new Error("needs_tap"); }
+  if(!tap || redirectMode()){ markNeedsTap(); throw new Error("needs_tap"); }
   const n = await gConnect({silent:true}); if(a.email && n.email && n.email !== a.email) throw hubE("other_account", "Google returned "+n.email+", not "+a.email+" · sign out first to switch accounts");
   gSet(Object.assign({}, a, n, {needsTap:false})); return n.token; }
 /* One request: 30 s timeout (AbortController), jittered backoff on 429/5xx and network errors, offline fails fast.
@@ -5490,7 +5558,7 @@ const hubFolder = verify => tagFolder(HUB.APP, [[HUB.ROOT,"hub",HUB.APP]], {veri
 async function hubSub(name, verify, noCreate){ const base = await hubFolder(verify); return dFolder([name], verify, noCreate, base); }
 async function withRetry(fn){ try { return await fn(false); } catch(e){ if(/http_404/.test(e.message)) return fn(true); throw e; } }
 const fmtTime = iso => { try { const d = new Date(iso); if(isNaN(d)) return ""; return fmtD(keyOf(d))+" "+p2(d.getHours())+":"+p2(d.getMinutes()); } catch { return ""; } };
-function hubErr(e){ const m = String(e&&e.message||e); return m==="signed_out"?"Sign-in needed":m==="needs_tap"?"Google sign-in expired · tap to reconnect":m==="no_client"?"Client ID missing":m==="offline"?"Offline · your changes wait on this device":m==="timeout"?"Google did not answer in "+Math.round(HUB.timeout/1000)+" s (timeout); nothing was written":m==="network"?"No connection to Google; nothing was written":m==="bad_json"?"Google sent an unreadable answer":m==="silent_timeout"?"Google did not answer the reconnect · tap again":/http_429/.test(m)?"Google is busy (429) · try again in a minute":/http_403/.test(m)?"No access (check the Drive API and the origin on the client)":/http_/.test(m)?"Google answered "+m.slice(5):/popup|denied/.test(m)?"Sign-in cancelled":m==="gsi"?"Google script did not load (offline?)":m; }
+function hubErr(e){ const m = String(e&&e.message||e); return m==="signed_out"?"Sign-in needed":m==="needs_tap"?"Google sign-in expired · tap to reconnect":m==="no_client"?"Client ID missing":m==="offline"?"Offline · your changes wait on this device":m==="timeout"?"Google did not answer in "+Math.round(HUB.timeout/1000)+" s (timeout); nothing was written":m==="network"?"No connection to Google; nothing was written":m==="bad_json"?"Google sent an unreadable answer":m==="silent_timeout"?"Google did not answer the reconnect · tap again":/http_429/.test(m)?"Google is busy (429) · try again in a minute":/http_403/.test(m)?"No access (check the Drive API and the origin on the client)":/http_/.test(m)?"Google answered "+m.slice(5):/^(popup_lost|popup_blocked|no_drive)$/.test(e&&e.code)?m:/popup|denied/.test(m)?"Sign-in cancelled":m==="gsi"?"Google script did not load (offline?)":m; }
 // one sync at a time across tabs (Web Lock); in this tab an in-flight flag that always clears
 async function withLock(fn){ if(navigator.locks && navigator.locks.request) return navigator.locks.request("embergine-drive", {ifAvailable:true}, async l => { if(!l) throw hubE("other_tab", "Another Embergine tab is syncing"); return fn(); }); return fn(); }
 const alive = g0 => { if(HUB.gen !== g0 || !gAuth()) throw hubE("cancelled", "cancelled"); };
@@ -5525,21 +5593,30 @@ async function readTwin(folder, f, repair){ let text;
 // rolling Drive backups (P12): once a day, before the first write, copy state.json to backups/state-YYYY-MM-DD.json; keep 7 daily + 4 Sundays
 const BK_RE = /^state-(\d{4}-\d{2}-\d{2})\.json$/;
 const isSunday = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d).getDay() === 0; };
-async function dailyBackup(f){ const day = todayKey(); const done = lsObj("embergine_backup_day"); if(done[acct()] === day) return;
+async function dailyBackup(st){ const day = todayKey(); const done = lsObj("embergine_backup_day"); if(done[acct()] === day) return;
   const bf = await hubSub("backups"); const name = `state-${day}.json`;
-  if(!(await dList(bf, name)).length) await gJSON(`${HUB.DRIVE}/files/${encodeURIComponent(f.id)}/copy?fields=id`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name, parents:[bf]})}, {once:true});
+  if(!(await dList(bf, name)).length) await dWrite(bf, name, Object.assign({ v:1, savedAt:new Date().toISOString(), device:gDevice(), dev:devId() }, st), null);
   done[acct()] = day; lsPut("embergine_backup_day", done); await pruneBackups(bf); }
+// a copy before a risky step (mass delete, Repair, Bring back): backups/before-<what>-<date>-<time>.json, the newest 10 kept
+const BKB_RE = /^before-([a-z-]+)-(\d{4}-\d{2}-\d{2})-(\d{6})\.json$/;
+async function backupBefore(what, st){ const bf = await hubSub("backups"); const d = new Date(); const name = `before-${what}-${todayKey()}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}.json`;
+  const w = await dWrite(bf, name, Object.assign({ v:1, savedAt:d.toISOString(), device:gDevice(), dev:devId(), before:what }, st), null);
+  const L = (await dList(bf)).filter(f => BKB_RE.test(f.name)).sort((x, y) => y.name.slice(-22).localeCompare(x.name.slice(-22))); for(const f of L.slice(10)) await dTrash(f.id).catch(()=>{});
+  HUB.last.before = name; return w && w.id; }
 async function pruneBackups(bf){ const L = (await dList(bf)).filter(f => BK_RE.test(f.name)); const seen = new Set(), dup = [];
   L.forEach(f => { const d = f.name.match(BK_RE)[1]; if(seen.has(d)) dup.push(f); else seen.add(d); });
   const dates = [...seen].sort().reverse(); const keep = new Set(dates.slice(0,7)); dates.slice(7).filter(isSunday).slice(0,4).forEach(d => keep.add(d));
   for(const f of L) if(dup.includes(f) || !keep.has(f.name.match(BK_RE)[1])) await dTrash(f.id).catch(()=>{}); }
 async function driveBackups(){ if(!hubCan() || !gAuth()) return []; const bf = await hubSub("backups", false, true); if(!bf) return [];
-  const L = (await dList(bf)).filter(f => BK_RE.test(f.name)); const by = new Map(); L.forEach(f => { const d = f.name.match(BK_RE)[1]; if(!by.has(d)) by.set(d, f); });
-  return [...by.entries()].sort((a,b) => b[0].localeCompare(a[0])).map(([d,f]) => ({ id:f.id, name:f.name, date:d, label:fmtD(d), weekly:isSunday(d), size:+f.size||0, modifiedTime:f.modifiedTime||"" })); }
+  const L0 = await dList(bf), L = L0.filter(f => BK_RE.test(f.name)); const by = new Map(); L.forEach(f => { const d = f.name.match(BK_RE)[1]; if(!by.has(d)) by.set(d, f); });
+  const daily = [...by.entries()].sort((a,b) => b[0].localeCompare(a[0])).map(([d,f]) => ({ id:f.id, name:f.name, date:d, label:fmtD(d), weekly:isSunday(d), size:+f.size||0, modifiedTime:f.modifiedTime||"" }));
+  const WHAT = { "mass-delete":"before a big removal from another device", repair:"before Repair", bringback:"before Bring back" };
+  const before = L0.filter(f => BKB_RE.test(f.name)).map(f => { const m = f.name.match(BKB_RE); return { id:f.id, name:f.name, date:m[2], label:fmtD(m[2])+" "+m[3].slice(0,2)+":"+m[3].slice(2,4)+" · "+(WHAT[m[1]]||m[1]), before:m[1], size:+f.size||0, modifiedTime:f.modifiedTime||"" }; }).sort((x, y) => y.name.slice(-22).localeCompare(x.name.slice(-22)));
+  return daily.concat(before); }
 // Bring back: merge a backup into this device and Drive, or (mode "replace", after an explicit confirm) make arrest progress equal to it
 async function bringBack(id, mode){ if(!hubCan() || !gAuth()) throw new Error("signed_out"); const o = await dRead(id);
   if(o && +o.v > 1) throw new Error("That backup was made by a newer Embergine"); const bad = badField(o); if(bad) throw new Error("That backup is damaged ("+bad+")");
-  const n0 = (typeof DB !== "undefined" && DB.codes || []).length;
+  const n0 = (typeof DB !== "undefined" && DB.codes || []).length; try { await backupBefore("bringback", stateCore()); } catch {}
   try { localStorage.setItem("embergine.snap.bringback", JSON.stringify(Object.assign({ at:new Date().toISOString() }, stateCore()))); } catch {}
   if(mode === "replace"){ await hubSyncState(); if(HUB.last.err) throw new Error(HUB.last.err);
     const cur = stateCore(), be = o.ember || EMBER0(), bk = new Set(arr(be.codes).map(codeKey)), bq = obj(be.quiz), bes = new Set(arr(obj(be.x).est).map(estKey));
@@ -5550,35 +5627,126 @@ async function bringBack(id, mode){ if(!hubCan() || !gAuth()) throw new Error("s
   else applyState(mergeState(stateCore(), core(o)));
   HUB.fp = ""; await hubSyncState(); const n1 = (typeof DB !== "undefined" && DB.codes || []).length;
   return { mode: mode === "replace" ? "replace" : "merge", codes: n1, added: n1 - n0, err: HUB.last.err || "" }; }
-/* Sync state.json: read ALL twins (abort on any failure), merge them with this device, write ONE (the oldest, after a
-   revision check on appProperties.rev; a mismatch merges again), bin the rest. Writes only when Drive lacks something. */
+/* Drive layout (claude/cloud-model.md): state.json = the core (everything except the records, plus layout:2) and
+   recs-00…15.json = the records, each in the part chosen by a hash of its key. Every file carries appProperties.rev (who
+   wrote it last) and .h (a fingerprint of its content). Read: one listing, only files whose rev moved since this device
+   last read them are downloaded. Write: only files whose fingerprint differs from Drive's, 4 at a time, the first failure
+   stops the rest. A pre-split single state.json (1.3.1 and older devices) is read and merged the same way.
+   Any read failure aborts before anything is written; a damaged file is copied aside and never overwritten silently. */
+const PARTS = 16, PART_RE = /^recs-(\d\d)\.json$/, partName = i => "recs-" + p2(i) + ".json";
+const RECS = [ { p:"ember.codes", k:c => codeKey(c) }, { p:"ember.real", k:r => realKey(r) }, { p:"ember.quiz", map:true }, { p:"ember.x.est", k:e => estKey(e) },
+  { p:"ember.x.mast.ev", k:e => String(e && e.id) }, { p:"tangerine.profile.attempts", k:x => x.caseId + "@" + x.at }, { p:"tangerine.profile.exams", k:x => x.caseId + ":" + x.qi + "@" + x.at },
+  { p:"tangerine.profile.review", map:true }, { p:"tangerine.my", k:c => String(c && c.id) } ];
+const fnv = s => { let h = 0x811c9dc5; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h; };
+const partOf = key => fnv(String(key)) % PARTS;
+const pGet = (o, p) => p.split(".").reduce((v, k) => v && typeof v === "object" ? v[k] : undefined, o);
+function pSet(o, p, v){ const ks = p.split("."); let c = o; for(let i = 0; i < ks.length - 1; i++){ if(!c[ks[i]] || typeof c[ks[i]] !== "object") return false; c = c[ks[i]]; } c[ks[ks.length-1]] = v; return true; }
+function splitState(st){ const coreO = JSON.parse(JSON.stringify(st)), parts = Array.from({length:PARTS}, () => ({})), moved = [];
+  for(const R of RECS){ const v = pGet(coreO, R.p); if(v == null) continue;
+    if(R.map){ if(typeof v !== "object" || Array.isArray(v)) continue; for(const k in v){ const i = partOf(R.p + "|" + k); (parts[i][R.p] = parts[i][R.p] || {})[k] = v[k]; } pSet(coreO, R.p, {}); }
+    else { if(!Array.isArray(v)) continue; for(const x of v){ const i = partOf(R.p + "|" + R.k(x)); (parts[i][R.p] = parts[i][R.p] || []).push(x); } pSet(coreO, R.p, []); }
+    moved.push(R.p); }
+  return { core: Object.assign(coreO, { v:1, layout:2, parts:PARTS, recs:moved }), parts: parts.map((recs, i) => ({ v:1, layout:2, app:HUB.APP, part:i, recs })) }; }
+function joinState(coreO, partObjs){ const st = JSON.parse(JSON.stringify(coreO || {})); ["layout","parts","recs","savedAt","device","dev"].forEach(k => delete st[k]);
+  for(const R of RECS){ const all = partObjs.map(po => po && po.recs && po.recs[R.p]).filter(Boolean); if(!all.length && !arr(coreO && coreO.recs).includes(R.p)) continue;
+    const top = R.p.split(".")[0]; if(!st[top] || typeof st[top] !== "object"){ if(!all.length) continue; st[top] = top === "ember" ? {} : { profile:{}, my:[] }; }
+    const ks = R.p.split("."); let c = st; for(let i = 0; i < ks.length - 1; i++){ if(!c[ks[i]] || typeof c[ks[i]] !== "object") c[ks[i]] = {}; c = c[ks[i]]; }
+    const cur = c[ks[ks.length-1]];
+    if(R.map){ const o = cur && typeof cur === "object" && !Array.isArray(cur) ? Object.assign({}, cur) : {}; all.forEach(m => { if(m && typeof m === "object" && !Array.isArray(m)) Object.assign(o, m); }); c[ks[ks.length-1]] = o; }
+    else { const L = Array.isArray(cur) ? cur.slice() : []; all.forEach(m => { if(Array.isArray(m)) L.push(...m); }); c[ks[ks.length-1]] = L; } }
+  return st; }
+const coreFp = o => { const c = Object.assign({}, o); ["savedAt","device","dev"].forEach(k => delete c[k]); return fpOf(c); };
+// what this device last read from Drive: {fileId: {rev, data}} per account, so unchanged files are never downloaded again
+const SEEN = "embergine.drive.seen";
+HUB.seen = null; HUB.io = { down:0, up:0, skipped:0, bytesUp:0, bytesDown:0, timeouts:0, retries:0 };
+function seenAll(){ if(!HUB.seen || HUB.seenAcct !== acct()){ HUB.seen = {}; HUB.seenAcct = acct(); try { const o = JSON.parse(localStorage.getItem(SEEN) || "{}"); if(o && o[acct()]) HUB.seen = o[acct()]; } catch {} } return HUB.seen; }
+function seenSave(){ try { const s = JSON.stringify({ [acct()]: HUB.seen || {} }); if(s.length < 2500000) localStorage.setItem(SEEN, s); else localStorage.removeItem(SEEN); } catch { try { localStorage.removeItem(SEEN); } catch {} } }
+const verOf = f => ((f.appProperties && f.appProperties.rev) || "") + "|" + (f.modifiedTime || "");   // any change on Drive moves modifiedTime
+// read one part file (twins included); damaged → copied aside as recs-NN.damaged-<time>.json, treated as empty and rewritten
+async function readPart(folder, f, run){ const seen = seenAll(), v = verOf(f), c = seen[f.id];
+  if(c && c.rev && c.rev === v && c.data){ HUB.io.skipped++; return { f, o:c.data }; }
+  let text; try { text = await dText(f.id); }
+  catch(e){ if(e.status === 404 && !(await dList(folder, f.name)).some(x => x.id === f.id)) return null; throw hubE("read_failed", "Could not read "+f.name+" from Drive ("+hubErr(e)+"); nothing was written"); }
+  HUB.io.down++; HUB.io.bytesDown += text.length;
+  let o = null; try { o = JSON.parse(text); } catch { try { text = await dText(f.id); o = JSON.parse(text); } catch {} }   // one more try: a cut-off answer is not a damaged file
+  if(o && +o.v > 1) throw hubE("newer", f.name+" on Drive was made by a newer Embergine; nothing was written. Update Embergine on this device first.");
+  const ok = o && typeof o === "object" && o.recs && typeof o.recs === "object" && !Array.isArray(o.recs) && RECS.every(R => o.recs[R.p] == null || (R.map ? (typeof o.recs[R.p] === "object" && !Array.isArray(o.recs[R.p])) : Array.isArray(o.recs[R.p])));
+  if(!ok){ const d = new Date(), name = f.name.replace(/\.json$/, "") + `.damaged-${todayKey()}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}.json`;
+    await gJSON(`${HUB.DRIVE}/files/${encodeURIComponent(f.id)}?fields=id`, {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ name })});
+    run.damaged.push(name); run.aside.add(f.id); delete seen[f.id]; return null; }
+  seen[f.id] = { rev:v, data:o }; return { f, o }; }
+async function readCore(folder, f, opt){ const seen = seenAll(), v = verOf(f), c = seen[f.id];
+  if(c && c.rev && c.rev === v && c.data){ HUB.io.skipped++; return { f, o:c.data }; }
+  const t = await readTwin(folder, f, opt.repair); if(t && t.o){ HUB.io.down++; seen[f.id] = { rev:v, data:t.o }; } return t; }
+async function pool(jobs, n){ let i = 0, err = null; const one = async () => { while(!err && i < jobs.length){ const j = jobs[i++]; try { await j(); } catch(e){ err = err || e; } } };
+  await Promise.all(Array.from({length:Math.min(n, jobs.length)}, one)); if(err) throw err; }
+const recTotal = st => { const c = stateCounts(st); return Object.values(c).reduce((a, b) => a + b, 0); };
+function recLoss(a, b){ const A = stateCounts(a), B = stateCounts(b); let n = 0; for(const k in A) n += Math.max(0, A[k] - (B[k]||0)); return { n, total:recTotal(a) }; }
 async function hubSyncState(opt={}){ if(!gAuth()) return; if(SET.google.syncState===false){ HUB.last.err = ""; return; }
-  if(HUB.busy && Date.now()-HUB.busyAt < 120000) return; HUB.busy = true; HUB.busyAt = Date.now(); const g0 = HUB.gen;
+  if(HUB.busy && Date.now()-HUB.busyAt < 120000) return; HUB.busy = true; HUB.busyAt = Date.now(); const g0 = HUB.gen; const io0 = Object.assign({}, HUB.io);
   try { await withLock(() => withRetry(async retry => { const folder = await hubFolder(retry || !!opt.verify);
       for(let loop = 0; ; loop++){
-        const files = await dList(folder, "state.json"); const twins = [];
-        for(const f of files){ const t = await readTwin(folder, f, opt.repair); if(t) twins.push(t); }
+        const run = { damaged:[], aside:new Set() }; const L = (await dList(folder)).filter(f => f.mimeType !== HUB.FOLDER);
+        const cores = L.filter(f => f.name === "state.json"), partFiles = L.filter(f => PART_RE.test(f.name));
+        const twins = []; for(const f of cores){ const t = await readCore(folder, f, opt); if(t) twins.push(t); }
+        const parts = []; for(const f of partFiles){ const t = await readPart(folder, f, run); if(t) parts.push(t); }
         alive(g0);
-        const good = twins.filter(t => t.o), local = stateCore(); let merged = local;
-        for(const t of good) merged = mergeState(merged, core(t.o));
+        const good = twins.filter(t => t.o), split = good.filter(t => +t.o.layout === 2), whole = good.filter(t => +t.o.layout !== 2);
+        const remotes = whole.map(t => core(t.o));
+        if(split.length || parts.length){ let base = split.length ? split[0].o : { v:1, layout:2, recs:[] }; for(const t of split.slice(1)) base = Object.assign({}, base, core(mergeState(core(joinState(base, [])), core(joinState(t.o, []))))); remotes.push(core(joinState(base, parts.map(t => t.o)))); }
+        const local = stateCore(); let merged = local; for(const r of remotes) merged = mergeState(merged, r);
+        // a big removal from another device: keep a Drive copy first, then ask (claude/cloud-model.md, Mass delete)
+        const loss = recLoss(local, merged);
+        if(loss.n >= 25 && loss.n >= 0.2 * loss.total && !opt.keepRemoved){
+          const bid = await backupBefore("mass-delete", local).catch(() => null);
+          HUB.mass = { n:loss.n, total:loss.total, backup:bid, local, merged, at:Date.now() };
+          throw hubE("mass_delete", "Another device removed "+loss.n+" of your "+loss.total+" records at once. Nothing was changed here yet"+(bid ? "; a copy is on Drive" : "")+".", {fix:"mass"}); }
         const fL = fingerprint(local), fM = fingerprint(merged), src = good[good.length-1];
         if(fM !== fL){ applyState(merged); HUB.last.state = "merged from "+(src && src.o.device || "Drive")+" "+fmtTime(src && src.o.savedAt); }
-        const keep = twins.length ? twins[0].f : null;
-        const need = !keep || twins.length > 1 || twins.some(t => !t.o || fingerprint(core(t.o)) !== fM);
-        if(!need){ if(fM === fL) HUB.last.state = "up to date"; const r = keep.appProperties && keep.appProperties.rev; if(r) HUB.rev = r; break; }
-        if(keep && twins[0].o) await dailyBackup(keep).then(() => { HUB.last.backup = ""; }, e => { HUB.last.backup = hubErr(e); });
-        if(keep){ const m = await dMeta(keep.id); const r0 = (keep.appProperties && keep.appProperties.rev) || "", r1 = (m && m.appProperties && m.appProperties.rev) || "";
-          if(r0 !== r1 || (m && m.modifiedTime && keep.modifiedTime && m.modifiedTime !== keep.modifiedTime)){ if(loop < 3) continue; throw new Error("Drive kept changing while syncing · try again"); } }
+        // what Drive should hold
+        const S = splitState(merged), want = [{ name:"state.json", data:S.core, h:coreFp(S.core) }].concat(S.parts.map((po, i) => ({ name:partName(i), data:po, h:fpOf(po.recs) })));
+        const byName = n => L.filter(f => f.name === n && !run.aside.has(f.id));
+        const jobs = want.filter(w => { const ex = byName(w.name); return !ex.length || ex.length > 1 || (ex[0].appProperties && ex[0].appProperties.h) !== w.h || (w.name === "state.json" && (whole.length || twins.some(t => !t.o))); });
+        const extras = L.filter(f => !run.aside.has(f.id) && (f.name === "state.json" || PART_RE.test(f.name)) && byName(f.name)[0] !== f);
+        if(!jobs.length && !extras.length && !run.damaged.length){ if(fM === fL) HUB.last.state = "up to date"; break; }
+        // somebody wrote meanwhile? look once more before overwriting (revision check)
+        const L2 = (await dList(folder)).filter(f => f.mimeType !== HUB.FOLDER), moved = L2.some(f => { if(run.aside.has(f.id)) return false; const o = L.find(x => x.id === f.id); return (f.name === "state.json" || PART_RE.test(f.name)) && (!o || verOf(o) !== verOf(f)); });
+        if(moved){ if(loop < 3) continue; throw new Error("Drive kept changing while syncing · try again"); }
         alive(g0);
-        const n = parseInt(((keep && keep.appProperties && keep.appProperties.rev) || "0"), 10) || 0, rev = (n+1)+"."+devId()+"."+Math.random().toString(36).slice(2,6);
-        const out = Object.assign({ v:1, savedAt:new Date().toISOString(), device:gDevice(), dev:devId() }, merged);
-        const w = await dWrite(folder, "state.json", out, keep && keep.id, {rev}); alive(g0); HUB.rev = rev; HUB.revFile = (w && w.id) || (keep && keep.id) || "";
-        for(const t of twins.slice(1)) await dTrash(t.f.id).catch(()=>{});
-        setSynced(out.savedAt); if(fM === fL) HUB.last.state = "saved "+fmtTime(out.savedAt); if(twins.length > 1) HUB.last.state += " · "+(twins.length-1)+" twin file"+(twins.length>2?"s":"")+" merged";
+        if(remotes.length) await dailyBackup(remotes.reduce((m, r) => mergeState(m, r))).then(() => { HUB.last.backup = ""; }, e => { HUB.last.backup = hubErr(e); });
+        const tag = devId() + "." + Date.now().toString(36) + Math.random().toString(36).slice(2,5), stamp = new Date().toISOString();
+        const seen = seenAll();
+        await pool(jobs.map(w => async () => { const ex = byName(w.name)[0]; const n = parseInt(((ex && ex.appProperties && ex.appProperties.rev) || "0"), 10) || 0, rev = (n+1)+"."+tag;
+          const data = w.name === "state.json" ? Object.assign({ savedAt:stamp, device:gDevice(), dev:devId() }, w.data) : w.data; const text = JSON.stringify(data);
+          const res = await dWrite(folder, w.name, text, ex && ex.id, {rev, h:w.h}); alive(g0); HUB.io.up++; HUB.io.bytesUp += text.length;
+          const id = (res && res.id) || (ex && ex.id); if(id) seen[id] = { rev: verOf({ appProperties:{rev}, modifiedTime:(res && res.modifiedTime) || "" }), data }; if(w.name === "state.json"){ HUB.rev = rev; HUB.revFile = id || ""; } }), 4);
+        for(const f of extras) await dTrash(f.id).then(() => { delete seen[f.id]; }, ()=>{});
+        seenSave(); setSynced(stamp);
+        if(fM === fL) HUB.last.state = "saved "+fmtTime(stamp); if(whole.length && !split.length) HUB.last.state += " · Drive copy moved to parts";
+        if(extras.length) HUB.last.state += " · "+extras.length+" twin file"+(extras.length>1?"s":"")+" merged";
+        if(run.damaged.length) HUB.last.state += " · damaged file kept aside as "+run.damaged.join(", ");
+        HUB.wrote = { at:Date.now(), files:jobs.length };
         hubVerifyLater(); break; }
-      HUB.fp = stateFingerprint(); HUB.stateAt = Date.now(); HUB.last.err = ""; HUB.last.fix = ""; HUB.pending = false; })); }
-  catch(e){ if(e.code === "cancelled") return; if(e.code === "other_tab"){ HUB.last.state = e.message; return; } HUB.last.err = hubErr(e); HUB.last.fix = e.fix || (e.message === "needs_tap" ? "tap" : ""); }
+      seenSave(); HUB.fp = stateFingerprint(); HUB.stateAt = Date.now(); HUB.last.err = ""; HUB.last.fix = ""; HUB.pending = false; HUB.retryN = 0; HUB.mass = null;
+      HUB.lastRun = { down:HUB.io.down-io0.down, up:HUB.io.up-io0.up, skipped:HUB.io.skipped-io0.skipped, at:Date.now() }; })); }
+  catch(e){ if(e.code === "cancelled") return; if(e.code === "other_tab"){ HUB.last.state = e.message; return; } HUB.last.err = hubErr(e); HUB.last.fix = e.fix || (e.message === "needs_tap" ? "tap" : "");
+    if(e.message === "timeout") HUB.io.timeouts++; if(e.code === "mass_delete") setTimeout(massAsk, 0); else retryLater(e); }
   finally { HUB.busy = false; hubPaint(); } }
+// a failed sync tries again by itself: 30 s, 2, 5 and 15 minutes (and when the device is back online)
+const RETRY = Array.isArray(window.__egRetry) ? window.__egRetry : [30000, 120000, 300000, 900000];
+function retryLater(e){ const m = String(e && e.message || ""); if(/^(needs_tap|signed_out|no_client)$/.test(m) || /^(damaged|newer|other_account|mass_delete)$/.test(e && e.code)) return;
+  clearTimeout(HUB.retryT); const n = HUB.retryN || 0; const ms = RETRY[Math.min(n, RETRY.length-1)]; HUB.retryN = n + 1; HUB.retryAt = Date.now() + ms; HUB.io.retries++;
+  HUB.retryT = setTimeout(() => { HUB.retryAt = 0; if(gAuth() && navigator.onLine !== false) hubSync(false); }, ms); }
+async function massAsk(){ const M = HUB.mass; if(!M || HUB.massOpen) return; HUB.massOpen = true;
+  const yes = await ask("Bring them back?", `Another device removed ${M.n} of your ${M.total} records at once (a reset or a clear-out). ${M.backup ? "A copy from before is on Drive (Settings › Backups). " : ""}Bring them back on every device, or keep them removed?`, "Bring them back", "Keep them removed");
+  HUB.massOpen = false; if(HUB.mass !== M) return;
+  if(yes){ const newR = arr(M.merged.ember && M.merged.ember.resets).map(r => String(r.id)).filter(id => !arr(M.local.ember && M.local.ember.resets).some(r => String(r.id) === id));
+    const ld = obj(M.local.tangerine && M.local.tangerine.profile && M.local.tangerine.profile.myDel), md = obj(M.merged.tangerine && M.merged.tangerine.profile && M.merged.tangerine.profile.myDel);
+    if(typeof DB !== "undefined" && newR.length){ DB.undone = [...new Set([...arr(DB.undone).map(String), ...newR])].sort(); save(); }
+    if(window.TG){ const u = Object.assign({}, TG.Store.profile.myUndo); let ch = false; for(const k in md) if(!(ld[k] >= md[k])){ u[k] = md[k]; ch = true; } if(ch){ TG.Store.profile.myUndo = u; TG.Store.cacheLocal(); TG.Store.saveProfile(); } }
+    HUB.mass = null; toast("Bringing them back on every device…"); HUB.fp = ""; await hubSyncState({ keepRemoved:true }); }
+  else { HUB.mass = null; toast("Kept them removed · the copy stays on Drive"); HUB.fp = ""; await hubSyncState({ keepRemoved:true }); }
+  hubPaint(); }
 // after a write, look again a little later: another device's write landing on top of ours means merge again (F08-18)
 function hubVerifyLater(){ clearTimeout(HUB.verifyT); const g0 = HUB.gen; HUB.verifyT = setTimeout(async () => { if(HUB.gen !== g0 || !HUB.revFile || !gToken()) return;
   try { const m = await dMeta(HUB.revFile); const r = m && m.appProperties && m.appProperties.rev; if(r && r !== HUB.rev && !HUB.busy){ HUB.fp = ""; await hubSyncState(); } } catch {} }, HUB.verifyMs); }
@@ -5611,14 +5779,36 @@ function hubPaint(){ const dot = $("#hubdot"); const a = gAuth(); const L = HUB.
   if(dot){ dot.className = "hubdot" + (a ? (why ? " err" : " on") : ""); dot.title = why ? "Sync problem: "+why : (a ? "Synced with Google Drive" : "Not signed in"); dot.setAttribute("data-hint", "Google Drive|" + (a ? (why ? "Red: " + why + "." : "Green: synced" + (L.sync ? " " + L.sync : "") + ".") : "Grey: not connected.") + " Settings → Google & Citrus."); }
   hubBanner(a, tapNeed, why);
   const box = $("#hubBox"); if(!box) return; const g = SET.google;
-  if(!hubCan()){ box.innerHTML = `<p class="sh-small sh-muted">Google sign-in works only in the installed app (${esc(APP_URL)}). There your progress is kept on Google Drive and shared with Citrus Maxima.${IS_PWA?"":" Here in claude.ai, use Backup to carry progress across."}</p>`; return; }
-  box.innerHTML = `
-    ${a ? `<div class="kv"><div class="t"><b>${esc(a.email||"Signed in")}</b><small>${esc(L.sync?"Last sync "+L.sync:"Not synced yet")}${why?" · <span style=\"color:var(--crit)\">"+esc(why)+"</span>":""}${HUB.pending&&why?" · changes wait on this device":""}</small></div><div class="sh-row">${tapNeed?`<button class="sh-btn sm primary" data-act="hubReconnect">Reconnect</button>`:`<button class="sh-btn sm" data-act="hubSync">${HUB.syncing?"Syncing…":"Sync now"}</button>`}${L.fix==="repair"&&!tapNeed?`<button class="sh-btn sm" data-act="hubRepair">Repair Drive copy</button>`:""}<button class="sh-btn sm" data-act="hubSignOut">Sign out</button></div></div>`
+  if(!hubCan()){ box.innerHTML = cloudCard() + `<p class="sh-small sh-muted">Google sign-in works only in the installed app (${esc(APP_URL)}). There your progress is kept on Google Drive and shared with Citrus Maxima.${IS_PWA?"":" Here in claude.ai, use Backup to carry progress across."}</p>`; return; }
+  box.innerHTML = cloudCard() + `
+    ${a ? `<div class="kv"><div class="t"><b>${esc(a.email||"Signed in")}</b><small>${esc(L.sync?"Last sync "+L.sync:"Not synced yet")}${why?" · <span style=\"color:var(--crit)\">"+esc(why)+"</span>":""}${HUB.pending&&why?" · changes wait on this device":""}</small></div><div class="sh-row">${tapNeed?`<button class="sh-btn sm primary" data-act="hubReconnect">Reconnect</button>`:`<button class="sh-btn sm" data-act="hubSync">${HUB.syncing?"Syncing…":"Sync now"}</button>`}${L.fix==="repair"&&!tapNeed?`<button class="sh-btn sm" data-act="hubRepair">Repair Drive copy</button>`:""}${L.fix==="mass"&&!tapNeed?`<button class="sh-btn sm primary" data-act="hubMass">Answer: removed records</button>`:""}<button class="sh-btn sm" data-act="hubSignOut">Sign out</button></div></div>`
         : `<div class="kv"><div class="t"><b>Not connected</b><small>One Google sign-in: Drive keeps your progress, Citrus plans your sessions.</small></div><button class="sh-btn primary" data-act="hubConnect">Sign in with Google</button></div>`}
     <div class="kv"><div class="t"><b>Progress on Drive</b><small>state.json in your Embergine folder on Drive (${HUB.byTag[HUB.APP]==="tag"?"found by its tag, wherever Citrus puts it":"My Apps/hub/embergine until Citrus moves it"}) · every device merges its work into one copy${L.state?" · "+esc(L.state):""}${L.backup?" · backup: "+esc(L.backup):""}</small></div><input type="checkbox" class="sw" data-hub="syncState" ${g.syncState!==false?"checked":""}></div>
     <div class="kv"><div class="t"><b>Status for Citrus</b><small>status.json: summary, week, time asks, pending${L.status?" · written "+esc(L.status):""}</small></div><input type="checkbox" class="sw" data-hub="publish" ${g.publish!==false?"checked":""}></div>
     <details style="margin-top:8px"><summary class="sh-small sh-muted" style="cursor:pointer">Client ID (advanced)</summary><input class="sh" id="hubCid" value="${esc(g.clientId||"")}" style="margin-top:6px"><p class="sh-small sh-muted" style="margin-top:4px">The shared "Citrus web" client of the My Apps project. Add <code>https://embergine.github.io</code> to its authorised JavaScript origins once.</p></details>`;
 }
+/* "Your data" (claude/cloud-model.md, Plain words): one sentence that says whether everything is saved, then four rows. */
+const hm = t => { const d = new Date(t); return p2(d.getHours())+":"+p2(d.getMinutes()); };
+function cloudState(){ const D = window.EG_DEV || {}, a = gAuth(), L = HUB.last;
+  if(D.err && !D.ok) return { tone:"crit", text:"Not saved safely: this device could not keep its second copy ("+D.err+"). Download a backup in Settings › Backup." };
+  if(!hubCan()) return { tone:"ok", text:"Saved on this device, in two copies. In this copy of Embergine, Backup carries progress to other devices." };
+  if(!a) return { tone:"warn", text:"Saved on this device only, in two copies. Sign in with Google to keep a copy on Drive too." };
+  if(a.needsTap) return { tone:"warn", text:"Saved on this device. Drive waits for you: tap Reconnect"+(HUB.pending ? " and your latest changes go up." : ".") };
+  if(HUB.mass) return { tone:"warn", text:"Saved on this device. Another device removed many records: answer the question to carry on." };
+  if(navigator.onLine === false) return { tone:"warn", text:"Saved on this device. Offline: changes go to Drive when you are back online." };
+  if(HUB.busy || HUB.syncing) return { tone:"ok", text:"Saved on this device; saving to Drive now…" };
+  if(L.err) return { tone:"crit", text:"Saved on this device, but not on Drive: "+L.err+(HUB.retryAt ? ". It tries again by itself at "+hm(HUB.retryAt)+"." : (L.fix === "repair" ? ". Tap Repair below." : ".")) };
+  if(HUB.pending || (HUB.fp && HUB.fp !== stateFingerprint())) return { tone:"ok", text:"Saved on this device; the latest changes go to Drive in a moment." };
+  if(HUB.stateAt) return { tone:"ok", text:"Everything is saved: on this device and on Google Drive (last sync "+hm(HUB.stateAt)+")." };
+  return { tone:"ok", text:"Saved on this device; Drive syncs in a moment." }; }
+function cloudCard(){ const D = window.EG_DEV || {}, st = cloudState(), a = gAuth(), run = HUB.lastRun, kb = n => n ? (n < 1024 ? n+" bytes" : Math.round(n/1024)+" KB") : "";
+  const dev = D.ok ? "Two copies (slot "+esc(D.slot||"A")+", "+(D.at ? fmtTime(new Date(D.at).toISOString()) : "now")+")"+(D.bytes ? " · "+kb(D.bytes) : "")+(D.persisted === false ? " · the browser may clear it when space runs low" : "")+(D.damaged ? " · damaged copy "+esc(D.damaged)+" ignored" : "") : (D.err ? "Second copy failed: "+esc(D.err) : "Starting…");
+  const drv = !hubCan() ? "Only in the installed app" : !a ? "Not signed in" : "state.json + 16 small part files in your Embergine folder"+(HUB.stateAt ? " · last sync "+hm(HUB.stateAt) : "")+(run ? " · last time "+run.down+" downloaded, "+run.up+" uploaded" : "");
+  const bk = !hubCan() || !a ? "Settings › Backup downloads a file any time" : "One a day on Drive (7 days + 4 Sundays), plus one before every big change"+(HUB.last.before ? " · latest: "+esc(HUB.last.before) : "");
+  const io = HUB.io || {};
+  return `<div class="eg-data" id="yourData"><b>Your data</b><p class="eg-data-say ${st.tone}" role="status">${esc(st.text)}</p>
+    <div class="eg-data-rows"><div><span>This device</span><small>${dev}</small></div><div><span>Google Drive</span><small>${esc(drv)}</small></div><div><span>Backups</span><small>${bk}</small></div><div><span>Two devices</span><small>Changes from each device merge record by record; nothing one device does is overwritten by another. A big removal asks first.</small></div></div>
+    ${hubCan() ? `<details class="eg-data-diag"><summary class="sh-small sh-muted">Diagnostics</summary><p class="sh-small sh-muted">Sign-in: ${redirectMode() ? "same window (goes to Google and back)" : "Google window"} · last event ${esc(HUB.auth.lastEvent||"none")}${HUB.auth.lastError ? " · "+esc(HUB.auth.lastError) : ""} · files downloaded ${io.down||0}, skipped (unchanged) ${io.skipped||0}, uploaded ${io.up||0} · retries ${io.retries||0} · timeouts ${io.timeouts||0}${HUB.retryAt ? " · next try "+hm(HUB.retryAt) : ""} · return address ${esc(returnAddress())}</p></details>` : ""}</div>`; }
 // Today banner: an expired sign-in or a blocked sync is never silent
 function hubBanner(a, tapNeed, why){ const host = $("#sv-today"); if(!host) return; let el = $("#hubBanner");
   const show = a && hubCan() && (tapNeed || (HUB.last.err && HUB.last.fix === "repair"));
@@ -5636,14 +5826,15 @@ async function acctCheck(a){ const prev = lastEmail(); if(prev && a.email && pre
     if(!ok){ try { google.accounts.oauth2.revoke(a.token, ()=>{}); } catch {} return false; } }
   try { if(a.email) localStorage.setItem("embergine_last_email", a.email); } catch {} return true; }
 async function hubConnect(){ const inp = $("#hubCid"); if(inp){ SET.google.clientId = inp.value.trim(); saveSet(); } if(!SET.google.clientId){ toast("Enter the client ID first"); return; }
-  try { toast("Google is opening…"); const a = await gConnect({}); if(!(await acctCheck(a))){ toast("Sign-in cancelled · nothing was mixed"); hubPaint(); return; } HUB.gen++; HUB.fp = ""; HUB.last = {}; gSet(a); saveSet(); toast("Connected: "+(a.email||"Google")); await hubSync(true, true); } catch(e){ toast(hubErr(e)); } hubPaint(); }
+  try { toast(redirectMode() ? "Going to Google…" : "Google is opening…"); const a = await gConnect({}); if(!(await acctCheck(a))){ toast("Sign-in cancelled · nothing was mixed"); hubPaint(); return; } HUB.gen++; HUB.fp = ""; HUB.last = {}; gSet(a); saveSet(); toast("Connected: "+(a.email||"Google")); await hubSync(true, true); } catch(e){ toast(hubErr(e)); } hubPaint(); }
 async function hubReconnect(){ const a = gAuth(); if(!a){ hubConnect(); return; }
+  if(redirectMode()){ try { toast("Going to Google…"); await gRedirect({renew:true}); } catch(e){ toast(hubErr(e)); } return; }
   try { const n = await gConnect({silent:true}); if(a.email && n.email && n.email !== a.email){ if(!(await acctCheck(n))){ toast("Kept "+a.email+" · tap Reconnect and pick that account"); return; } HUB.gen++; HUB.fp = ""; idsSet({}); }
     gSet(Object.assign({}, a, n, {needsTap:false})); HUB.last.err = ""; HUB.last.fix = ""; toast("Reconnected"); await hubSync(true, true); }
-  catch(e){ toast(/popup|silent|denied/.test(String(e.message)) ? "Google did not reconnect · tap again, or Sign out and sign in" : hubErr(e)); } hubPaint(); }
-async function hubRepair(){ HUB.fp = ""; await hubSyncState({repair:true, verify:true}); if(!HUB.last.err){ toast("Drive copy rebuilt from this device"); hubSync(true, true); } else toast(HUB.last.err); }
+  catch(e){ toast(e.code ? hubErr(e) : /popup|silent|denied/.test(String(e.message)) ? "Google did not reconnect · tap again, or Sign out and sign in" : hubErr(e)); } hubPaint(); }
+async function hubRepair(){ HUB.fp = ""; try { await backupBefore("repair", stateCore()); } catch {} await hubSyncState({repair:true, verify:true}); if(!HUB.last.err){ toast("Drive copy rebuilt from this device"); hubSync(true, true); } else toast(HUB.last.err); }
 // sign-out: forget the token, the Citrus plan and this account's caches; in-flight syncs drop their results (F08-22)
-function hubSignOut(){ const a = gAuth(); HUB.gen++; clearTimeout(HUB.timer); clearTimeout(HUB.verifyT);
+function hubSignOut(){ const a = gAuth(); HUB.gen++; HUB.seen = null; try { localStorage.removeItem(SEEN); } catch {} clearTimeout(HUB.timer); clearTimeout(HUB.verifyT);
   try { if(a && a.token && window.google && google.accounts && google.accounts.oauth2 && google.accounts.oauth2.revoke) google.accounts.oauth2.revoke(a.token, ()=>{}); } catch {}
   ["embergine_drive_ids","embergine_synced_at","embergine_backup_day"].forEach(k => { const o = lsObj(k); delete o[(a && a.email) || "_"]; delete o._; for(const x in o) if(typeof o[x] !== "object" && k === HUB.IDS) delete o[x]; lsPut(k, o); });
   gSet(null); Object.assign(HUB, { plan:null, last:{}, fp:"", rev:"", revFile:"", statusFp:"", statusAt:0, busy:false, syncing:false, pending:false, copied:{}, chain:Promise.resolve() });
@@ -5674,6 +5865,7 @@ document.addEventListener("click", e => {
     case "hubSync": hubSync(true, true); break;
     case "hubReconnect": hubReconnect(); break;
     case "hubRepair": hubRepair(); break;
+    case "hubMass": massAsk(); break;
     case "hubSignOut": hubSignOut(); break;
     case "updateApp": if(SW.waiting){ if(window.EG && EG.updateApp) EG.updateApp(SW.waiting); else SW.waiting.postMessage({type:"SKIP_WAITING"}); } break;
     case "repair": if(navigator.onLine === false){ toast("Connect to the internet first: Repair downloads the app again"); break; } if(Date.now() - (+b.dataset.arm||0) > 4000){ b.dataset.arm = Date.now(); b.dataset.label = b.dataset.label || b.textContent; b.textContent = "Tap again to repair"; setTimeout(()=>{ if(Date.now() - (+b.dataset.arm||0) >= 3900) b.textContent = b.dataset.label; }, 4000); toast("Repair clears the app cache and reloads. Tap again within 4 s."); break; } b.dataset.arm = 0; (async()=>{ try { if(navigator.serviceWorker){ const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r=>r.unregister())); } if(window.caches){ const ks = await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); } } catch {} toast("Cache cleared. Reloading…"); setTimeout(()=>location.reload(), 700); })(); break;
@@ -5735,9 +5927,11 @@ function boot(){
   applyTheme();
   const s = $("#setSound"); if(s) s.checked = SET.sound!==false; const h = $("#setHints"); if(h) h.checked = !!SET.hints;
   new MutationObserver(()=>{ document.body.classList.toggle("in-sim", tab==="codes" && !$("#simRun").hidden); if($("#simRun").hidden) $("#console")?.classList.remove("open"); }).observe($("#simRun"), {attributes:true, attributeFilter:["hidden"]});
+  const back = hubCan() ? takeRedirect() : null;   // before routing: the address may hold Google's answer
   const h0 = (location.hash||"").replace("#",""); show(TABS.includes(h0) ? h0 : "today");
+  if(back) setTimeout(() => finishRedirect(back), 50); else if(hubCan() && !redirectMode()) setTimeout(() => gisPrep(), 400);
   window.addEventListener("hashchange", ()=>{ const k = (location.hash||"").replace("#",""); if(k!==tab) show(TABS.includes(k) ? k : "today"); });
-  if(hubCan()){ if(gAuth()) setTimeout(()=>hubSync(false), 1500); setInterval(()=>{ if(gAuth()) hubSync(false); }, 10*60*1000); window.addEventListener("online", ()=>{ if(gAuth()) hubSync(false); }); }
+  if(hubCan()){ if(gAuth() && !back) setTimeout(()=>hubSync(false), 1500); setInterval(()=>{ if(gAuth()) hubSync(false); }, 10*60*1000); window.addEventListener("online", ()=>{ if(gAuth()) hubSync(false); }); }
   armDayTurn(); setInterval(dayCheck, 60000);
   document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible") dayCheck(); });
   document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden"){ Promise.resolve(hubPushState(false)).then(()=>{ if(!HUB.last.err) hubPushStatus(false); }); } });
@@ -9178,7 +9372,7 @@ EG.on("show", ({tab}) => { if(tab !== "progress") return; let box = $("#yuzuProg
 
 // ================= Settings groups =================
 const WHATSNEW = (window.EG_WHATSNEW = window.EG_WHATSNEW || []);
-WHATSNEW.unshift(["1.3.1", "Drive: Embergine finds its folders by tag, so Citrus can tidy them into one Citrus folder without breaking sync."], ["1.3.0", "Settings in labelled groups with a jump row; each group says whether it syncs."], ["1.3.0", "Citrus Maxima can open Embergine straight into the Round, a code, a case, a drill, a boss fight or rhythm strips; a ← Citrus chip takes you back."], ["1.3.0", "Send to Yuzu: missed questions and debrief takeaways become flashcards."], ["1.3.0", "Citrus sees this week's codes, CPR fraction, drill accuracy, cases, causes practised and suggested tasks."]);
+WHATSNEW.unshift(["1.4.0", "Google sign-in fixed: a late answer from Google is kept, and the installed app signs in by going to Google and back in the same window."], ["1.4.0", "Your progress is kept twice on this device and split into small files on Drive, so only what changed travels. A big removal from another device asks first."], ["1.4.0", "Settings › Your data says in one sentence whether everything is saved."], ["1.3.1", "Drive: Embergine finds its folders by tag, so Citrus can tidy them into one Citrus folder without breaking sync."], ["1.3.0", "Settings in labelled groups with a jump row; each group says whether it syncs."], ["1.3.0", "Citrus Maxima can open Embergine straight into the Round, a code, a case, a drill, a boss fight or rhythm strips; a ← Citrus chip takes you back."], ["1.3.0", "Send to Yuzu: missed questions and debrief takeaways become flashcards."], ["1.3.0", "Citrus sees this week's codes, CPR fraction, drill accuracy, cases, causes practised and suggested tasks."]);
 function applySimDefaults(){ const S0 = EG.settings ? EG.settings() : {}; const d = S0.simDefaults || {}; const a = $("#setSetting"), b = $("#setSpeed");
   if(a && d.setting && [...a.options].some(o => o.value === d.setting)) a.value = d.setting; if(b && d.speed && [...b.options].some(o => o.value === String(d.speed))) b.value = String(d.speed); }
 function nameControls(root){ $$("input, select, textarea", root).forEach(el => { if(el.type === "hidden" || el.getAttribute("aria-label") || el.getAttribute("aria-labelledby") || (el.id && $(`label[for="${el.id}"]`)) || el.closest("label")) return;
@@ -9234,6 +9428,62 @@ new MutationObserver(() => { document.body.classList.toggle("eg-sheet-open", !!d
 // the sync dot gets a spoken name that follows its colour
 const hd = document.getElementById("hubdot");
 if(hd){ const name = () => hd.setAttribute("aria-label", "Google Drive: " + (hd.classList.contains("err") ? "last sync failed" : hd.classList.contains("on") ? "synced" : "not connected")); name(); new MutationObserver(name).observe(hd, {attributes:true, attributeFilter:["class"]}); }
+
+})();
+
+/* mod 21-devstore.js */
+;(function(){
+/* Device store (claude/cloud-model.md, Sudachi devstore.js): everything Embergine keeps in localStorage is mirrored into
+   IndexedDB in two slots written in turn (A, B, A…), each with a fingerprint. localStorage stays the live copy the engines
+   read; on start-up the newest readable slot wins when localStorage is missing, older, or holds an unreadable key — then
+   the page reloads once with the recovered data. Saves are debounced (200 ms) and flushed when the page hides. */
+const DS_KEYS = ["ember.v1", "tangerine.v1.profile", "tangerine.v1.my", "embergine.settings"], DS_STAMP = "embergine.dev.stamp", DS_DB = "embergine-device", DS_ST = "slots";
+const DS = window.EG_DEV = { ok:false, at:0, slot:"", err:"", restored:"", writes:0, bytes:0, persisted:null };
+let dsDbP = null, dsT = null, dsLast = null, dsBusy = null, dsFailed = {};
+function dsOpen(){ return dsDbP || (dsDbP = new Promise((res, rej) => { let r; try { r = indexedDB.open(DS_DB, 1); } catch(e){ return rej(e); }
+  r.onupgradeneeded = () => { if(!r.result.objectStoreNames.contains(DS_ST)) r.result.createObjectStore(DS_ST); }; r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error("blocked")); }).catch(e => { dsDbP = null; throw e; })); }
+async function dsGet(k){ const d = await dsOpen(); return new Promise((res, rej) => { const q = d.transaction(DS_ST, "readonly").objectStore(DS_ST).get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+async function dsPut(k, v){ const d = await dsOpen(); return new Promise((res, rej) => { const tx = d.transaction(DS_ST, "readwrite"); tx.objectStore(DS_ST).put(v, k); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error || new Error("abort")); }); }
+function dsHash(s){ let h = 0; for(let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return h + ":" + s.length; }
+const dsRaw = Storage.prototype.getItem;
+function dsSnap(){ const keys = {}; DS_KEYS.forEach(k => { let v = null; try { v = dsRaw.call(localStorage, k); } catch {} if(dsFailed[k] != null) v = dsFailed[k]; if(v != null) keys[k] = v; }); return keys; }
+const dsValid = s => !!(s && typeof s === "object" && s.keys && typeof s.keys === "object" && typeof s.at === "number" && s.h === dsHash(JSON.stringify(s.keys)));
+async function dsSlots(){ const out = []; for(const n of ["A", "B"]){ try { const s = await dsGet(n); if(s) out.push(Object.assign({ name:n, good:dsValid(s) }, s)); } catch(e){ DS.err = String(e && e.message || e); } } return out; }
+async function dsWrite(){ clearTimeout(dsT); dsT = null; if(dsBusy) return dsBusy.then(dsWrite);
+  dsBusy = (async () => { const keys = dsSnap(), body = JSON.stringify(keys); const at = +dsRaw.call(localStorage, DS_STAMP) || Date.now();
+    if(dsLast && dsLast.h === dsHash(body)) return;
+    const name = dsLast && dsLast.name === "A" ? "B" : "A", rec = { at, seq:((dsLast && dsLast.seq) || 0) + 1, keys, h:dsHash(body) };
+    try { await dsPut(name, rec); dsLast = { name, seq:rec.seq, h:rec.h }; DS.ok = true; DS.at = at; DS.slot = name; DS.writes++; DS.bytes = body.length; DS.err = ""; dsFailed = {}; }
+    catch(e){ DS.err = String(e && e.message || e); } })().finally(() => { dsBusy = null; });
+  return dsBusy; }
+const dsLater = () => { clearTimeout(dsT); dsT = setTimeout(dsWrite, +window.__egDevMs || 200); };
+// every write to a mirrored key stamps the time and schedules the mirror (a write the browser refused is still mirrored)
+{ const set0 = Storage.prototype.setItem, rem0 = Storage.prototype.removeItem;
+  Storage.prototype.setItem = function(k, v){ if(this !== localStorage || !DS_KEYS.includes(k)) return set0.call(this, k, v);
+    try { set0.call(this, k, v); delete dsFailed[k]; } catch(e){ dsFailed[k] = String(v); try { set0.call(this, DS_STAMP, String(Date.now())); } catch {} dsLater(); throw e; }
+    try { set0.call(this, DS_STAMP, String(Date.now())); } catch {} dsLater(); };
+  Storage.prototype.removeItem = function(k){ rem0.call(this, k); if(this === localStorage && DS_KEYS.includes(k)){ try { set0.call(this, DS_STAMP, String(Date.now())); } catch {} dsLater(); } }; }
+addEventListener("pagehide", () => { dsWrite(); });
+document.addEventListener("visibilitychange", () => { if(document.visibilityState === "hidden") dsWrite(); });
+// start-up: recover from the newest good slot when this copy is missing, older or damaged
+(async () => {
+  try { if(navigator.storage && navigator.storage.persist) DS.persisted = await navigator.storage.persist(); } catch {}
+  let slots; try { slots = await dsSlots(); } catch(e){ DS.err = String(e && e.message || e); return; }
+  const good = slots.filter(s => s.good).sort((a, b) => (b.at - a.at) || (b.seq - a.seq)), best = good[0];
+  if(slots.some(s => !s.good)) DS.damaged = slots.filter(s => !s.good).map(s => s.name).join(", ");
+  if(best){ dsLast = { name:best.name, seq:Math.max(...slots.map(s => +s.seq || 0)), h:best.h }; DS.ok = true; DS.at = best.at; DS.slot = best.name; DS.bytes = JSON.stringify(best.keys).length; }
+  const stamp = +dsRaw.call(localStorage, DS_STAMP) || 0, cur = dsSnap();
+  const parses = v => { try { JSON.parse(v); return true; } catch { return false; } };
+  const fix = best ? Object.keys(best.keys).filter(k => parses(best.keys[k]) && (best.at > stamp ? cur[k] !== best.keys[k] : (cur[k] != null && !parses(cur[k])))) : [];
+  let again = false; try { again = sessionStorage.getItem("embergine.dev.restored") === String(best && best.at); } catch {}
+  if(fix.length && !again){ const set0 = Object.getPrototypeOf(localStorage).setItem;
+    try { fix.forEach(k => localStorage.setItem(k, best.keys[k])); localStorage.setItem(DS_STAMP, String(best.at)); sessionStorage.setItem("embergine.dev.restored", String(best.at)); sessionStorage.setItem("embergine.dev.note", (best.at > stamp ? "Recovered this device's progress from its second copy" : "Repaired an unreadable save from its second copy") + " (slot " + best.name + ")"); } catch(e){ DS.err = String(e && e.message || e); return; }
+    location.reload(); return; }
+  try { const n = sessionStorage.getItem("embergine.dev.note"); if(n){ DS.restored = n; sessionStorage.removeItem("embergine.dev.note"); setTimeout(() => EG.toast(n), 600); } } catch {}
+  if(!best || dsHash(JSON.stringify(cur)) !== best.h) await dsWrite();
+  try { EG.hubPaint(); } catch {}
+})();
+EG.devstore = { state: () => DS, flush: dsWrite, slots: dsSlots };
 
 })();
 

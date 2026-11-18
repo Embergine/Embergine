@@ -943,6 +943,10 @@ html.sf-locked body{overflow:hidden}
 .eg-data-rows span{font-weight:600;font-size:.86rem} .eg-data-rows small{color:var(--muted);overflow-wrap:anywhere}
 @media (max-width:480px){ .eg-data-rows>div{grid-template-columns:1fr;gap:0} }
 .eg-data-diag{margin-top:6px} .eg-data-diag p{overflow-wrap:anywhere}
+.eg-help{border:1px solid var(--crit);border-radius:12px;padding:10px 12px;margin:8px 0}
+.eg-help-d{margin-top:8px}
+.eg-help code,.eg-help-d code{overflow-wrap:anywhere;font-family:var(--f-mono)}
+.eg-help-steps{margin:6px 0 6px 18px;padding:0;display:grid;gap:6px}
 
 /* ===== Tangerine (scoped) ===== */
 #tg /* Layout: a bedside encounter. Left rail = the patient (triage card + always-dark bedside monitor + clock);
@@ -4993,7 +4997,7 @@ document.querySelectorAll('.view').forEach(v=>{});
 /* ================= EMBERGINE SHELL ================= */
 "use strict";
 const EG = (function(){
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.4.1";
 const IS_PWA = !!window.EMBERGINE_PWA;
 const APP_URL = "https://embergine.github.io/embergine/";
 const $ = (s, el=document) => el.querySelector(s);
@@ -5458,7 +5462,8 @@ function gRedirect(o={}){ const cid = (SET.google.clientId||"").trim(); if(!cid)
   HUB.auth.lastEvent = "redirect: away"; (window.__egAssign || (u => location.assign(u)))("https://accounts.google.com/o/oauth2/v2/auth?" + q);
   return new Promise(() => {}); }
 // on start-up, before routing: Google just sent us back? keep the token, tidy the address. → null | {ok, message, a}
-function takeRedirect(){ const h = location.hash || ""; if(!/[#&](access_token|error)=/.test(h)) return null;
+function strandedTrip(){ try { const b = JSON.parse(localStorage.getItem(GBACK) || "null"); if(b && Date.now() - (+b.at||0) < 30*60000){ localStorage.removeItem(GBACK); return true; } if(b) localStorage.removeItem(GBACK); } catch {} return false; }
+function takeRedirect(){ const h = location.hash || ""; if(!/[#&](access_token|error)=/.test(h)){ if(strandedTrip()){ HUB.signinHelp = true; HUB.auth.lastEvent = "redirect: Google did not send us back"; } return null; }
   const r = Object.fromEntries(new URLSearchParams(h.slice(1))); let back = null; try { back = JSON.parse(localStorage.getItem(GBACK) || "null"); localStorage.removeItem(GBACK); } catch {}
   history.replaceState(null, "", location.pathname + location.search + (back && back.hash && !/access_token|error=/.test(back.hash) ? back.hash : "#settings"));
   if(!back || back.state !== r.state){ HUB.auth.lastEvent = "redirect: state mismatch"; return { ok:false, message:"That Google answer was not for this sign-in · tap Sign in again" }; }
@@ -5785,6 +5790,7 @@ function hubPaint(){ const dot = $("#hubdot"); const a = gAuth(); const L = HUB.
         : `<div class="kv"><div class="t"><b>Not connected</b><small>One Google sign-in: Drive keeps your progress, Citrus plans your sessions.</small></div><button class="sh-btn primary" data-act="hubConnect">Sign in with Google</button></div>`}
     <div class="kv"><div class="t"><b>Progress on Drive</b><small>state.json in your Embergine folder on Drive (${HUB.byTag[HUB.APP]==="tag"?"found by its tag, wherever Citrus puts it":"My Apps/hub/embergine until Citrus moves it"}) · every device merges its work into one copy${L.state?" · "+esc(L.state):""}${L.backup?" · backup: "+esc(L.backup):""}</small></div><input type="checkbox" class="sw" data-hub="syncState" ${g.syncState!==false?"checked":""}></div>
     <div class="kv"><div class="t"><b>Status for Citrus</b><small>status.json: summary, week, time asks, pending${L.status?" · written "+esc(L.status):""}</small></div><input type="checkbox" class="sw" data-hub="publish" ${g.publish!==false?"checked":""}></div>
+    ${signinHelp()}
     <details style="margin-top:8px"><summary class="sh-small sh-muted" style="cursor:pointer">Client ID (advanced)</summary><input class="sh" id="hubCid" value="${esc(g.clientId||"")}" style="margin-top:6px"><p class="sh-small sh-muted" style="margin-top:4px">The shared "Citrus web" client of the My Apps project. Add <code>https://embergine.github.io</code> to its authorised JavaScript origins once.</p></details>`;
 }
 /* "Your data" (claude/cloud-model.md, Plain words): one sentence that says whether everything is saved, then four rows. */
@@ -5809,6 +5815,13 @@ function cloudCard(){ const D = window.EG_DEV || {}, st = cloudState(), a = gAut
   return `<div class="eg-data" id="yourData"><b>Your data</b><p class="eg-data-say ${st.tone}" role="status">${esc(st.text)}</p>
     <div class="eg-data-rows"><div><span>This device</span><small>${dev}</small></div><div><span>Google Drive</span><small>${esc(drv)}</small></div><div><span>Backups</span><small>${bk}</small></div><div><span>Two devices</span><small>Changes from each device merge record by record; nothing one device does is overwritten by another. A big removal asks first.</small></div></div>
     ${hubCan() ? `<details class="eg-data-diag"><summary class="sh-small sh-muted">Diagnostics</summary><p class="sh-small sh-muted">Sign-in: ${redirectMode() ? "same window (goes to Google and back)" : "Google window"} · last event ${esc(HUB.auth.lastEvent||"none")}${HUB.auth.lastError ? " · "+esc(HUB.auth.lastError) : ""} · files downloaded ${io.down||0}, skipped (unchanged) ${io.skipped||0}, uploaded ${io.up||0} · retries ${io.retries||0} · timeouts ${io.timeouts||0}${HUB.retryAt ? " · next try "+hm(HUB.retryAt) : ""} · return address ${esc(returnAddress())}</p></details>` : ""}</div>`; }
+function signinHelp(){ const ra = returnAddress(), alt = ra.replace(/\/embergine\//, "/Embergine/") !== ra ? ra.replace(/\/embergine\//, "/Embergine/") : ra.replace(/\/Embergine\//, "/embergine/");
+  const body = `<p class="sh-small">If Google showed <b>Error 400: redirect_uri_mismatch</b>, Google does not know this app's return address yet. In <b>console.cloud.google.com</b> › APIs &amp; Services › Credentials › the shared web client (753489712404-ra7ahu…):</p>
+    <ol class="sh-small eg-help-steps"><li>Authorised JavaScript origins: add <code>${esc(location.origin)}</code> <button class="sh-btn sm" data-copy="${esc(location.origin)}">Copy</button></li>
+    <li>Authorised redirect URIs: add <code>${esc(ra)}</code> <button class="sh-btn sm" data-copy="${esc(ra)}">Copy</button>${alt !== ra ? ` and also <code>${esc(alt)}</code> <button class="sh-btn sm" data-copy="${esc(alt)}">Copy</button> (Google treats capital letters as a different address)` : ""}</li>
+    <li>Save, wait about 5 minutes, then sign in again.</li></ol>
+    <p class="sh-small sh-muted">Or skip the return trip: ${redirectMode() ? `<button class="sh-btn sm" data-act="hubPopupMode">Use Google's window instead</button>` : `this device already uses Google's window. <button class="sh-btn sm" data-act="hubRedirectMode">Use the same window</button>`}</p>`;
+  return HUB.signinHelp ? `<div class="eg-help" role="alert"><b>Google did not send you back</b>${body}</div>` : `<details class="eg-help-d"><summary class="sh-small sh-muted" style="cursor:pointer">Sign-in trouble?</summary>${body}</details>`; }
 // Today banner: an expired sign-in or a blocked sync is never silent
 function hubBanner(a, tapNeed, why){ const host = $("#sv-today"); if(!host) return; let el = $("#hubBanner");
   const show = a && hubCan() && (tapNeed || (HUB.last.err && HUB.last.fix === "repair"));
@@ -5866,6 +5879,8 @@ document.addEventListener("click", e => {
     case "hubReconnect": hubReconnect(); break;
     case "hubRepair": hubRepair(); break;
     case "hubMass": massAsk(); break;
+    case "hubPopupMode": try { localStorage.setItem(GMODE, "popup"); } catch {} HUB.signinHelp = false; HUB.tc = null; gisPrep(); toast("This device now signs in with Google's window"); hubPaint(); break;
+    case "hubRedirectMode": try { localStorage.setItem(GMODE, "redirect"); } catch {} HUB.signinHelp = false; toast("This device now signs in by going to Google and back"); hubPaint(); break;
     case "hubSignOut": hubSignOut(); break;
     case "updateApp": if(SW.waiting){ if(window.EG && EG.updateApp) EG.updateApp(SW.waiting); else SW.waiting.postMessage({type:"SKIP_WAITING"}); } break;
     case "repair": if(navigator.onLine === false){ toast("Connect to the internet first: Repair downloads the app again"); break; } if(Date.now() - (+b.dataset.arm||0) > 4000){ b.dataset.arm = Date.now(); b.dataset.label = b.dataset.label || b.textContent; b.textContent = "Tap again to repair"; setTimeout(()=>{ if(Date.now() - (+b.dataset.arm||0) >= 3900) b.textContent = b.dataset.label; }, 4000); toast("Repair clears the app cache and reloads. Tap again within 4 s."); break; } b.dataset.arm = 0; (async()=>{ try { if(navigator.serviceWorker){ const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r=>r.unregister())); } if(window.caches){ const ks = await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); } } catch {} toast("Cache cleared. Reloading…"); setTimeout(()=>location.reload(), 700); })(); break;
@@ -5879,6 +5894,7 @@ document.addEventListener("change", e => {
   if(t.id==="setHints"){ SET.hints = t.checked; saveSet(); }
   if(t.matches("[data-hub]")){ SET.google[t.dataset.hub] = t.checked; saveSet(); }
 });
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-copy]"); if(b){ e.preventDefault(); copyText(b.dataset.copy); } });
 function copyText(t){ try { navigator.clipboard.writeText(t).then(()=>toast("Copied")).catch(()=>fallbackCopy(t)); } catch { fallbackCopy(t); } }
 function fallbackCopy(t){ const ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast("Copied"); } catch { toast("Select and copy manually"); } ta.remove(); }
 
@@ -5930,6 +5946,7 @@ function boot(){
   const back = hubCan() ? takeRedirect() : null;   // before routing: the address may hold Google's answer
   const h0 = (location.hash||"").replace("#",""); show(TABS.includes(h0) ? h0 : "today");
   if(back) setTimeout(() => finishRedirect(back), 50); else if(hubCan() && !redirectMode()) setTimeout(() => gisPrep(), 400);
+  if(HUB.signinHelp) setTimeout(() => { toast("Google did not send you back · Settings › Google shows what to fix"); if(!gAuth()) show("settings"); hubPaint(); }, 300);
   window.addEventListener("hashchange", ()=>{ const k = (location.hash||"").replace("#",""); if(k!==tab) show(TABS.includes(k) ? k : "today"); });
   if(hubCan()){ if(gAuth() && !back) setTimeout(()=>hubSync(false), 1500); setInterval(()=>{ if(gAuth()) hubSync(false); }, 10*60*1000); window.addEventListener("online", ()=>{ if(gAuth()) hubSync(false); }); }
   armDayTurn(); setInterval(dayCheck, 60000);
@@ -9372,7 +9389,7 @@ EG.on("show", ({tab}) => { if(tab !== "progress") return; let box = $("#yuzuProg
 
 // ================= Settings groups =================
 const WHATSNEW = (window.EG_WHATSNEW = window.EG_WHATSNEW || []);
-WHATSNEW.unshift(["1.4.0", "Google sign-in fixed: a late answer from Google is kept, and the installed app signs in by going to Google and back in the same window."], ["1.4.0", "Your progress is kept twice on this device and split into small files on Drive, so only what changed travels. A big removal from another device asks first."], ["1.4.0", "Settings › Your data says in one sentence whether everything is saved."], ["1.3.1", "Drive: Embergine finds its folders by tag, so Citrus can tidy them into one Citrus folder without breaking sync."], ["1.3.0", "Settings in labelled groups with a jump row; each group says whether it syncs."], ["1.3.0", "Citrus Maxima can open Embergine straight into the Round, a code, a case, a drill, a boss fight or rhythm strips; a ← Citrus chip takes you back."], ["1.3.0", "Send to Yuzu: missed questions and debrief takeaways become flashcards."], ["1.3.0", "Citrus sees this week's codes, CPR fraction, drill accuracy, cases, causes practised and suggested tasks."]);
+WHATSNEW.unshift(["1.4.1", "If Google shows an error instead of sending you back, Settings › Google now shows the exact address to add, with Copy buttons, and can switch to Google's own window instead."], ["1.4.0", "Google sign-in fixed: a late answer from Google is kept, and the installed app signs in by going to Google and back in the same window."], ["1.4.0", "Your progress is kept twice on this device and split into small files on Drive, so only what changed travels. A big removal from another device asks first."], ["1.4.0", "Settings › Your data says in one sentence whether everything is saved."], ["1.3.1", "Drive: Embergine finds its folders by tag, so Citrus can tidy them into one Citrus folder without breaking sync."], ["1.3.0", "Settings in labelled groups with a jump row; each group says whether it syncs."], ["1.3.0", "Citrus Maxima can open Embergine straight into the Round, a code, a case, a drill, a boss fight or rhythm strips; a ← Citrus chip takes you back."], ["1.3.0", "Send to Yuzu: missed questions and debrief takeaways become flashcards."], ["1.3.0", "Citrus sees this week's codes, CPR fraction, drill accuracy, cases, causes practised and suggested tasks."]);
 function applySimDefaults(){ const S0 = EG.settings ? EG.settings() : {}; const d = S0.simDefaults || {}; const a = $("#setSetting"), b = $("#setSpeed");
   if(a && d.setting && [...a.options].some(o => o.value === d.setting)) a.value = d.setting; if(b && d.speed && [...b.options].some(o => o.value === String(d.speed))) b.value = String(d.speed); }
 function nameControls(root){ $$("input, select, textarea", root).forEach(el => { if(el.type === "hidden" || el.getAttribute("aria-label") || el.getAttribute("aria-labelledby") || (el.id && $(`label[for="${el.id}"]`)) || el.closest("label")) return;

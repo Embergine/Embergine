@@ -1,5 +1,5 @@
 /* Embergine service worker: offline app shell; updates only when the user taps Update. */
-const VERSION = "0805a3b2f0";
+const VERSION = "81cc5243d7";
 const CACHE = "embergine-" + VERSION, FONTS = "embergine-fonts-v1";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "icons/apple-touch-180.png", "icons/favicon-32.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, {cache:"reload"}))))); });
